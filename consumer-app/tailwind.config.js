@@ -12,6 +12,27 @@ module.exports = {
         medium: ["Urbanist_500Medium"],
         semibold: ["Urbanist_600SemiBold"],
         bold: ["Urbanist_700Bold"]
+      },
+      colors: {
+        primary: "#1BAC4B",
+        secondary: "#FFD300",
+        gray: {
+          50: "#FAFAFA",
+          100: "#F5F5F5",
+          200: "#EEEEEE",
+          300: "#E0E0E0",
+          400: "#BDBDBD",
+          500: "#9E9E0E",
+          600: "#757575",
+          700: "#616161",
+          800: "#424242",
+          900: "#212121"
+        },
+        dark: {
+          1: "#181A20",
+          2: "#1F222A",
+          3: "#35383F"
+        }
       }
     }
   },

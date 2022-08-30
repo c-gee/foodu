@@ -2,6 +2,7 @@ import { View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "./Header";
+import MenuCategoriesSection from "./MenuCategoriesSection";
 import SearchBar from "../../components/SearchBar";
 import SectionHeader from "../../components/SectionHeader";
 import SpecialOffer from "../../components/SpecialOffer";
@@ -20,12 +21,16 @@ const HomeScreen = () => {
           navigationText="See All"
         />
         <View className="mt-6 shadow-lg shadow-slate-300">
+          {/* To be fetched from database */}
           <SpecialOffer
             imageURL="image-url"
             navigationTarget="MenuItemDetails"
             navigationTargetId={123}
           />
         </View>
+      </View>
+      <View className="mx-6 my-3 mt-1">
+        <MenuCategoriesSection />
       </View>
     </SafeAreaView>
   );

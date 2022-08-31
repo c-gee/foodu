@@ -29,8 +29,15 @@ const HomeScreen = () => {
           />
         </View>
       </View>
-      <View className="mx-6 my-3 mt-1">
+      <View className="mx-6 my-1">
         <MenuCategoriesSection />
+      </View>
+      <View className="mx-6 my-3">
+        <SectionHeader
+          title="Discount Guaranteed! 👌"
+          navigationTarget="Promos"
+          navigationText="See All"
+        />
       </View>
     </SafeAreaView>
   );

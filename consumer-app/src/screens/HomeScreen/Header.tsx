@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, TextInput } from "react-native";
+import { View, Text, Image, TouchableOpacity } from "react-native";
 import { BellIcon, ShoppingBagIcon } from "react-native-heroicons/outline";
 import { Ionicons } from "@expo/vector-icons";
 

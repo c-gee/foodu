@@ -13,6 +13,10 @@ module.exports = {
         semibold: ["Urbanist_600SemiBold"],
         bold: ["Urbanist_700Bold"]
       },
+      fontSize: {
+        tiny: ["8px", "11px"],
+        xxs: ["10px", "13px"]
+      },
       colors: {
         primary: "#1BAC4B",
         secondary: "#FFD300",

@@ -2,7 +2,7 @@ import { View } from "react-native";
 
 import FoodEmojiButton from "../../components/FoodEmojiButton";
 
-// To be fetched from database
+// To be fetched from API
 const menuCategories = [
   { emoji: "🍔", label: "Hamburger", menuCategoryId: 1 },
   { emoji: "🍕", label: "Pizza", menuCategoryId: 2 },

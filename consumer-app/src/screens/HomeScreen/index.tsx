@@ -20,8 +20,8 @@ const HomeScreen = () => {
           navigationTarget="SpecialOffers"
           navigationText="See All"
         />
-        <View className="mt-6 shadow-lg shadow-slate-300">
-          {/* To be fetched from database */}
+        <View className="mt-6">
+          {/* To be fetched from API */}
           <SpecialOffer
             imageURL="image-url"
             navigationTarget="MenuItemDetails"

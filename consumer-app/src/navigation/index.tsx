@@ -4,7 +4,8 @@ import { RootStackParamList } from "./types";
 import HomeScreen from "../screens/HomeScreen";
 import SpecialOffersScreen from "../screens/SpecialOffersScreen";
 import PromosScreen from "../screens/PromosScreen";
-import MenuCategoriesScreen from "../screens/MenuCategoriesScreen";
+import CuisineCategoriesScreen from "../screens/CuisineCategoriesScreen";
+import SearchScreen from "../screens/SearchScreen";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
@@ -27,8 +28,13 @@ export const RootStackNavigation = () => {
         options={{ headerShown: false }}
       />
       <RootStack.Screen
-        name="MenuCategories"
-        component={MenuCategoriesScreen}
+        name="CuisineCategories"
+        component={CuisineCategoriesScreen}
+        options={{ headerShown: false }}
+      />
+      <RootStack.Screen
+        name="Search"
+        component={SearchScreen}
         options={{ headerShown: false }}
       />
     </RootStack.Navigator>

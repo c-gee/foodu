@@ -3,11 +3,14 @@ import type {
   NativeStackScreenProps
 } from "@react-navigation/native-stack";
 
+type SearchType = "restaurant" | "cuisine";
+
 export type RootStackParamList = {
   Home: undefined;
   SpecialOffers: undefined;
   Promos: undefined;
-  MenuCategories: undefined;
+  CuisineCategories: undefined;
+  Search: { keyword: string; type: SearchType } | undefined;
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =

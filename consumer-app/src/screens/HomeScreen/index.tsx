@@ -9,13 +9,13 @@ import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "./Header";
-import MenuCategoriesSection from "./MenuCategoriesSection";
+import CuisineCategoriesSection from "./CuisineCategoriesSection";
 import PromosSection from "./PromosSection";
 import SearchBar from "../../components/SearchBar";
 import SectionHeader from "../../components/SectionHeader";
 import SpecialOffer from "../../components/SpecialOffer";
 import MerchantCard from "../../components/MerchantCard";
-import { RootStackScreenProps } from "../../navigations/types";
+import { RootStackScreenProps } from "../../navigation/types";
 
 // To be fetched from API
 import { merchants } from "../../../data/db.json";
@@ -140,7 +140,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
         </View>
       </View>
       <View className="mx-6 my-1">
-        <MenuCategoriesSection />
+        <CuisineCategoriesSection />
       </View>
       <View className="my-3">
         <View className="mx-6">

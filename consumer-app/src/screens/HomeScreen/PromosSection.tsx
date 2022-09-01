@@ -1,4 +1,3 @@
-import { View, Text } from "react-native";
 import PromoMenuItemCard from "../../components/PromoMenuItemCard";
 
 // To be fetched from API

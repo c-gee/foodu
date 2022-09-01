@@ -11,7 +11,7 @@ const FoodEmojiButton = ({ emoji, label, onPress }: Props) => {
     <TouchableOpacity onPress={onPress}>
       <Text className="text-5xl text-center py-2">{emoji}</Text>
       {label && (
-        <Text className="text-base font-bold  text-center" numberOfLines={1}>
+        <Text className="text-base font-bold text-center" numberOfLines={1}>
           {label}
         </Text>
       )}

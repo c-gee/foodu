@@ -6,6 +6,7 @@ import MerchantScreen from "../screens/MerchantScreen";
 import SpecialOffersScreen from "../screens/SpecialOffersScreen";
 import PromosScreen from "../screens/PromosScreen";
 import CuisineCategoriesScreen from "../screens/CuisineCategoriesScreen";
+import RecommendationsScreen from "../screens/RecommendationsScreen";
 import SearchScreen from "../screens/SearchScreen";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -36,6 +37,11 @@ export const RootStackNavigation = () => {
       <RootStack.Screen
         name="CuisineCategories"
         component={CuisineCategoriesScreen}
+        options={{ headerShown: false }}
+      />
+      <RootStack.Screen
+        name="Recommendations"
+        component={RecommendationsScreen}
         options={{ headerShown: false }}
       />
       <RootStack.Screen

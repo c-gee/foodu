@@ -1,19 +1,14 @@
 import {
-  View,
   ScrollView,
-  FlatList,
+  View,
   TouchableOpacity,
-  Text
+  Text,
+  FlatList
 } from "react-native";
-import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState } from "react";
 
-import Header from "./Header";
-import CuisineCategoriesSection from "./CuisineCategoriesSection";
-import PromosSection from "./PromosSection";
-import SearchBar from "../../components/SearchBar";
-import SectionHeader from "../../components/SectionHeader";
-import SpecialOffer from "../../components/SpecialOffer";
+import NavigationTopBar from "../../components/NavigationTopBar";
 import MerchantCard from "../../components/MerchantCard";
 import { RootStackScreenProps } from "../../navigation/types";
 
@@ -41,10 +36,24 @@ const filters = [
   {
     label: "Western",
     icon: "🍝"
+  },
+  {
+    label: "Rice Dish",
+    icon: "🍛"
+  },
+  {
+    label: "Vegan",
+    icon: "🥗"
+  },
+  {
+    label: "Beverages",
+    icon: "🍹"
   }
 ];
 
-const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
+const RecommendationsScreen = ({
+  navigation
+}: RootStackScreenProps<"CuisineCategories">) => {
   const [filter, setFilter] = useState<string>(filters[0].label);
   const [filteredResults, setFilteredResults] = useState(merchants);
 
@@ -69,8 +78,8 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
       showsHorizontalScrollIndicator={false}
       contentContainerStyle={{
         paddingHorizontal: 24,
-        paddingBottom: 12,
-        marginTop: 24
+        marginTop: 8,
+        marginBottom: 12
       }}
       className="bg-white"
     >
@@ -78,7 +87,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
         <TouchableOpacity
           key={label}
           className={`flex-row px-3 py-2 mr-3 rounded-full ${
-            filter === label ? "bg-primary" : "bg-white border border-primary"
+            filter === label ? "bg-primary" : "border border-primary"
           }`}
           onPress={() => {
             onFilter(label);
@@ -93,78 +102,20 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
           </Text>
         </TouchableOpacity>
       ))}
-      <TouchableOpacity
-        className="flex-row px-3 py-2 rounded-full bg-white border border-primary"
-        onPress={() => {
-          navigation.navigate("Recommendations");
-        }}
-      >
-        <Text className={"align-middle text-primary"}>🥡 More</Text>
-      </TouchableOpacity>
-    </ScrollView>
-  );
-
-  const HeaderComponent = () => (
-    <ScrollView
-      contentContainerStyle={{
-        flexGrow: 1
-      }}
-    >
-      <Header />
-      <View className="mx-6 my-3">
-        <SearchBar />
-      </View>
-      <View className="mx-6 my-3">
-        <SectionHeader
-          title="Special Offers"
-          navigationText="See All"
-          onPress={() => navigation.navigate("SpecialOffers")}
-        />
-        <View className="mt-6">
-          {/* To be fetched from API */}
-          <SpecialOffer
-            image={require("../../../assets/special-offer-01.png")}
-            onPress={() => navigation.navigate("Merchant", { id: 123 })}
-          />
-        </View>
-      </View>
-      <View className="mx-6 my-1">
-        <CuisineCategoriesSection />
-      </View>
-      <View className="my-3">
-        <View className="mx-6">
-          <SectionHeader
-            title="Discount Guaranteed! 👌"
-            navigationText="See All"
-            onPress={() => navigation.navigate("Promos")}
-          />
-        </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            padding: 24,
-            paddingEnd: 12
-          }}
-        >
-          <PromosSection />
-        </ScrollView>
-      </View>
-      <View className="mt-0">
-        <View className="mx-6">
-          <SectionHeader title="Recommended For You 😍" />
-        </View>
-        <FilterControls />
-      </View>
     </ScrollView>
   );
 
   return (
     <SafeAreaView className="flex-1 bg-white">
+      <NavigationTopBar
+        title="Recommended For You 😍"
+        icon="go_back"
+        onPress={navigation.goBack}
+      />
       <FlatList
         data={filteredResults}
         keyExtractor={(item) => item.id}
-        ListHeaderComponent={HeaderComponent}
+        ListHeaderComponent={FilterControls}
         renderItem={({ item }) => (
           <View className="mx-6">
             <MerchantCard
@@ -181,9 +132,10 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
         contentContainerStyle={{
           paddingBottom: 24
         }}
+        stickyHeaderIndices={[0]}
       />
     </SafeAreaView>
   );
 };
 
-export default HomeScreen;
+export default RecommendationsScreen;

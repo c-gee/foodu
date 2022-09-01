@@ -10,6 +10,7 @@ export type RootStackParamList = {
   SpecialOffers: undefined;
   Promos: undefined;
   CuisineCategories: undefined;
+  Recommendations: undefined;
   Search: { keyword: string; type: SearchType } | undefined;
   Merchant: { id: number };
 };

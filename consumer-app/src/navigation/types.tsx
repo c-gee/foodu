@@ -11,6 +11,7 @@ export type RootStackParamList = {
   Promos: undefined;
   CuisineCategories: undefined;
   Search: { keyword: string; type: SearchType } | undefined;
+  Merchant: { id: number };
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =

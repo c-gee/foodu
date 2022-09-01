@@ -1,16 +1,17 @@
-import { View, TouchableOpacity, Image, Platform } from "react-native";
+import {
+  View,
+  TouchableOpacity,
+  Image,
+  Platform,
+  ImageURISource
+} from "react-native";
 
 type Props = {
-  imageURL: string;
-  navigationTarget: string;
-  navigationTargetId: number;
+  image: ImageURISource; // allow use of require for now till API fetching is ready
+  onPress: () => void;
 };
 
-const SpecialOffer = ({
-  imageURL,
-  navigationTarget,
-  navigationTargetId
-}: Props) => {
+const SpecialOffer = ({ image, onPress }: Props) => {
   return (
     <View
       className="shadow-lg shadow-slate-300"
@@ -31,14 +32,9 @@ const SpecialOffer = ({
         })
       }}
     >
-      <TouchableOpacity
-        onPress={() => {
-          /* navigation code here */
-        }}
-        className="w-full"
-      >
+      <TouchableOpacity onPress={onPress} className="w-full">
         <Image
-          source={require("../../../assets/speacial-offers-01.png")}
+          source={image}
           style={{
             width: "100%",
             height: undefined,

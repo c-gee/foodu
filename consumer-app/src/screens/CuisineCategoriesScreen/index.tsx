@@ -33,7 +33,7 @@ const CuisineCategoriesScreen = ({
   navigation
 }: RootStackScreenProps<"CuisineCategories">) => {
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white pb-12">
       <NavigationTopBar
         title="More Category"
         icon="go_back"

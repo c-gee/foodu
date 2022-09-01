@@ -133,9 +133,8 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
         <View className="mt-6">
           {/* To be fetched from API */}
           <SpecialOffer
-            imageURL="image-url"
-            navigationTarget="MenuItemDetails"
-            navigationTargetId={123}
+            image={require("../../../assets/special-offer-01.png")}
+            onPress={() => navigation.navigate("Merchant", { id: 123 })}
           />
         </View>
       </View>
@@ -190,6 +189,9 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
             />
           </View>
         )}
+        contentContainerStyle={{
+          paddingBottom: 24
+        }}
       />
     </SafeAreaView>
   );

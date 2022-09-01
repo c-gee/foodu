@@ -1,6 +1,9 @@
 import { View } from "react-native";
 
 import FoodEmojiButton from "../../components/FoodEmojiButton";
+import { RootStackParamList } from "../../navigation/types";
+
+import { useNavigation } from "@react-navigation/native";
 
 // To be fetched from API
 const menuCategories = [
@@ -10,10 +13,19 @@ const menuCategories = [
   { emoji: "🍖", label: "Meat", menuCategoryId: 4 },
   { emoji: "🥬", label: "Vegetable", menuCategoryId: 5 },
   { emoji: "🍰", label: "Dessert", menuCategoryId: 6 },
-  { emoji: "🍹", label: "Drinks", menuCategoryId: 7 }
+  { emoji: "🍹", label: "Beverages", menuCategoryId: 7 }
 ];
 
 const MenuCategoriesSection = () => {
+  const navigation = useNavigation();
+
+  const navigateTo = (
+    target: keyof RootStackParamList,
+    options?: { id?: number }
+  ): void => {
+    navigation.navigate(target);
+  };
+
   return (
     <View className=" flex flex-row flex-wrap justify-center items-center">
       {menuCategories.map(({ emoji, label, menuCategoryId }) => (
@@ -21,8 +33,7 @@ const MenuCategoriesSection = () => {
           <FoodEmojiButton
             emoji={emoji}
             label={label}
-            navigationTarget="MenuCategory"
-            navigationTargetId={menuCategoryId}
+            onPress={() => navigateTo("MenuCategories")}
           />
         </View>
       ))}
@@ -30,7 +41,7 @@ const MenuCategoriesSection = () => {
         <FoodEmojiButton
           emoji="🥡"
           label="More"
-          navigationTarget="MenuCategories"
+          onPress={() => navigateTo("MenuCategories")}
         />
       </View>
     </View>

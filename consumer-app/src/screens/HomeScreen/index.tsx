@@ -15,6 +15,7 @@ import SearchBar from "../../components/SearchBar";
 import SectionHeader from "../../components/SectionHeader";
 import SpecialOffer from "../../components/SpecialOffer";
 import MerchantCard from "../../components/MerchantCard";
+import { RootStackScreenProps } from "../../navigations/types";
 
 // To be fetched from API
 import { merchants } from "../../../data/db.json";
@@ -55,7 +56,7 @@ const filters = [
   }
 ];
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
   const [filter, setFilter] = useState<string>(filters[0].label);
   const [filteredResults, setFilteredResults] = useState(merchants);
 
@@ -126,8 +127,8 @@ const HomeScreen = () => {
       <View className="mx-6 my-3">
         <SectionHeader
           title="Special Offers"
-          navigationTarget="SpecialOffers"
           navigationText="See All"
+          onPress={() => navigation.navigate("SpecialOffers")}
         />
         <View className="mt-6">
           {/* To be fetched from API */}
@@ -145,8 +146,8 @@ const HomeScreen = () => {
         <View className="mx-6">
           <SectionHeader
             title="Discount Guaranteed! 👌"
-            navigationTarget="Promos"
             navigationText="See All"
+            onPress={() => navigation.navigate("Promos")}
           />
         </View>
         <ScrollView
@@ -162,11 +163,7 @@ const HomeScreen = () => {
       </View>
       <View className="my-3 mt-0">
         <View className="mx-6">
-          <SectionHeader
-            title="Recommended For You 😍"
-            navigationTarget="SpecialOffers"
-            navigationText="See All"
-          />
+          <SectionHeader title="Recommended For You 😍" />
         </View>
         <FilterControls />
       </View>
@@ -174,7 +171,7 @@ const HomeScreen = () => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white font-regular">
+    <SafeAreaView className="flex-1 bg-white">
       {/* Main flat list loads the recommendation section list */}
       <FlatList
         data={filteredResults}

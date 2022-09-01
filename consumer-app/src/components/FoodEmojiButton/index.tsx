@@ -1,24 +1,14 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 type Props = {
   emoji: string;
   label?: string;
-  navigationTarget: string;
-  navigationTargetId?: number;
+  onPress: () => void;
 };
 
-const FoodEmojiButton = ({
-  emoji,
-  label,
-  navigationTarget,
-  navigationTargetId
-}: Props) => {
+const FoodEmojiButton = ({ emoji, label, onPress }: Props) => {
   return (
-    <TouchableOpacity
-      onPress={() => {
-        /* navigation code here */
-      }}
-    >
+    <TouchableOpacity onPress={onPress}>
       <Text className="text-5xl text-center py-2">{emoji}</Text>
       {label && (
         <Text className="text-base font-bold  text-center" numberOfLines={1}>

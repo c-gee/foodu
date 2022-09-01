@@ -9,7 +9,7 @@ import {
   Urbanist_700Bold
 } from "@expo-google-fonts/urbanist";
 
-import { RootStackNavigation } from "./src/navigations";
+import { RootStackNavigation } from "./src/navigation";
 
 export default function App() {
   let [fontsLoaded] = useFonts({

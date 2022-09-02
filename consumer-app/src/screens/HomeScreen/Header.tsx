@@ -12,7 +12,7 @@ const Header = () => {
           height: 48
         }}
         resizeMode="cover"
-        className="rounded-full flex-none"
+        className="rounded-full"
       />
       <View className="flex-auto mr-8">
         <Text className="text-base text-gray-600">Deliver to</Text>

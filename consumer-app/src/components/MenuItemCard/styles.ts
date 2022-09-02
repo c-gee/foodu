@@ -1,32 +1,42 @@
-type Variant = "regular" | "small";
+type Variant = "regular" | "small" | "large";
+type Orientation = "vertical" | "horizontal";
 
 const imageDimension = (variant: Variant) => {
-  return variant === "small" ? 154 : 192;
+  switch (variant) {
+    case "small":
+      return 100;
+    case "large":
+      return 192;
+    default:
+      return 154;
+  }
 };
 
 export default {
-  container: (variant: Variant) => {
+  container: (variant: Variant, orientation: Orientation) => {
+    const maxWidth =
+      orientation === "vertical" ? imageDimension(variant) + 28 : "auto";
+
     return {
-      maxWidth: imageDimension(variant) + 28,
-      padding: 14,
-      paddingBottom: 16
+      maxWidth,
+      padding: 14
     };
   },
   title: (variant: Variant) => {
-    const fontSize = variant === "small" ? 18 : 20;
+    const fontSize = variant === "large" ? 20 : 18;
 
-    return {
-      fontSize
-    };
+    return { fontSize };
   },
   price: {
     fontSize: 18
   },
   image: (variant: Variant) => {
+    const borderRadius = variant === "small" ? 24 : 20;
+
     return {
       width: imageDimension(variant),
       height: imageDimension(variant),
-      borderRadius: 20
+      borderRadius
     };
   }
 };

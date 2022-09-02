@@ -11,16 +11,17 @@ type Props = {
   totalReviews: number;
   deliveryFee: string;
   distance: number;
+  onPress: () => void;
 };
 
 const MerchantCard = ({
-  id,
   name,
   imageURL,
   distance,
   rating,
   totalReviews,
-  deliveryFee
+  deliveryFee,
+  onPress
 }: Props) => {
   return (
     <TouchableOpacity
@@ -44,9 +45,7 @@ const MerchantCard = ({
           }
         })
       }}
-      onPress={() => {
-        /* navigate to menu item details page */
-      }}
+      onPress={onPress}
     >
       <Image
         source={{
@@ -70,7 +69,7 @@ const MerchantCard = ({
           <StarIcon color="#FFAB38" size={16} />
           <Text className="text-xs text-gray-700 font-medium ml-1">
             {rating > 0 ? rating : "N/A"}{" "}
-            {totalReviews > 0 ? `(${totalReviews})` : ""}
+            {totalReviews > 0 ? `(${totalReviews})` : null}
           </Text>
           <Text></Text>
         </View>

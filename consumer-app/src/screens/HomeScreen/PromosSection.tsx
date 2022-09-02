@@ -71,6 +71,7 @@ const PromosSection = () => {
             distance={mechantDetails.distance}
             showReviews={true}
             showDistance={true}
+            showFavorited={true}
             badge={displayTag}
             onPress={() => {
               navigation.navigate("Merchant", {
@@ -79,7 +80,7 @@ const PromosSection = () => {
                 menuItemId: id
               });
             }}
-            variant="regular"
+            variant="large"
           />
         )
       )}

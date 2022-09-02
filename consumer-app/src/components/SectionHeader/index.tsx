@@ -6,7 +6,7 @@ type Props = {
   onPress?: () => void;
 };
 
-const SectionHeader = ({ title = "", navigationText, onPress }: Props) => {
+const SectionHeader = ({ title, navigationText, onPress }: Props) => {
   return (
     <View className="flex flex-row justify-between items-center">
       <Text className="text-xl font-bold text-gray-900">{title}</Text>

@@ -175,6 +175,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
               rating={item.merchantBrief.rating}
               totalReviews={item.merchantBrief.vote_count}
               deliveryFee={item.estimatedDeliveryFee.priceDisplay}
+              onPress={() => navigation.navigate("Merchant", { id: item.id })}
             />
           </View>
         )}

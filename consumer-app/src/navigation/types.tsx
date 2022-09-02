@@ -12,7 +12,11 @@ export type RootStackParamList = {
   CuisineCategories: undefined;
   Recommendations: undefined;
   Search: { keyword: string; type: SearchType } | undefined;
-  Merchant: { id: number };
+  Merchant: {
+    id: number | string;
+    showMenuItem?: boolean;
+    menuItemId?: number | string;
+  };
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =

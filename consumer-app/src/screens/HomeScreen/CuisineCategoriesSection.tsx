@@ -1,47 +1,46 @@
 import { View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import FoodEmojiButton from "../../components/FoodEmojiButton";
-import { RootStackParamList } from "../../navigation/types";
-
-import { useNavigation } from "@react-navigation/native";
 
 // To be fetched from API
 const cuisineCategories = [
-  { emoji: "🍔", label: "Hamburger", id: 1 },
-  { emoji: "🍕", label: "Pizza", id: 2 },
-  { emoji: "🍜", label: "Noodles", id: 3 },
-  { emoji: "🍖", label: "Meat", id: 4 },
-  { emoji: "🥬", label: "Vegetable", id: 5 },
-  { emoji: "🍰", label: "Dessert", id: 6 },
-  { emoji: "🍹", label: "Beverages", id: 7 }
+  { emoji: "🍔", name: "Hamburger", id: 1 },
+  { emoji: "🍕", name: "Pizza", id: 2 },
+  { emoji: "🍜", name: "Noodles", id: 3 },
+  { emoji: "🍖", name: "Meat", id: 4 },
+  { emoji: "🥬", name: "Vegetable", id: 5 },
+  { emoji: "🍰", name: "Dessert", id: 6 },
+  { emoji: "🍹", name: "Beverages", id: 7 }
 ];
 
 const CuisineCategoriesSection = () => {
   const navigation = useNavigation();
 
-  const navigateTo = (
-    target: keyof RootStackParamList,
-    options?: { id?: number }
-  ): void => {
-    navigation.navigate(target);
+  const searchCuisine = (keyword: string) => {
+    navigation.navigate("Search", {
+      keyword,
+      type: "cuisine",
+      showSearchBar: false
+    });
   };
 
   return (
     <View className="flex flex-row flex-wrap justify-center items-center">
-      {cuisineCategories.map(({ emoji, label, id }) => (
+      {cuisineCategories.map(({ emoji, name, id }) => (
         <View className="basis-1/4 md:basis-1/8 my-3" key={id}>
           <FoodEmojiButton
             emoji={emoji}
-            label={label}
-            onPress={() => navigateTo("CuisineCategories")}
+            name={name}
+            onPress={() => searchCuisine(name)}
           />
         </View>
       ))}
       <View className="basis-1/4 md:basis-1/8 my-3">
         <FoodEmojiButton
           emoji="🥡"
-          label="More"
-          onPress={() => navigateTo("CuisineCategories")}
+          name="More"
+          onPress={() => navigation.navigate("CuisineCategories")}
         />
       </View>
     </View>

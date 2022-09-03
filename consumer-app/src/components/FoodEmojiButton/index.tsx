@@ -2,21 +2,21 @@ import { Text, TouchableOpacity } from "react-native";
 
 type Props = {
   emoji: string;
-  label?: string;
+  name?: string;
   onPress: () => void;
 };
 
-const FoodEmojiButton = ({ emoji, label, onPress }: Props) => {
+const FoodEmojiButton = ({ emoji, name, onPress }: Props) => {
   return (
     <TouchableOpacity onPress={onPress}>
       <Text className="text-5xl text-center py-2">{emoji}</Text>
-      {label && (
+      {name && (
         <Text
           className="text-base font-bold text-center"
           numberOfLines={1}
           ellipsizeMode="tail"
         >
-          {label}
+          {name}
         </Text>
       )}
     </TouchableOpacity>

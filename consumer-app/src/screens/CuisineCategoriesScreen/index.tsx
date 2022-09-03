@@ -7,26 +7,26 @@ import { RootStackScreenProps } from "../../navigation/types";
 
 // To be fetched from API
 const cuisineCategories = [
-  { emoji: "🍔", label: "Hamburger", id: 1 },
-  { emoji: "🍕", label: "Pizza", id: 2 },
-  { emoji: "🍜", label: "Noodles", id: 3 },
-  { emoji: "🍖", label: "Meat", id: 4 },
-  { emoji: "🥬", label: "Vegetable", id: 5 },
-  { emoji: "🍰", label: "Dessert", id: 6 },
-  { emoji: "🍹", label: "Beverages", id: 7 },
-  { emoji: "🥐", label: "Pastry", id: 8 },
-  { emoji: "🍲", label: "Pot of Food", id: 9 },
-  { emoji: "🥗", label: "Salad", id: 10 },
-  { emoji: "🍱", label: "Bento", id: 11 },
-  { emoji: "🥘", label: "Pan of Food", id: 12 },
-  { emoji: "🍝", label: "Spaghetti", id: 13 },
-  { emoji: "🍣", label: "Sushi", id: 14 },
-  { emoji: "🍩", label: "Doughnut", id: 15 },
-  { emoji: "🥩", label: "Steak", id: 16 },
-  { emoji: "🍳", label: "Breakfast Set", id: 17 },
-  { emoji: "☕", label: "Coffee", id: 18 },
-  { emoji: "🎂", label: "Cake", id: 19 },
-  { emoji: "🍺", label: "Alcholic Drinksasadasd", id: 20 }
+  { emoji: "🍔", name: "Hamburger", id: 1 },
+  { emoji: "🍕", name: "Pizza", id: 2 },
+  { emoji: "🍜", name: "Noodles", id: 3 },
+  { emoji: "🍖", name: "Meat", id: 4 },
+  { emoji: "🥬", name: "Vegetable", id: 5 },
+  { emoji: "🍰", name: "Dessert", id: 6 },
+  { emoji: "🍹", name: "Beverages", id: 7 },
+  { emoji: "🥐", name: "Pastry", id: 8 },
+  { emoji: "🍲", name: "Pot of Food", id: 9 },
+  { emoji: "🥗", name: "Salad", id: 10 },
+  { emoji: "🍱", name: "Bento", id: 11 },
+  { emoji: "🥘", name: "Pan of Food", id: 12 },
+  { emoji: "🍝", name: "Spaghetti", id: 13 },
+  { emoji: "🍣", name: "Sushi", id: 14 },
+  { emoji: "🍩", name: "Doughnut", id: 15 },
+  { emoji: "🥩", name: "Steak", id: 16 },
+  { emoji: "🍳", name: "Breakfast Set", id: 17 },
+  { emoji: "☕", name: "Coffee", id: 18 },
+  { emoji: "🎂", name: "Cake", id: 19 },
+  { emoji: "🍺", name: "Alcholic Drinksasadasd", id: 20 }
 ];
 
 const CuisineCategoriesScreen = ({
@@ -49,11 +49,12 @@ const CuisineCategoriesScreen = ({
             <View className="basis-1/4 my-3" key={item.id}>
               <FoodEmojiButton
                 emoji={item.emoji}
-                label={item.label}
+                name={item.name}
                 onPress={() => {
                   navigation.navigate("Search", {
-                    keyword: item.label,
-                    type: "cuisine"
+                    keyword: item.name,
+                    type: "cuisine",
+                    showSearchBar: false
                   });
                 }}
               />

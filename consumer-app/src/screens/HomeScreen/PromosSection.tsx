@@ -1,5 +1,6 @@
 import { VerticalMenuItemCard } from "../../components/MenuItemCard";
 import { useNavigation } from "@react-navigation/native";
+import { View } from "react-native";
 
 // To be fetched from API
 const promoMenuItems = [
@@ -63,39 +64,40 @@ const PromosSection = () => {
   const navigation = useNavigation();
 
   return (
-    <>
+    <View className="flex flex-row -ml-2">
       {promoMenuItems.map((menuItem) => (
-        <VerticalMenuItemCard
-          key={menuItem.id}
-          title={menuItem.name}
-          imageURL={menuItem.imageURL}
-          rating={menuItem.mechantDetails.rating}
-          price={menuItem.price}
-          totalReviews={menuItem.mechantDetails.totalReviews}
-          deliveryFee={menuItem.mechantDetails.deliveryFee}
-          distance={menuItem.mechantDetails.distance}
-          showReviews={true}
-          showDistance={true}
-          showFavorited={true}
-          badge={menuItem.displayTag}
-          onPress={() => {
-            navigation.navigate("Merchant", {
-              id: menuItem.mechantDetails.id,
-              showMenuItem: true,
-              menuItem: {
-                id: menuItem.id,
-                name: menuItem.name,
-                description: menuItem.description,
-                price: menuItem.price,
-                imageURL: menuItem.imageURL,
-                displayTag: menuItem.displayTag
-              }
-            });
-          }}
-          variant="large"
-        />
+        <View className="mx-2" key={menuItem.id}>
+          <VerticalMenuItemCard
+            title={menuItem.name}
+            imageURL={menuItem.imageURL}
+            rating={menuItem.mechantDetails.rating}
+            price={menuItem.price}
+            totalReviews={menuItem.mechantDetails.totalReviews}
+            deliveryFee={menuItem.mechantDetails.deliveryFee}
+            distance={menuItem.mechantDetails.distance}
+            showReviews={true}
+            showDistance={true}
+            showFavorited={true}
+            badge={menuItem.displayTag}
+            onPress={() => {
+              navigation.navigate("Merchant", {
+                id: menuItem.mechantDetails.id,
+                showMenuItem: true,
+                menuItem: {
+                  id: menuItem.id,
+                  name: menuItem.name,
+                  description: menuItem.description,
+                  price: menuItem.price,
+                  imageURL: menuItem.imageURL,
+                  displayTag: menuItem.displayTag
+                }
+              });
+            }}
+            variant="xl"
+          />
+        </View>
       ))}
-    </>
+    </View>
   );
 };
 

@@ -75,32 +75,35 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
       className="bg-white"
     >
       {filters.map(({ label, icon }) => (
+        <View className="mx-1" key={label}>
+          <TouchableOpacity
+            className={`flex-row px-3 py-2 rounded-full border-2 border-primary ${
+              filter === label ? "bg-primary" : "bg-white"
+            }`}
+            onPress={() => {
+              onFilter(label);
+            }}
+          >
+            <Text
+              className={`align-middle ${
+                filter === label ? "text-white" : "text-primary"
+              }`}
+            >
+              {icon} {label}
+            </Text>
+          </TouchableOpacity>
+        </View>
+      ))}
+      <View className="mx-1">
         <TouchableOpacity
-          key={label}
-          className={`flex-row px-3 py-2 mr-3 rounded-full ${
-            filter === label ? "bg-primary" : "bg-white border border-primary"
-          }`}
+          className="flex-row px-3 py-2 rounded-full bg-white border-2 border-primary"
           onPress={() => {
-            onFilter(label);
+            navigation.navigate("Recommendations");
           }}
         >
-          <Text
-            className={`align-middle ${
-              filter === label ? "text-white" : "text-primary"
-            }`}
-          >
-            {icon} {label}
-          </Text>
+          <Text className={"align-middle text-primary"}>🥡 More</Text>
         </TouchableOpacity>
-      ))}
-      <TouchableOpacity
-        className="flex-row px-3 py-2 rounded-full bg-white border border-primary"
-        onPress={() => {
-          navigation.navigate("Recommendations");
-        }}
-      >
-        <Text className={"align-middle text-primary"}>🥡 More</Text>
-      </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 
@@ -154,7 +157,9 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
         <View className="mx-6">
           <SectionHeader title="Recommended For You 😍" />
         </View>
-        <FilterControls />
+        <View className="mb-2">
+          <FilterControls />
+        </View>
       </View>
     </ScrollView>
   );
@@ -165,6 +170,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
         data={filteredResults}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={HeaderComponent}
+        ItemSeparatorComponent={() => <View className="py-2" />}
         renderItem={({ item }) => (
           <View className="mx-6">
             <MerchantCard
@@ -180,7 +186,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
           </View>
         )}
         contentContainerStyle={{
-          paddingBottom: 24
+          paddingVertical: 24
         }}
       />
     </SafeAreaView>

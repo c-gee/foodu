@@ -6,6 +6,8 @@ const promoMenuItems = [
   {
     id: 123,
     name: "Vegan Brown Rice Bowl",
+    description:
+      "Lorem ipsum dolor sit amet consectetur adipisicing elit. Ullam eaque saepe culpa voluptas. Dicta, expedita optio recusandae saepe natus repellendus deleniti placeat quia earum nisi harum quo odio, eum doloribus.",
     imageURL:
       "https://simplyceecee.co/wp-content/uploads/2020/02/simpleveganricebowls.jpg",
     price: 12.9,
@@ -22,6 +24,8 @@ const promoMenuItems = [
   {
     id: 234,
     name: "Classic Pizza",
+    description:
+      "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Officiis, dolore! Est ipsam labore incidunt dolorem voluptatibus rem, velit blanditiis, voluptas eius molestiae fugiat facere modi ut tenetur. Omnis, commodi vel!",
     imageURL:
       "https://img.freepik.com/free-photo/top-view-mixed-pizza-with-tomato-black-olive-melted-cheese_140725-10787.jpg?w=2000",
     price: 23.9,
@@ -38,6 +42,8 @@ const promoMenuItems = [
   {
     id: 345,
     name: "Salmond Poke Bowl",
+    description:
+      "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Id alias corrupti esse veniam dolorem cupiditate aliquam natus quos quaerat temporibus dignissimos officia explicabo repellat molestiae asperiores, sapiente eum. Inventore, fuga!",
     imageURL:
       "https://www.deliciousmagazine.co.uk/wp-content/uploads/2018/09/20180123_Delicious_SalmonPoke_156-768x960.jpg",
     price: 15.9,
@@ -58,32 +64,37 @@ const PromosSection = () => {
 
   return (
     <>
-      {promoMenuItems.map(
-        ({ id, name, imageURL, price, displayTag, mechantDetails }) => (
-          <VerticalMenuItemCard
-            key={id}
-            title={name}
-            imageURL={imageURL}
-            rating={mechantDetails.rating}
-            price={price}
-            totalReviews={mechantDetails.totalReviews}
-            deliveryFee={mechantDetails.deliveryFee}
-            distance={mechantDetails.distance}
-            showReviews={true}
-            showDistance={true}
-            showFavorited={true}
-            badge={displayTag}
-            onPress={() => {
-              navigation.navigate("Merchant", {
-                id: mechantDetails.id,
-                showMenuItem: true,
-                menuItemId: id
-              });
-            }}
-            variant="large"
-          />
-        )
-      )}
+      {promoMenuItems.map((menuItem) => (
+        <VerticalMenuItemCard
+          key={menuItem.id}
+          title={menuItem.name}
+          imageURL={menuItem.imageURL}
+          rating={menuItem.mechantDetails.rating}
+          price={menuItem.price}
+          totalReviews={menuItem.mechantDetails.totalReviews}
+          deliveryFee={menuItem.mechantDetails.deliveryFee}
+          distance={menuItem.mechantDetails.distance}
+          showReviews={true}
+          showDistance={true}
+          showFavorited={true}
+          badge={menuItem.displayTag}
+          onPress={() => {
+            navigation.navigate("Merchant", {
+              id: menuItem.mechantDetails.id,
+              showMenuItem: true,
+              menuItem: {
+                id: menuItem.id,
+                name: menuItem.name,
+                description: menuItem.description,
+                price: menuItem.price,
+                imageURL: menuItem.imageURL,
+                displayTag: menuItem.displayTag
+              }
+            });
+          }}
+          variant="large"
+        />
+      ))}
     </>
   );
 };

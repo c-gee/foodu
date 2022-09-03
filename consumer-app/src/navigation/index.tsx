@@ -8,47 +8,42 @@ import PromosScreen from "../screens/PromosScreen";
 import CuisineCategoriesScreen from "../screens/CuisineCategoriesScreen";
 import RecommendationsScreen from "../screens/RecommendationsScreen";
 import SearchScreen from "../screens/SearchScreen";
+import MenuItemScreen from "../screens/MenuItemScreen";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootStackNavigation = () => {
   return (
-    <RootStack.Navigator>
-      <RootStack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{ headerShown: false }}
-      />
-      <RootStack.Screen
-        name="Merchant"
-        component={MerchantScreen}
-        options={{ headerShown: false }}
-      />
-      <RootStack.Screen
-        name="SpecialOffers"
-        component={SpecialOffersScreen}
-        options={{ headerShown: false }}
-      />
-      <RootStack.Screen
-        name="Promos"
-        component={PromosScreen}
-        options={{ headerShown: false }}
-      />
-      <RootStack.Screen
-        name="CuisineCategories"
-        component={CuisineCategoriesScreen}
-        options={{ headerShown: false }}
-      />
-      <RootStack.Screen
-        name="Recommendations"
-        component={RecommendationsScreen}
-        options={{ headerShown: false }}
-      />
-      <RootStack.Screen
-        name="Search"
-        component={SearchScreen}
-        options={{ headerShown: false }}
-      />
+    <RootStack.Navigator
+      screenOptions={{
+        headerShown: false
+      }}
+    >
+      <RootStack.Group>
+        <RootStack.Screen name="Home" component={HomeScreen} />
+        <RootStack.Screen name="Merchant" component={MerchantScreen} />
+        <RootStack.Screen
+          name="SpecialOffers"
+          component={SpecialOffersScreen}
+        />
+        <RootStack.Screen name="Promos" component={PromosScreen} />
+        <RootStack.Screen
+          name="CuisineCategories"
+          component={CuisineCategoriesScreen}
+        />
+        <RootStack.Screen
+          name="Recommendations"
+          component={RecommendationsScreen}
+        />
+        <RootStack.Screen
+          name="Search"
+          component={SearchScreen}
+          options={{ headerShown: false }}
+        />
+      </RootStack.Group>
+      <RootStack.Group screenOptions={{ presentation: "modal" }}>
+        <RootStack.Screen name="MenuItem" component={MenuItemScreen} />
+      </RootStack.Group>
     </RootStack.Navigator>
   );
 };

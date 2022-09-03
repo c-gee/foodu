@@ -3,6 +3,8 @@ import type {
   NativeStackScreenProps
 } from "@react-navigation/native-stack";
 
+import { MenuItem } from "../models";
+
 type SearchType = "restaurant" | "cuisine";
 
 export type RootStackParamList = {
@@ -15,7 +17,10 @@ export type RootStackParamList = {
   Merchant: {
     id: number | string;
     showMenuItem?: boolean;
-    menuItemId?: number | string;
+    menuItem?: MenuItem;
+  };
+  MenuItem: {
+    menuItem: MenuItem;
   };
 };
 

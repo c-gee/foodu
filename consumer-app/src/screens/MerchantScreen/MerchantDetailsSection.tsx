@@ -37,7 +37,7 @@ const MerchantDetailsSection = ({
         </TouchableOpacity>
       </View>
       <View className="flex-row justify-between items-center space-x-3 py-3 border-b-[1px] border-b-gray-300">
-        <StarIcon color="#FFAB38" size={24} className="flex-0" />
+        <StarIcon color="#FFAB38" size={24} />
         <View className="flex-1 flex-row items-center">
           <Text className="text-xl text-gray-900 font-bold">
             {rating > 0 ? rating : "N/A"}{" "}
@@ -56,7 +56,7 @@ const MerchantDetailsSection = ({
         </TouchableOpacity>
       </View>
       <View className="flex-row justify-between items-center space-x-3 py-3 border-b-[1px] border-b-gray-300">
-        <MapPinIcon color="#1BAC4B" size={24} className="flex-0" />
+        <MapPinIcon color="#1BAC4B" size={24} />
         <View className="flex-1">
           <Text className="text-xl text-gray-900 font-bold">
             {distance.toFixed(1)} km

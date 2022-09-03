@@ -3,14 +3,19 @@ import { AntDesign } from "@expo/vector-icons";
 import { HeartIcon, PaperAirplaneIcon } from "react-native-heroicons/outline";
 import { useNavigation } from "@react-navigation/native";
 
-const HeroImage = () => {
+type Props = {
+  imageURL: string;
+  variant: "restaurant" | "menu_item";
+};
+
+const HeroImage = ({ imageURL, variant }: Props) => {
   const navigation = useNavigation();
 
   return (
     <View className="relative">
       <Image
         source={{
-          uri: "https://assets.tmecosys.com/image/upload/t_web767x639/img/recipe/vimdb/270590.jpg"
+          uri: imageURL
         }}
         style={{
           width: "100%"
@@ -25,14 +30,16 @@ const HeroImage = () => {
         <AntDesign name="arrowleft" size={24} color="white" />
       </TouchableOpacity>
       <View className="absolute top-[52] right-5 flex-row space-x-3">
-        <TouchableOpacity
-          onPress={() => {
-            /* favorite this restaurant */
-          }}
-          className="w-12 h-12 rounded-full bg-gray-900/50 p-3"
-        >
-          <HeartIcon size={24} color="white" />
-        </TouchableOpacity>
+        {variant === "restaurant" && (
+          <TouchableOpacity
+            onPress={() => {
+              /* favorite this restaurant */
+            }}
+            className="w-12 h-12 rounded-full bg-gray-900/50 p-3"
+          >
+            <HeartIcon size={24} color="white" />
+          </TouchableOpacity>
+        )}
         <TouchableOpacity
           onPress={() => {
             /* share this page */

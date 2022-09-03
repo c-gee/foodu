@@ -1,14 +1,18 @@
-type Variant = "regular" | "small" | "large";
+type Variant = "xs" | "sm" | "base" | "lg" | "xl";
 type Orientation = "vertical" | "horizontal";
 
 const imageDimension = (variant: Variant) => {
   switch (variant) {
-    case "small":
+    case "xs":
+      return 80;
+    case "sm":
       return 100;
-    case "large":
+    case "lg":
+      return 154;
+    case "xl":
       return 192;
     default:
-      return 154;
+      return 120; // base
   }
 };
 
@@ -23,7 +27,7 @@ export default {
     };
   },
   title: (variant: Variant) => {
-    const fontSize = variant === "large" ? 20 : 18;
+    const fontSize = variant === "xl" ? 20 : 18;
 
     return { fontSize };
   },
@@ -31,7 +35,7 @@ export default {
     fontSize: 18
   },
   image: (variant: Variant) => {
-    const borderRadius = variant === "small" ? 24 : 20;
+    const borderRadius = variant === "sm" ? 24 : 20;
 
     return {
       width: imageDimension(variant),

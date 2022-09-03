@@ -18,7 +18,7 @@ type Props = {
   showFavorited?: boolean;
   badge?: string | null;
   onPress: () => void;
-  variant: "regular" | "small" | "large";
+  variant: "xs" | "sm" | "base" | "lg" | "xl";
 };
 
 export const VerticalMenuItemCard = ({
@@ -34,7 +34,7 @@ export const VerticalMenuItemCard = ({
   showFavorited = false,
   badge,
   onPress,
-  variant = "regular"
+  variant = "base"
 }: Props) => {
   return (
     <TouchableOpacity

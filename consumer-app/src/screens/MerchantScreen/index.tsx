@@ -13,7 +13,7 @@ import {
   VerticalMenuItemCard,
   HorizontalMenuItemCard
 } from "../../components/MenuItemCard";
-import { MenuItem } from "../../models";
+import { MenuItem } from "../../models/types";
 
 // To be fetched from APIs
 import { merchants } from "../../../data/db.json";
@@ -228,7 +228,7 @@ const MerchantScreen = ({
               onPress={() => {
                 navigation.navigate("MenuItem", { menuItem: item });
               }}
-              variant="regular"
+              variant="lg"
             />
           )}
           contentContainerStyle={{
@@ -264,7 +264,7 @@ const MerchantScreen = ({
           onPress={() => {
             navigation.navigate("MenuItem", { menuItem: item });
           }}
-          variant="small"
+          variant="base"
         />
       </View>
     );

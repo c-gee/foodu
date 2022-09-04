@@ -10,16 +10,18 @@ import { useState, useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
 
 import EmptyResult from "./EmptyResult";
+import SearchCard from "../../components/SearchCard";
 import NavigationTopBar from "../../components/NavigationTopBar";
 import SearchBar from "../../components/SearchBar/index";
-import { HorizontalMerchantCard } from "../../components/MerchantCard";
-import { HorizontalMenuItemCard } from "../../components/MenuItemCard";
 import { RootStackScreenProps } from "../../navigation/types";
-import { MenuItem, Merchant } from "../../models/types";
+import { Merchant } from "../../models/types";
 
 import { merchants, menu_items } from "../../../data/db.json";
-
-type ResultItem = Merchant | MenuItem;
+// To be fetched from API
+const merchantsWithMenuItems = merchants.slice(0, 4).map((merchant) => ({
+  ...merchant,
+  menu_items: menu_items.slice(0, 2)
+}));
 
 const SearchScreen = ({
   route,
@@ -27,24 +29,57 @@ const SearchScreen = ({
 }: RootStackScreenProps<"Search">) => {
   const { keyword, showSearchBar } = route.params;
   const [searched, setSearched] = useState<string>();
-  const [searchResults, setSearchResults] = useState<ResultItem[]>([]);
+  const [searchResults, setSearchResults] = useState<Merchant[]>([]);
 
   useEffect(() => {
     if (keyword && keyword?.length == 0) return;
 
     // Should make API query and set returned results
     // Test display for merchant search
-    setSearchResults(merchants);
+    setSearchResults(merchantsWithMenuItems);
   }, [keyword]);
 
   const onSubmitEditing = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
   ) => {
     setSearched(e.nativeEvent.text);
-
     // Fetch new search results
-    // Test display for menu item search
-    setSearchResults(menu_items);
+    setSearchResults(merchantsWithMenuItems);
+  };
+
+  const renderItem = ({ item }: { item: Merchant }) => {
+    return (
+      <SearchCard
+        merchant={{
+          title: item.address.name,
+          imageURL: item.merchantBrief.smallPhotoHref,
+          rating: item.merchantBrief.rating,
+          totalReviews: item.merchantBrief.vote_count,
+          deliveryFee: item.estimatedDeliveryFee.priceDisplay,
+          distance: item.merchantBrief.distanceInKm,
+          badge: item.merchantBrief.promo?.hasPromo ? "PROMO" : "",
+          onPress: () => {
+            navigation.navigate("Merchant", { id: item.id });
+          },
+          variant: "base"
+        }}
+        menu_items={item.menu_items?.map((item) => ({
+          id: item.id,
+          title: item.name,
+          price: item.price,
+          imageURL: item.imageURL,
+          badge: item.displayTag,
+          onPress: () => {
+            navigation.navigate("Merchant", {
+              id: item.id,
+              showMenuItem: true,
+              menuItem: item
+            });
+          },
+          variant: "xs"
+        }))}
+      />
+    );
   };
 
   const HeaderComponent = () => (
@@ -72,62 +107,11 @@ const SearchScreen = ({
     </View>
   );
 
-  const renderMenuItem = (item: MenuItem) => {
-    return (
-      <View className="mx-6">
-        <HorizontalMenuItemCard
-          title={item.name}
-          imageURL={item.imageURL}
-          price={item.price}
-          badge={item.displayTag}
-          onPress={() => {
-            navigation.navigate("Merchant", {
-              id: merchants[2]?.id,
-              showMenuItem: true,
-              menuItem: item
-            });
-          }}
-          variant="xs"
-        />
-      </View>
-    );
-  };
-
-  const renderMerchant = (item: Merchant) => {
-    return (
-      <View className="mx-6">
-        <HorizontalMerchantCard
-          id={item.id}
-          title={item.address.name}
-          imageURL={item.merchantBrief.smallPhotoHref}
-          distance={item.merchantBrief.distanceInKm}
-          rating={item.merchantBrief.rating}
-          totalReviews={item.merchantBrief.vote_count}
-          badge={item.merchantBrief.promo?.hasPromo ? "PROMO" : ""}
-          deliveryFee={item.estimatedDeliveryFee.priceDisplay}
-          onPress={() => {
-            navigation.navigate("Merchant", { id: item.id });
-          }}
-          variant="base"
-        />
-      </View>
-    );
-  };
-
-  const renderItem = ({ item }: { item: ResultItem }) => {
-    if (item?.price) {
-      return renderMenuItem(item);
-    }
-    if (item?.address) {
-      return renderMerchant(item);
-    }
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <FlatList
         data={searchResults}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={() => (
           <View className="flex flex-1 justify-center items-center space-y-2 px-10 bg-white">
             <EmptyResult isSearch={showSearchBar ?? false} />

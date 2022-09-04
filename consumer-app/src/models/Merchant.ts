@@ -1,3 +1,5 @@
+import { MenuItem } from "./MenuItem";
+
 // export type Merchant = {
 //   id: number;
 //   name: string;
@@ -19,6 +21,7 @@
 //     hasPromo: boolean;
 //     description: string;
 //   };
+//   menu_items?: MenuItem[];
 // };
 
 // Temporarily mimic data schema in db.json
@@ -40,7 +43,7 @@ export type Merchant = {
     };
     rating: number;
     vote_count: number;
-    promo: {
+    promo?: {
       hasPromo: boolean;
     };
   };
@@ -48,6 +51,7 @@ export type Merchant = {
     price: number;
     priceDisplay: string;
   };
+  menu_items?: MenuItem[];
 };
 
 export class MerchantModel {
@@ -63,13 +67,14 @@ export class MerchantModel {
       };
       rating: number;
       vote_count: number;
-      promo: {
+      promo?: {
         hasPromo: boolean;
       };
     },
     public estimatedDeliveryFee: {
       price: number;
       priceDisplay: string;
-    }
+    },
+    public menuItems: MenuItem[]
   ) {}
 }

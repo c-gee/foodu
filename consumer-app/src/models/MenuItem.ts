@@ -1,3 +1,5 @@
+import { Merchant } from "./Merchant";
+
 export type MenuItem = {
   id: number;
   name: string;
@@ -5,6 +7,7 @@ export type MenuItem = {
   imageURL: string;
   price: number;
   displayTag: string | null;
+  merchantDetails?: Merchant;
 };
 
 export class MenuItemModel {

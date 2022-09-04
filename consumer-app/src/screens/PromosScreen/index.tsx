@@ -44,6 +44,7 @@ const PromosScreen = ({ navigation }: RootStackScreenProps<"Promos">) => {
           </View>
         )}
         contentContainerStyle={{
+          flexGrow: 1,
           paddingBottom: 24
         }}
         stickyHeaderIndices={[0]}

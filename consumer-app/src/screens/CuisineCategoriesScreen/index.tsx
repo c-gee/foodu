@@ -60,7 +60,7 @@ const CuisineCategoriesScreen = ({
             </View>
           )}
           columnWrapperStyle={{
-            flex: 1,
+            flexGrow: 1,
             justifyContent: "space-evenly"
           }}
           contentContainerStyle={{

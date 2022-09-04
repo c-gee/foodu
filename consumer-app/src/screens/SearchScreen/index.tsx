@@ -137,7 +137,7 @@ const SearchScreen = ({
         ItemSeparatorComponent={() => <View className="py-2" />}
         renderItem={renderItem}
         contentContainerStyle={{
-          flex: 1,
+          flexGrow: 1,
           paddingBottom: 24
         }}
       />

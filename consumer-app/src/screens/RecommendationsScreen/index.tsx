@@ -134,6 +134,7 @@ const RecommendationsScreen = ({
           </View>
         )}
         contentContainerStyle={{
+          flexGrow: 1,
           paddingBottom: 24
         }}
         stickyHeaderIndices={[0]}

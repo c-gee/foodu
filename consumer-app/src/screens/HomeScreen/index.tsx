@@ -199,6 +199,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
           </View>
         )}
         contentContainerStyle={{
+          flexGrow: 1,
           paddingBottom: 24
         }}
       />

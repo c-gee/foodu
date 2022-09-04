@@ -39,35 +39,27 @@ const SpecialOffersScreen = ({
         icon="go_back"
         onPress={navigation.goBack}
       />
-      <View className="w-full">
-        <FlatList
-          data={specialOffers}
-          horizontal={false}
-          numColumns={4}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <View className="my-3" key={item.id}>
-              <SpecialOffer
-                image={item.image}
-                onPress={() => {
-                  navigation.navigate("Merchant", {
-                    id: item.merchantId
-                  });
-                }}
-              />
-            </View>
-          )}
-          columnWrapperStyle={{
-            flex: 1,
-            flexDirection: "column",
-            paddingHorizontal: 24,
-            paddingBottom: 12
-          }}
-          contentContainerStyle={{
-            paddingBottom: 48
-          }}
-        />
-      </View>
+      <FlatList
+        data={specialOffers}
+        horizontal={false}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View className="mx-6 my-2" key={item.id}>
+            <SpecialOffer
+              image={item.image}
+              onPress={() => {
+                navigation.navigate("Merchant", {
+                  id: item.merchantId
+                });
+              }}
+            />
+          </View>
+        )}
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: 24
+        }}
+      />
     </SafeAreaView>
   );
 };

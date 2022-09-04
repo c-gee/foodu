@@ -238,7 +238,6 @@ const MerchantScreen = ({
             backgroundColor: "white"
           }}
           ItemSeparatorComponent={() => <View className="px-2" />}
-          // stickyHeaderIndices={[0]}
         />
       </>
     ) : (

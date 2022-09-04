@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity, Platform, Image } from "react-native";
-import { HeartIcon } from "react-native-heroicons/outline";
 import styles from "./styles";
 import { MaterialIcons } from "@expo/vector-icons";
 import { StarIcon } from "react-native-heroicons/solid";
@@ -12,9 +11,7 @@ type Props = {
   totalReviews?: number;
   deliveryFee?: number;
   distance?: number;
-  showReviews?: boolean;
-  showDistance?: boolean;
-  showFavorited?: boolean;
+  showMerchantDetails?: boolean;
   badge?: string | null;
   onPress: () => void;
   variant: "xs" | "sm" | "base" | "lg" | "xl";
@@ -28,9 +25,7 @@ export const HorizontalMenuItemCard = ({
   totalReviews,
   deliveryFee,
   distance,
-  showReviews = false,
-  showDistance = false,
-  showFavorited = false,
+  showMerchantDetails = false,
   badge,
   onPress,
   variant = "base"
@@ -70,9 +65,14 @@ export const HorizontalMenuItemCard = ({
           style={styles.image(variant)}
           resizeMode="cover"
         />
+        {badge && showMerchantDetails && (
+          <View className="absolute  top-3 left-3 self-start bg-primary p-[6] px-[8] rounded-md">
+            <Text className="text-xxs text-semibold text-white">{badge}</Text>
+          </View>
+        )}
       </View>
       <View className="flex flex-1 justify-center ml-4 space-y-3">
-        {badge && variant !== "xs" && (
+        {badge && variant !== "xs" && !showMerchantDetails && (
           <View className="self-start bg-primary p-[6] px-[8] rounded-md">
             <Text className="text-xxs text-semibold text-white">{badge}</Text>
           </View>
@@ -85,31 +85,29 @@ export const HorizontalMenuItemCard = ({
           >
             {title}
           </Text>
-          {(showReviews || showDistance) && (
+          {showMerchantDetails && (
             <View className="flex flex-row justify-start space-x-3">
-              {showDistance && distance && (
+              {distance && (
                 <Text className="text-xs text-gray-700 font-medium">
                   {(distance / 1000).toFixed(1)} km
                 </Text>
               )}
-              {showReviews && (
-                <View className="flex flex-row justify-start items-center space-x-2">
-                  <Text className="text-xs text-gray-700 font-medium">|</Text>
-                  {rating !== undefined && (
-                    <View className="flex flex-row justify-start items-center space-x-1">
-                      <StarIcon color="#FFAB38" size={16} />
-                      <Text className="text-xs text-gray-700 font-medium">
-                        {rating > 0 ? rating : "N/A"}
-                      </Text>
-                    </View>
-                  )}
-                  {totalReviews !== undefined && (
+              <View className="flex flex-row justify-start items-center space-x-2">
+                <Text className="text-xs text-gray-700 font-medium">|</Text>
+                {rating !== undefined && (
+                  <View className="flex flex-row justify-start items-center space-x-1">
+                    <StarIcon color="#FFAB38" size={16} />
                     <Text className="text-xs text-gray-700 font-medium">
-                      {totalReviews > 0 ? `(${totalReviews})` : null}
+                      {rating > 0 ? rating : "N/A"}
                     </Text>
-                  )}
-                </View>
-              )}
+                  </View>
+                )}
+                {totalReviews !== undefined && (
+                  <Text className="text-xs text-gray-700 font-medium">
+                    {totalReviews > 0 ? `(${totalReviews})` : null}
+                  </Text>
+                )}
+              </View>
             </View>
           )}
         </View>
@@ -132,7 +130,6 @@ export const HorizontalMenuItemCard = ({
               </View>
             )}
           </View>
-          {showFavorited && <HeartIcon color="#FF8A9B" size={24} />}
         </View>
       </View>
     </TouchableOpacity>

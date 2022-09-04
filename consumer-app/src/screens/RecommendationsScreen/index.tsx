@@ -81,12 +81,12 @@ const RecommendationsScreen = ({
         marginTop: 8,
         marginBottom: 12
       }}
-      className="bg-white"
+      className="bg-white space-x-2"
     >
       {filters.map(({ label, icon }) => (
         <TouchableOpacity
           key={label}
-          className={`flex-row px-3 py-2 mr-3 rounded-full ${
+          className={`flex-row px-3 py-2 rounded-full ${
             filter === label ? "bg-primary" : "border border-primary"
           }`}
           onPress={() => {
@@ -116,6 +116,7 @@ const RecommendationsScreen = ({
         data={filteredResults}
         keyExtractor={(item) => item.id}
         ListHeaderComponent={FilterControls}
+        ItemSeparatorComponent={() => <View className="py-2" />}
         renderItem={({ item }) => (
           <View className="mx-6">
             <HorizontalMerchantCard

@@ -13,9 +13,7 @@ type Props = {
   totalReviews?: number;
   deliveryFee?: number;
   distance?: number;
-  showReviews?: boolean;
-  showDistance?: boolean;
-  showFavorited?: boolean;
+  showMerchantDetails?: boolean;
   badge?: string | null;
   onPress: () => void;
   variant: "xs" | "sm" | "base" | "lg" | "xl";
@@ -29,9 +27,7 @@ export const VerticalMenuItemCard = ({
   totalReviews,
   deliveryFee,
   distance,
-  showReviews = false,
-  showDistance = false,
-  showFavorited = false,
+  showMerchantDetails = false,
   badge,
   onPress,
   variant = "base"
@@ -77,7 +73,7 @@ export const VerticalMenuItemCard = ({
           </View>
         )}
       </View>
-      <View className="mt-2 flex-1 justify-between space-y-3">
+      <View className="mt-2 flex-1 justify-between space-y-2">
         <Text
           className="text-xl text-gray-900 font-bold items-start"
           style={styles.title(variant)}
@@ -86,13 +82,13 @@ export const VerticalMenuItemCard = ({
         >
           {title}
         </Text>
-        <View className="mt-2 flex-row justify-start items-center space-x-2">
-          {showDistance && distance && (
-            <Text className="text-xs text-gray-700 font-medium">
-              {(distance / 1000).toFixed(1)} km
-            </Text>
-          )}
-          {showReviews && (
+        {showMerchantDetails && (
+          <View className="mt-2 flex-row justify-start items-center space-x-2">
+            {distance && (
+              <Text className="text-xs text-gray-700 font-medium">
+                {(distance / 1000).toFixed(1)} km
+              </Text>
+            )}
             <View className="flex flex-row justify-start items-center space-x-2">
               <Text className="text-xs text-gray-700 font-medium">|</Text>
               {rating !== undefined && (
@@ -109,8 +105,8 @@ export const VerticalMenuItemCard = ({
                 </Text>
               )}
             </View>
-          )}
-        </View>
+          </View>
+        )}
         <View className="mt-2 flex-row justify-between">
           <View className="flex-row justify-center items-center space-x-2">
             <Text className="text-lg text-primary font-medium">
@@ -130,7 +126,7 @@ export const VerticalMenuItemCard = ({
               </View>
             )}
           </View>
-          {showFavorited && <HeartIcon color="#FF8A9B" size={24} />}
+          {showMerchantDetails && <HeartIcon color="#FF8A9B" size={24} />}
         </View>
       </View>
     </TouchableOpacity>

@@ -3,9 +3,7 @@ import type {
   NativeStackScreenProps
 } from "@react-navigation/native-stack";
 
-import { MenuItem } from "../models";
-
-type SearchType = "restaurant" | "cuisine";
+import { MenuItem } from "../models/types";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -13,7 +11,10 @@ export type RootStackParamList = {
   Promos: undefined;
   CuisineCategories: undefined;
   Recommendations: undefined;
-  Search: { keyword: string; type: SearchType } | undefined;
+  Search: {
+    keyword?: string;
+    showSearchBar?: boolean;
+  };
   Merchant: {
     id: number | string;
     showMenuItem?: boolean;

@@ -21,7 +21,13 @@ export const RootStackNavigation = () => {
     >
       <RootStack.Group>
         <RootStack.Screen name="Home" component={HomeScreen} />
-        <RootStack.Screen name="Merchant" component={MerchantScreen} />
+        <RootStack.Screen
+          name="Merchant"
+          component={MerchantScreen}
+          initialParams={{
+            showMenuItem: false
+          }}
+        />
         <RootStack.Screen
           name="SpecialOffers"
           component={SpecialOffersScreen}
@@ -39,6 +45,9 @@ export const RootStackNavigation = () => {
           name="Search"
           component={SearchScreen}
           options={{ headerShown: false }}
+          initialParams={{
+            showSearchBar: true
+          }}
         />
       </RootStack.Group>
       <RootStack.Group screenOptions={{ presentation: "modal" }}>

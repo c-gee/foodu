@@ -4,7 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const Header = () => {
   return (
-    <View className="flex-row justify-between items-center space-x-4 px-5 py-3">
+    <View className="flex-row justify-between items-center space-x-4 px-6 py-3">
       <Image
         source={require("../../../assets/avatar-96x96.png")}
         style={{

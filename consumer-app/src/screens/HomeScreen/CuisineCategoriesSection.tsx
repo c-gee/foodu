@@ -17,14 +17,6 @@ const cuisineCategories = [
 const CuisineCategoriesSection = () => {
   const navigation = useNavigation();
 
-  const searchCuisine = (keyword: string) => {
-    navigation.navigate("Search", {
-      keyword,
-      type: "cuisine",
-      showSearchBar: false
-    });
-  };
-
   return (
     <View className="flex flex-row flex-wrap justify-center items-center">
       {cuisineCategories.map(({ emoji, name, id }) => (
@@ -32,7 +24,12 @@ const CuisineCategoriesSection = () => {
           <FoodEmojiButton
             emoji={emoji}
             name={name}
-            onPress={() => searchCuisine(name)}
+            onPress={() => {
+              navigation.navigate("Search", {
+                keyword: name,
+                showSearchBar: false
+              });
+            }}
           />
         </View>
       ))}

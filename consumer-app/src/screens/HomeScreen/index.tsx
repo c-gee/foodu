@@ -3,7 +3,9 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
-  Text
+  Text,
+  NativeSyntheticEvent,
+  TextInputSubmitEditingEventData
 } from "react-native";
 import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -47,6 +49,15 @@ const filters = [
 const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
   const [filter, setFilter] = useState<string>(filters[0].label);
   const [filteredResults, setFilteredResults] = useState(merchants);
+
+  const onSearchSubmitEditing = (
+    e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
+  ) => {
+    navigation.navigate("Search", {
+      keyword: e.nativeEvent.text,
+      showSearchBar: true
+    });
+  };
 
   const onFilter = (label: string) => {
     setFilter(label);
@@ -115,7 +126,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
     >
       <Header />
       <View className="mx-6 my-3">
-        <SearchBar />
+        <SearchBar onSubmitEditing={onSearchSubmitEditing} />
       </View>
       <View className="mx-6 my-3">
         <SectionHeader
@@ -186,7 +197,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
           </View>
         )}
         contentContainerStyle={{
-          paddingVertical: 24
+          paddingBottom: 24
         }}
       />
     </SafeAreaView>

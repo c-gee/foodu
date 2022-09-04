@@ -33,7 +33,7 @@ const SpecialOffersScreen = ({
   navigation
 }: RootStackScreenProps<"SpecialOffers">) => {
   return (
-    <SafeAreaView className="flex-1 bg-white pb-12">
+    <SafeAreaView className="flex-1 bg-white">
       <NavigationTopBar
         title="Special Offers"
         icon="go_back"
@@ -62,6 +62,9 @@ const SpecialOffersScreen = ({
             flexDirection: "column",
             paddingHorizontal: 24,
             paddingBottom: 12
+          }}
+          contentContainerStyle={{
+            paddingBottom: 48
           }}
         />
       </View>

@@ -33,7 +33,7 @@ const CuisineCategoriesScreen = ({
   navigation
 }: RootStackScreenProps<"CuisineCategories">) => {
   return (
-    <SafeAreaView className="flex-1 bg-white pb-12">
+    <SafeAreaView className="flex-1 bg-white">
       <NavigationTopBar
         title="More Category"
         icon="go_back"
@@ -63,6 +63,9 @@ const CuisineCategoriesScreen = ({
           columnWrapperStyle={{
             flex: 1,
             justifyContent: "space-evenly"
+          }}
+          contentContainerStyle={{
+            paddingBottom: 48
           }}
         />
       </View>

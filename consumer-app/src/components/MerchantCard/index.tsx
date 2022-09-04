@@ -4,7 +4,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { HeartIcon } from "react-native-heroicons/outline";
 
 type Props = {
-  id: string;
+  id: string | number;
   name: string;
   imageURL: string;
   rating: number;
@@ -25,7 +25,7 @@ const MerchantCard = ({
 }: Props) => {
   return (
     <TouchableOpacity
-      className="flex-row bg-white p-[14] shadow-md shadow-slate-200 my-2"
+      className="flex-row bg-white p-[14] shadow-md shadow-slate-200"
       style={{
         ...Platform.select({
           android: {

@@ -27,7 +27,7 @@ const CuisineCategoriesSection = () => {
             onPress={() => {
               navigation.navigate("Search", {
                 keyword: name,
-                showSearchBar: false
+                isSearch: false
               });
             }}
           />

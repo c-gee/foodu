@@ -13,8 +13,9 @@ export type RootStackParamList = {
   Recommendations: undefined;
   Search: {
     keyword?: string;
-    showSearchBar?: boolean;
+    isSearch?: boolean;
   };
+  SearchFilter: undefined;
   Merchant: {
     id: number | string;
     showMenuItem?: boolean;

@@ -25,7 +25,7 @@ const SearchBar = ({ searched, onSubmitEditing }: Props) => {
   }, [searched]);
 
   return (
-    <View className="w-auto flex-1 flex-row justify-start items-center h-14 bg-gray-200 rounded-2xl px-5">
+    <View className="flex-1 flex-row justify-start items-center h-14 bg-gray-200 rounded-2xl px-5">
       <Feather
         name="search"
         size={20}

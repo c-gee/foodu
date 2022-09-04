@@ -55,7 +55,7 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
   ) => {
     navigation.navigate("Search", {
       keyword: e.nativeEvent.text,
-      showSearchBar: true
+      isSearch: true
     });
   };
 

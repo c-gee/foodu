@@ -8,6 +8,7 @@ import PromosScreen from "../screens/PromosScreen";
 import CuisineCategoriesScreen from "../screens/CuisineCategoriesScreen";
 import RecommendationsScreen from "../screens/RecommendationsScreen";
 import SearchScreen from "../screens/SearchScreen";
+import SearchFilterScreen from "../screens/SearchFilterScreen";
 import MenuItemScreen from "../screens/MenuItemScreen";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -46,12 +47,21 @@ export const RootStackNavigation = () => {
           component={SearchScreen}
           options={{ headerShown: false }}
           initialParams={{
-            showSearchBar: true
+            isSearch: true
           }}
         />
       </RootStack.Group>
-      <RootStack.Group screenOptions={{ presentation: "modal" }}>
-        <RootStack.Screen name="MenuItem" component={MenuItemScreen} />
+      <RootStack.Group>
+        <RootStack.Screen
+          name="MenuItem"
+          component={MenuItemScreen}
+          options={{ presentation: "modal" }}
+        />
+        <RootStack.Screen
+          name="SearchFilter"
+          component={SearchFilterScreen}
+          options={{ presentation: "fullScreenModal" }}
+        />
       </RootStack.Group>
     </RootStack.Navigator>
   );

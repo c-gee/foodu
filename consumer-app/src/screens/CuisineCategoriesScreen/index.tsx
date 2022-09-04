@@ -53,7 +53,7 @@ const CuisineCategoriesScreen = ({
                 onPress={() => {
                   navigation.navigate("Search", {
                     keyword: item.name,
-                    showSearchBar: false
+                    isSearch: false
                   });
                 }}
               />

@@ -1,5 +1,6 @@
 import {
   View,
+  ScrollView,
   FlatList,
   TouchableOpacity,
   NativeSyntheticEvent,
@@ -9,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useEffect } from "react";
 import { AntDesign } from "@expo/vector-icons";
 
+import FilterControls from "./FilterControls";
 import EmptyResult from "./EmptyResult";
 import SearchCard from "../../components/SearchCard";
 import NavigationTopBar from "../../components/NavigationTopBar";
@@ -17,6 +19,7 @@ import { RootStackScreenProps } from "../../navigation/types";
 import { Merchant } from "../../models/types";
 
 import { merchants, menu_items } from "../../../data/db.json";
+
 // To be fetched from API
 const merchantsWithMenuItems = merchants.slice(0, 4).map((merchant) => ({
   ...merchant,
@@ -27,7 +30,7 @@ const SearchScreen = ({
   route,
   navigation
 }: RootStackScreenProps<"Search">) => {
-  const { keyword, showSearchBar } = route.params;
+  const { keyword, isSearch } = route.params;
   const [searched, setSearched] = useState<string>();
   const [searchResults, setSearchResults] = useState<Merchant[]>([]);
 
@@ -84,19 +87,24 @@ const SearchScreen = ({
 
   const HeaderComponent = () => (
     <View className="flex justify-start items-start mb-3">
-      {showSearchBar ? (
-        <View className="w-full flex flex-row justify-center items-center p-6 py-5">
-          <TouchableOpacity
-            className="p-2 mr-3 -ml-1"
-            onPress={navigation.goBack}
-          >
-            <AntDesign name="arrowleft" size={24} color="#212121" />
-          </TouchableOpacity>
-          <SearchBar
-            searched={searched || keyword}
-            onSubmitEditing={onSubmitEditing}
-          />
-        </View>
+      {isSearch ? (
+        <ScrollView className="bg-white">
+          <View className="flex-row justify-center items-center p-6 py-3">
+            <TouchableOpacity
+              className="p-2 mr-3 -ml-1"
+              onPress={navigation.goBack}
+            >
+              <AntDesign name="arrowleft" size={24} color="#212121" />
+            </TouchableOpacity>
+            <View className="flex-1">
+              <SearchBar
+                searched={searched || keyword}
+                onSubmitEditing={onSubmitEditing}
+              />
+            </View>
+          </View>
+          <FilterControls />
+        </ScrollView>
       ) : (
         <NavigationTopBar
           title={keyword ? keyword : ""}
@@ -114,7 +122,7 @@ const SearchScreen = ({
         keyExtractor={(item) => item.id.toString()}
         ListEmptyComponent={() => (
           <View className="flex flex-1 justify-center items-center space-y-2 px-10 bg-white">
-            <EmptyResult isSearch={showSearchBar ?? false} />
+            <EmptyResult isSearch={isSearch ?? false} />
           </View>
         )}
         ListHeaderComponent={HeaderComponent}
@@ -124,6 +132,7 @@ const SearchScreen = ({
           flexGrow: 1,
           paddingBottom: 24
         }}
+        stickyHeaderIndices={[0]}
       />
     </SafeAreaView>
   );

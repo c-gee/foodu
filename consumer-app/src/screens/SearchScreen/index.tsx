@@ -12,7 +12,7 @@ import { AntDesign } from "@expo/vector-icons";
 import EmptyResult from "./EmptyResult";
 import NavigationTopBar from "../../components/NavigationTopBar";
 import SearchBar from "../../components/SearchBar/index";
-import MerchantCard from "../../components/MerchantCard";
+import { HorizontalMerchantCard } from "../../components/MerchantCard";
 import { HorizontalMenuItemCard } from "../../components/MenuItemCard";
 import { RootStackScreenProps } from "../../navigation/types";
 import { MenuItem, Merchant } from "../../models/types";
@@ -87,7 +87,7 @@ const SearchScreen = ({
               menuItem: item
             });
           }}
-          variant="base"
+          variant="xs"
         />
       </View>
     );
@@ -96,17 +96,19 @@ const SearchScreen = ({
   const renderMerchant = (item: Merchant) => {
     return (
       <View className="mx-6">
-        <MerchantCard
+        <HorizontalMerchantCard
           id={item.id}
-          name={item.address.name}
+          title={item.address.name}
           imageURL={item.merchantBrief.smallPhotoHref}
           distance={item.merchantBrief.distanceInKm}
           rating={item.merchantBrief.rating}
           totalReviews={item.merchantBrief.vote_count}
+          badge={item.merchantBrief.promo?.hasPromo ? "PROMO" : ""}
           deliveryFee={item.estimatedDeliveryFee.priceDisplay}
           onPress={() => {
             navigation.navigate("Merchant", { id: item.id });
           }}
+          variant="base"
         />
       </View>
     );

@@ -9,7 +9,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useState } from "react";
 
 import NavigationTopBar from "../../components/NavigationTopBar";
-import MerchantCard from "../../components/MerchantCard";
+import { HorizontalMerchantCard } from "../../components/MerchantCard";
 import { RootStackScreenProps } from "../../navigation/types";
 
 // To be fetched from API
@@ -118,14 +118,17 @@ const RecommendationsScreen = ({
         ListHeaderComponent={FilterControls}
         renderItem={({ item }) => (
           <View className="mx-6">
-            <MerchantCard
+            <HorizontalMerchantCard
               id={item.id}
-              name={item.address.name}
+              title={item.address.name}
               imageURL={item.merchantBrief.smallPhotoHref}
               distance={item.merchantBrief.distanceInKm}
               rating={item.merchantBrief.rating}
               totalReviews={item.merchantBrief.vote_count}
+              badge={item.merchantBrief.promo?.hasPromo ? "PROMO" : ""}
               deliveryFee={item.estimatedDeliveryFee.priceDisplay}
+              onPress={() => navigation.navigate("Merchant", { id: item.id })}
+              variant="base"
             />
           </View>
         )}

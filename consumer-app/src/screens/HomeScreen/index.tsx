@@ -16,7 +16,7 @@ import PromosSection from "./PromosSection";
 import SearchBar from "../../components/SearchBar";
 import SectionHeader from "../../components/SectionHeader";
 import SpecialOffer from "../../components/SpecialOffer";
-import MerchantCard from "../../components/MerchantCard";
+import { HorizontalMerchantCard } from "../../components/MerchantCard";
 import { RootStackScreenProps } from "../../navigation/types";
 
 // To be fetched from API
@@ -184,15 +184,17 @@ const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
         ItemSeparatorComponent={() => <View className="py-2" />}
         renderItem={({ item }) => (
           <View className="mx-6">
-            <MerchantCard
+            <HorizontalMerchantCard
               id={item.id}
-              name={item.address.name}
+              title={item.address.name}
               imageURL={item.merchantBrief.smallPhotoHref}
               distance={item.merchantBrief.distanceInKm}
               rating={item.merchantBrief.rating}
               totalReviews={item.merchantBrief.vote_count}
+              badge={item.merchantBrief.promo?.hasPromo ? "PROMO" : ""}
               deliveryFee={item.estimatedDeliveryFee.priceDisplay}
               onPress={() => navigation.navigate("Merchant", { id: item.id })}
+              variant="base"
             />
           </View>
         )}

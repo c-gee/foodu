@@ -2,6 +2,9 @@ import { VerticalMenuItemCard } from "../../components/MenuItemCard";
 import { useNavigation } from "@react-navigation/native";
 import { View } from "react-native";
 
+import { merchants } from "../../../data/db.json";
+import { VerticalMerchantCard } from "../../components/MerchantCard";
+
 // To be fetched from API
 const promoMenuItems = [
   {
@@ -97,6 +100,22 @@ const PromosSection = () => {
           />
         </View>
       ))}
+      {merchants.slice(0, 2).map((merchant) => (
+        <View className="mx-2" key={merchant.id}>
+          <VerticalMerchantCard
+            title={merchant.address.name}
+            imageURL={merchant.merchantBrief.smallPhotoHref}
+            distance={merchant.merchantBrief.distanceInKm}
+            rating={merchant.merchantBrief.rating}
+            totalReviews={merchant.merchantBrief.vote_count}
+            badge={merchant.merchantBrief.promo?.hasPromo ? "PROMO" : ""}
+            deliveryFee={merchant.estimatedDeliveryFee.priceDisplay}
+            onPress={() => navigation.navigate("Merchant", { id: merchant.id })}
+            variant="xl"
+          />
+        </View>
+      ))}
+      <View className="py-2" />
     </View>
   );
 };

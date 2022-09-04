@@ -7,31 +7,23 @@ import styles from "./styles";
 
 type Props = {
   title: string;
-  price: number;
   imageURL: string;
-  rating?: number;
-  totalReviews?: number;
-  deliveryFee?: number;
-  distance?: number;
-  showReviews?: boolean;
-  showDistance?: boolean;
-  showFavorited?: boolean;
-  badge?: string | null;
+  rating: number;
+  totalReviews: number;
+  deliveryFee: number | string;
+  distance: number;
+  badge?: string;
   onPress: () => void;
   variant: "xs" | "sm" | "base" | "lg" | "xl";
 };
 
-export const VerticalMenuItemCard = ({
+export const VerticalMerchantCard = ({
   title,
   imageURL,
-  price,
   rating,
   totalReviews,
   deliveryFee,
   distance,
-  showReviews = false,
-  showDistance = false,
-  showFavorited = false,
   badge,
   onPress,
   variant = "base"
@@ -87,50 +79,36 @@ export const VerticalMenuItemCard = ({
           {title}
         </Text>
         <View className="mt-2 flex-row justify-start items-center space-x-2">
-          {showDistance && distance && (
-            <Text className="text-xs text-gray-700 font-medium">
-              {(distance / 1000).toFixed(1)} km
-            </Text>
-          )}
-          {showReviews && (
-            <View className="flex flex-row justify-start items-center space-x-2">
-              <Text className="text-xs text-gray-700 font-medium">|</Text>
-              {rating !== undefined && (
-                <View className="flex flex-row justify-start items-center space-x-1">
-                  <StarIcon color="#FFAB38" size={16} />
-                  <Text className="text-xs text-gray-700 font-medium">
-                    {rating > 0 ? rating : "N/A"}
-                  </Text>
-                </View>
-              )}
-              {totalReviews !== undefined && (
-                <Text className="text-xs text-gray-700 font-medium">
-                  {totalReviews > 0 ? `(${totalReviews})` : null}
-                </Text>
-              )}
-            </View>
-          )}
-        </View>
-        <View className="mt-2 flex-row justify-between">
-          <View className="flex-row justify-center items-center space-x-2">
-            <Text className="text-lg text-primary font-medium">
-              RM{price.toFixed(2)}
-            </Text>
-            {deliveryFee && (
+          <Text className="text-xs text-gray-700 font-medium">
+            {distance.toFixed(1)} km
+          </Text>
+          <View className="flex flex-row justify-start items-center space-x-2">
+            <Text className="text-xs text-gray-700 font-medium">|</Text>
+            {rating !== undefined && (
               <View className="flex flex-row justify-start items-center space-x-1">
-                <Text className="text-xs text-gray-700 font-medium">|</Text>
-                <MaterialIcons
-                  name="delivery-dining"
-                  size={20}
-                  color="#1BAC4B"
-                />
+                <StarIcon color="#FFAB38" size={16} />
                 <Text className="text-xs text-gray-700 font-medium">
-                  {deliveryFee.toFixed(2)}
+                  {rating > 0 ? rating : "N/A"}
                 </Text>
               </View>
             )}
+            {totalReviews !== undefined && (
+              <Text className="text-xs text-gray-700 font-medium">
+                {totalReviews > 0 ? `(${totalReviews})` : null}
+              </Text>
+            )}
           </View>
-          {showFavorited && <HeartIcon color="#FF8A9B" size={24} />}
+        </View>
+        <View className="mt-2 flex-row justify-between">
+          <View className="flex-row justify-center items-center space-x-3">
+            <View className="flex flex-row justify-start items-center space-x-1">
+              <MaterialIcons name="delivery-dining" size={20} color="#1BAC4B" />
+              <Text className="text-xs text-gray-700 font-medium ml-1">
+                {deliveryFee}
+              </Text>
+            </View>
+          </View>
+          <HeartIcon color="#FF8A9B" size={24} />
         </View>
       </View>
     </TouchableOpacity>

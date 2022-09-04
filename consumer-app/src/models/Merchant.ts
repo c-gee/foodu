@@ -40,6 +40,9 @@ export type Merchant = {
     };
     rating: number;
     vote_count: number;
+    promo: {
+      hasPromo: boolean;
+    };
   };
   estimatedDeliveryFee: {
     price: number;
@@ -60,6 +63,9 @@ export class MerchantModel {
       };
       rating: number;
       vote_count: number;
+      promo: {
+        hasPromo: boolean;
+      };
     },
     public estimatedDeliveryFee: {
       price: number;

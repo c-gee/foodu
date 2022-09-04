@@ -72,7 +72,7 @@ export const HorizontalMenuItemCard = ({
         />
       </View>
       <View className="flex flex-1 justify-center ml-4 space-y-3">
-        {badge && (
+        {badge && variant !== "xs" && (
           <View className="self-start bg-primary p-[6] px-[8] rounded-md">
             <Text className="text-xxs text-semibold text-white">{badge}</Text>
           </View>
@@ -82,7 +82,6 @@ export const HorizontalMenuItemCard = ({
             className="text-gray-900 font-bold"
             style={styles.title(variant)}
             numberOfLines={1}
-            ellipsizeMode="tail"
           >
             {title}
           </Text>
@@ -115,21 +114,19 @@ export const HorizontalMenuItemCard = ({
           )}
         </View>
         <View className="flex-row justify-between">
-          <View className="flex-row justify-center items-center space-x-3">
-            <Text className=" text-primary font-medium" style={styles.price}>
+          <View className="flex-row justify-center items-center space-x-2">
+            <Text className="text-lg text-primary font-medium">
               RM{price.toFixed(2)}
             </Text>
             {deliveryFee && (
               <View className="flex flex-row justify-start items-center space-x-1">
-                <Text className="text-xs text-gray-700 font-medium mr-1">
-                  |
-                </Text>
+                <Text className="text-xs text-gray-700 font-medium">|</Text>
                 <MaterialIcons
                   name="delivery-dining"
                   size={20}
                   color="#1BAC4B"
                 />
-                <Text className="text-xs text-gray-700 font-medium ml-1">
+                <Text className="text-xs text-gray-700 font-medium">
                   {deliveryFee.toFixed(2)}
                 </Text>
               </View>

@@ -9,7 +9,7 @@ type Props = {
 
 const NavigationTopBar = ({ title, icon, onPress }: Props) => {
   return (
-    <View className="h-[72] flex-row justify-start items-center px-6 space-x-2">
+    <View className="h-[72] flex-row justify-start items-center px-6 space-x-2 bg-white">
       {icon && onPress && (
         <TouchableOpacity className="p-2 -ml-1" onPress={onPress}>
           <AntDesign

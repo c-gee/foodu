@@ -47,7 +47,7 @@ export const RootStackNavigation = () => {
           component={SearchScreen}
           options={{ headerShown: false }}
           initialParams={{
-            isSearch: true
+            isSearch: false
           }}
         />
       </RootStack.Group>
@@ -61,6 +61,9 @@ export const RootStackNavigation = () => {
           name="SearchFilter"
           component={SearchFilterScreen}
           options={{ presentation: "fullScreenModal" }}
+          initialParams={{
+            showSortByOnly: false
+          }}
         />
       </RootStack.Group>
     </RootStack.Navigator>

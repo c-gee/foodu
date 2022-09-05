@@ -19,10 +19,10 @@ const MerchantDetailsSection = ({
   deliveryFee
 }: Props) => {
   return (
-    <View className="flex px-5 py-3 pb-6 bg-white rounded-t-[32px]">
-      <View className="flex-row justify-between items-center space-x-3 truncate py-3 border-b-[1px] border-b-gray-300">
+    <View className="flex px-5 py-2 pb-6 bg-white">
+      <View className="flex-row justify-between items-center space-x-3 truncate border-b-[1px] border-b-gray-300">
         <Text
-          className="flex-1 text-3xl text-gray-900 font-bold"
+          className="flex-1 text-3xl text-gray-900 font-bold py-3"
           numberOfLines={2}
         >
           {name}

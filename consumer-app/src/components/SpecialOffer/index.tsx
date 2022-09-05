@@ -22,7 +22,7 @@ const SpecialOffer = ({ image, onPress }: Props) => {
               width: 0,
               height: 10
             },
-            shadowColor: "#000000",
+            shadowColor: "#424242",
             shadowRadius: 20,
             shadowOpacity: 0.1,
             elevation: 15,

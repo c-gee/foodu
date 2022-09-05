@@ -1,22 +1,32 @@
-import { useNavigation } from "@react-navigation/native";
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { ArrowsUpDownIcon } from "react-native-heroicons/outline";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-type FilterProps = {
-  label: "Promo" | "Self-Pick" | "Filter" | "Sort";
+import { SearchParams } from "../SearchFilterScreen/types";
+
+type FilterControlProps = {
+  label: "Promo" | "Self-Pickup" | "Filter" | "Sort";
   icon?: JSX.Element;
   onPress: () => void;
 };
 
-const FilterControls = () => {
-  const [sortOrder, setSortOrder] = useState<"ASC" | "DESC">("ASC");
-  const [filterPromo, setFilterPromo] = useState(false);
-  const [filterSelfPick, setFilterSelfPick] = useState(false);
-  const navigation = useNavigation();
+type Props = {
+  searchParams?: SearchParams;
+  onFilterPress: () => void;
+  onSortByPress: () => void;
+  onPromoPress: () => void;
+  onSelfPickupPress: () => void;
+};
 
-  const filters: FilterProps[] = useMemo(
+const FilterControls = ({
+  searchParams,
+  onFilterPress,
+  onSortByPress,
+  onPromoPress,
+  onSelfPickupPress
+}: Props) => {
+  const filterControls: FilterControlProps[] = useMemo(
     () => [
       {
         label: "Filter",
@@ -27,22 +37,20 @@ const FilterControls = () => {
             color="#1BAC4B"
           />
         ),
-        onPress: () => {
-          navigation.navigate("SearchFilter");
-        }
+        onPress: onFilterPress
       },
       {
         label: "Sort",
         icon: <ArrowsUpDownIcon size={14} color="#1BAC4B" />,
-        onPress: () => setSortOrder(sortOrder === "ASC" ? "DESC" : "ASC")
+        onPress: onSortByPress
       },
       {
         label: "Promo",
-        onPress: () => setFilterPromo((prevValue) => !prevValue)
+        onPress: onPromoPress
       },
       {
-        label: "Self-Pick",
-        onPress: () => setFilterSelfPick((prevValue) => !prevValue)
+        label: "Self-Pickup",
+        onPress: onSelfPickupPress
       }
     ],
     []
@@ -51,12 +59,16 @@ const FilterControls = () => {
   const filterStyles = useMemo(
     () => ({
       Promo: {
-        bgColor: filterPromo ? "bg-primary" : "bg-white",
-        textColor: filterPromo ? "text-white" : "text-primary"
+        bgColor:
+          searchParams?.restaurant === "Promo" ? "bg-primary" : "bg-white",
+        textColor:
+          searchParams?.restaurant === "Promo" ? "text-white" : "text-primary"
       },
-      "Self-Pick": {
-        bgColor: filterSelfPick ? "bg-primary" : "bg-white",
-        textColor: filterSelfPick ? "text-white" : "text-primary"
+      "Self-Pickup": {
+        bgColor:
+          searchParams?.mode === "Self-Pickup" ? "bg-primary" : "bg-white",
+        textColor:
+          searchParams?.mode === "Self-Pickup" ? "text-white" : "text-primary"
       },
       Filter: {
         bgColor: "bg-white",
@@ -67,7 +79,7 @@ const FilterControls = () => {
         textColor: "text-primary"
       }
     }),
-    [filterPromo, filterSelfPick]
+    [searchParams?.restaurant, searchParams?.mode]
   );
 
   return (
@@ -81,7 +93,7 @@ const FilterControls = () => {
       }}
       className="bg-white"
     >
-      {filters.map(({ label, icon, onPress }) => (
+      {filterControls.map(({ label, icon, onPress }) => (
         <View className="mx-[6px]" key={label}>
           <TouchableOpacity
             className={`flex-row justify-center items-center space-x-1 px-4 py-2 rounded-full border-2 border-primary ${filterStyles[label].bgColor}`}

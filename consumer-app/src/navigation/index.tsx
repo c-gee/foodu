@@ -46,9 +46,6 @@ export const RootStackNavigation = () => {
           name="Search"
           component={SearchScreen}
           options={{ headerShown: false }}
-          initialParams={{
-            isSearch: false
-          }}
         />
       </RootStack.Group>
       <RootStack.Group>

@@ -19,6 +19,7 @@ import { RootStackScreenProps } from "../../navigation/types";
 import { Merchant } from "../../models/types";
 
 import { merchants, menu_items } from "../../../data/db.json";
+import { useSearchContext } from "../../contexts/SearchContext";
 
 // To be fetched from API
 const merchantsWithMenuItems = merchants.slice(0, 4).map((merchant) => ({
@@ -75,41 +76,27 @@ const cuisines = [
   }
 ];
 
-const SearchScreen = ({
-  route,
-  navigation
-}: RootStackScreenProps<"Search">) => {
-  const { keyword, isSearch, searchParams } = route.params;
+const SearchScreen = ({ navigation }: RootStackScreenProps<"Search">) => {
+  const {
+    searchParams,
+    setKeyword,
+    setRestaurantFilter,
+    setModeFilter,
+    resetSearch,
+    isSearch
+  } = useSearchContext();
   const [searchResults, setSearchResults] = useState<Merchant[]>([]);
 
   useEffect(() => {
-    if (!searchParams || Object.keys(searchParams).length === 0) {
-      // Set initial searchParams
-      navigation.setParams({
-        searchParams: {
-          keyword: searchParams?.keyword || keyword || "",
-          sortBy: searchParams?.sortBy || "Recommended",
-          restaurant: searchParams?.restaurant || "Any",
-          deliveryFee: searchParams?.deliveryFee || "Any",
-          mode: searchParams?.mode || "Delivery"
-        }
-      });
-    }
-
-    // Should make API query with filters and set returned results
+    // Should make API query with search params and set returned results
     setSearchResults(merchantsWithMenuItems);
-  }, [searchParams, keyword]);
+  }, [searchParams]);
 
   const onSubmitEditing = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
   ) => {
-    if (searchParams) {
-      navigation.setParams({
-        searchParams: {
-          ...searchParams,
-          keyword: e.nativeEvent.text
-        }
-      });
+    if (e.nativeEvent.text.length > 0) {
+      setKeyword(e.nativeEvent.text);
     }
 
     // Fetch new search results
@@ -120,8 +107,7 @@ const SearchScreen = ({
     if (!searchParams) return;
 
     navigation.navigate("SearchFilter", {
-      searchParams,
-      isSearch
+      showSortByOnly: false
     });
   };
 
@@ -129,8 +115,6 @@ const SearchScreen = ({
     if (!searchParams) return;
 
     navigation.navigate("SearchFilter", {
-      searchParams,
-      isSearch,
       showSortByOnly: true
     });
   };
@@ -138,23 +122,20 @@ const SearchScreen = ({
   const onPromoPress = () => {
     if (!searchParams) return;
 
-    navigation.setParams({
-      searchParams: {
-        ...searchParams,
-        restaurant: searchParams?.restaurant === "Promo" ? "Any" : "Promo"
-      }
-    });
+    setRestaurantFilter(searchParams?.restaurant === "Promo" ? "Any" : "Promo");
   };
 
   const onSelfPickupPress = () => {
     if (!searchParams) return;
 
-    navigation.setParams({
-      searchParams: {
-        ...searchParams,
-        mode: searchParams?.mode === "Self-Pickup" ? "Delivery" : "Self-Pickup"
-      }
-    });
+    setModeFilter(
+      searchParams?.mode === "Self-Pickup" ? "Delivery" : "Self-Pickup"
+    );
+  };
+
+  const onExitScreen = () => {
+    resetSearch();
+    navigation.goBack();
   };
 
   const renderItem = ({ item }: { item: Merchant }) => {
@@ -197,24 +178,21 @@ const SearchScreen = ({
       <ScrollView className="bg-white">
         {isSearch ? (
           <View className="flex-row justify-center items-center p-6 py-3">
-            <TouchableOpacity
-              className="p-2 mr-3 -ml-1"
-              onPress={navigation.goBack}
-            >
+            <TouchableOpacity className="p-2 mr-3 -ml-1" onPress={onExitScreen}>
               <AntDesign name="arrowleft" size={24} color="#212121" />
             </TouchableOpacity>
             <View className="flex-1">
               <SearchBar
-                searched={keyword || searchParams?.keyword}
+                searched={searchParams?.keyword}
                 onSubmitEditing={onSubmitEditing}
               />
             </View>
           </View>
         ) : (
           <NavigationTopBar
-            title={keyword || searchParams?.keyword || ""}
+            title={searchParams?.keyword || ""}
             icon="go_back"
-            onPress={navigation.goBack}
+            onPress={onExitScreen}
           />
         )}
         <FilterControls

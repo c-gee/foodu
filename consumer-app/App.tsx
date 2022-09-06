@@ -10,6 +10,7 @@ import {
 } from "@expo-google-fonts/urbanist";
 
 import { RootStackNavigation } from "./src/navigation";
+import SearchContextProvider from "./src/contexts/SearchContext";
 
 export default function App() {
   let [fontsLoaded] = useFonts({
@@ -26,8 +27,10 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <NavigationContainer>
-        <RootStackNavigation />
-        <StatusBar style="auto" />
+        <SearchContextProvider>
+          <RootStackNavigation />
+          <StatusBar style="auto" />
+        </SearchContextProvider>
       </NavigationContainer>
     </SafeAreaProvider>
   );

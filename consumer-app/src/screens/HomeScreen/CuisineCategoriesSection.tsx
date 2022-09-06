@@ -2,6 +2,7 @@ import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
 import FoodEmojiButton from "../../components/FoodEmojiButton";
+import { useSearchContext } from "../../contexts/SearchContext";
 
 // To be fetched from API
 const cuisineCategories = [
@@ -16,6 +17,7 @@ const cuisineCategories = [
 
 const CuisineCategoriesSection = () => {
   const navigation = useNavigation();
+  const { setKeyword, setIsSearch } = useSearchContext();
 
   return (
     <View className="flex flex-row flex-wrap justify-center items-center">
@@ -25,10 +27,10 @@ const CuisineCategoriesSection = () => {
             emoji={emoji}
             name={name}
             onPress={() => {
-              navigation.navigate("Search", {
-                keyword: name,
-                isSearch: false
-              });
+              setIsSearch(false);
+              setKeyword(name);
+
+              navigation.navigate("Search");
             }}
           />
         </View>

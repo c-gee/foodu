@@ -6,7 +6,6 @@ import {
   ScrollView
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useMemo, useReducer } from "react";
 import RadioForm, {
   RadioButton,
   RadioButtonInput,
@@ -15,6 +14,7 @@ import RadioForm, {
 
 import NavigationTopBar from "../../components/NavigationTopBar";
 import { RootStackScreenProps } from "../../navigation/types";
+import { useSearchContext } from "../../contexts/SearchContext";
 import {
   sortByFilters,
   restaurantFilters,
@@ -24,42 +24,10 @@ import {
   RestaurantFilter,
   DeliveryFeeFilter,
   ModeFilter,
-  SearchParams
-} from "../SearchFilterScreen/types";
+  FilterOptions
+} from "../../contexts/SearchContext/types";
 
 type SectionTitle = "Sort by" | "Restaurant" | "Delivery Fee" | "Mode";
-type FilterOptions =
-  | SortByFilter
-  | RestaurantFilter
-  | DeliveryFeeFilter
-  | ModeFilter;
-
-enum ActionType {
-  SET_SORT_BY_FILTER = "SET_SORT_BY_FILTER",
-  SET_RESTAURANT_FILTER = "SET_RESTAURANT_FILTER",
-  SET_DELIVERY_FEE_FILTER = "SET_DELIVERY_FEE_FILTER",
-  SET_MODE_FILTER = "SET_MODE_FILTER",
-  RESET_FILTER = "RESET_FILTER"
-}
-
-type FilterAction =
-  | {
-      type: ActionType.SET_SORT_BY_FILTER;
-      payload: SortByFilter;
-    }
-  | {
-      type: ActionType.SET_RESTAURANT_FILTER;
-      payload: RestaurantFilter;
-    }
-  | {
-      type: ActionType.SET_DELIVERY_FEE_FILTER;
-      payload: DeliveryFeeFilter;
-    }
-  | {
-      type: ActionType.SET_MODE_FILTER;
-      payload: ModeFilter;
-    }
-  | { type: ActionType.RESET_FILTER; payload: SearchParams };
 
 type Section = {
   title: SectionTitle;
@@ -68,35 +36,6 @@ type Section = {
     | RestaurantFilter[]
     | DeliveryFeeFilter[]
     | ModeFilter[];
-};
-
-const reducer = (state: SearchParams, action: FilterAction): SearchParams => {
-  switch (action.type) {
-    case ActionType.SET_SORT_BY_FILTER:
-      return {
-        ...state,
-        sortBy: action.payload as SortByFilter
-      };
-    case ActionType.SET_RESTAURANT_FILTER:
-      return {
-        ...state,
-        restaurant: action.payload as RestaurantFilter
-      };
-    case ActionType.SET_DELIVERY_FEE_FILTER:
-      return {
-        ...state,
-        deliveryFee: action.payload as DeliveryFeeFilter
-      };
-    case ActionType.SET_MODE_FILTER:
-      return {
-        ...state,
-        mode: action.payload as ModeFilter
-      };
-    case ActionType.RESET_FILTER:
-      return action.payload;
-    default:
-      return state;
-  }
 };
 
 const filterSections: Section[] = [
@@ -122,55 +61,30 @@ const SearchFilterScreen = ({
   route,
   navigation
 }: RootStackScreenProps<"SearchFilter">) => {
-  const { searchParams, isSearch, showSortByOnly } = route.params;
-  const initialState: SearchParams = useMemo(
-    () => ({
-      keyword: searchParams.keyword,
-      sortBy: sortByFilters[0],
-      restaurant: restaurantFilters[0],
-      deliveryFee: deliveryFeeFilters[0],
-      mode: modeFilters[0]
-    }),
-    [searchParams.keyword]
-  );
-  const [state, dispatch] = useReducer(reducer, searchParams);
-
-  const resetFilter = () => {
-    dispatch({ type: ActionType.RESET_FILTER, payload: initialState });
-  };
-
-  const applyFilter = () => {
-    navigation.navigate("Search", {
-      searchParams: state,
-      isSearch
-    });
-  };
+  const { showSortByOnly } = route.params;
+  const {
+    searchParams,
+    setSortByFilter,
+    setRestaurantFilter,
+    setDeliveryFeeFilter,
+    setModeFilter,
+    resetFilter,
+    applySearch
+  } = useSearchContext();
 
   const onRadioPress = (section: SectionTitle, item: FilterOptions) => {
     switch (section) {
       case "Sort by":
-        dispatch({
-          type: ActionType.SET_SORT_BY_FILTER,
-          payload: item
-        });
+        setSortByFilter(item);
         break;
       case "Restaurant":
-        dispatch({
-          type: ActionType.SET_RESTAURANT_FILTER,
-          payload: item
-        });
+        setRestaurantFilter(item);
         break;
       case "Delivery Fee":
-        dispatch({
-          type: ActionType.SET_DELIVERY_FEE_FILTER,
-          payload: item
-        });
+        setDeliveryFeeFilter(item);
         break;
       case "Mode":
-        dispatch({
-          type: ActionType.SET_MODE_FILTER,
-          payload: item
-        });
+        setModeFilter(item);
         break;
     }
   };
@@ -181,13 +95,13 @@ const SearchFilterScreen = ({
   ): boolean | undefined => {
     switch (section) {
       case "Sort by":
-        return state.sortBy === item;
+        return searchParams.sortBy === item;
       case "Restaurant":
-        return state.restaurant === item;
+        return searchParams.restaurant === item;
       case "Delivery Fee":
-        return state.deliveryFee === item;
+        return searchParams.deliveryFee === item;
       case "Mode":
-        return state.mode === item;
+        return searchParams.mode === item;
       default:
         return undefined;
     }
@@ -266,7 +180,7 @@ const SearchFilterScreen = ({
           </View>
         ))}
       </ScrollView>
-      <View className="flex flex-row justify-end space-x-3 bg-white p-6">
+      <View className="flex flex-row justify-center items-center space-x-3 bg-white p-6">
         {showSortByOnly ? (
           <TouchableOpacity
             className="h-[58px] justify-center items-center basis-1/2 rounded-full bg-primary/10"
@@ -282,10 +196,9 @@ const SearchFilterScreen = ({
             <Text className="text-base text-primary font-bold">Reset</Text>
           </TouchableOpacity>
         )}
-
         <TouchableOpacity
           className="h-[58px] justify-center items-center basis-1/2 rounded-full bg-primary"
-          onPress={applyFilter}
+          onPress={applySearch}
         >
           <Text className="text-base text-white font-bold">Apply</Text>
         </TouchableOpacity>

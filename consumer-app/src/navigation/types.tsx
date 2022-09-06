@@ -4,7 +4,6 @@ import type {
 } from "@react-navigation/native-stack";
 
 import { MenuItem } from "../models/types";
-import { SearchParams } from "../screens/SearchFilterScreen/types";
 
 export type RootStackParamList = {
   Home: undefined;
@@ -12,14 +11,8 @@ export type RootStackParamList = {
   Promos: undefined;
   CuisineCategories: undefined;
   Recommendations: undefined;
-  Search: {
-    keyword?: string;
-    isSearch: boolean;
-    searchParams?: SearchParams;
-  };
+  Search: undefined;
   SearchFilter: {
-    searchParams: SearchParams;
-    isSearch: boolean;
     showSortByOnly?: boolean;
   };
   Merchant: {

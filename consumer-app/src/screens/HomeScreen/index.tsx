@@ -18,6 +18,7 @@ import SectionHeader from "../../components/SectionHeader";
 import SpecialOffer from "../../components/SpecialOffer";
 import { HorizontalMerchantCard } from "../../components/MerchantCard";
 import { RootStackScreenProps } from "../../navigation/types";
+import { useSearchContext } from "../../contexts/SearchContext";
 
 // To be fetched from API
 import { merchants } from "../../../data/db.json";
@@ -49,14 +50,17 @@ const filters = [
 const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
   const [filter, setFilter] = useState<string>(filters[0].label);
   const [filteredResults, setFilteredResults] = useState(merchants);
+  const { setKeyword, setIsSearch } = useSearchContext();
 
   const onSearchSubmitEditing = (
     e: NativeSyntheticEvent<TextInputSubmitEditingEventData>
   ) => {
-    navigation.navigate("Search", {
-      keyword: e.nativeEvent.text,
-      isSearch: true
-    });
+    if (e.nativeEvent.text.length == 0) return;
+
+    setIsSearch(true);
+    setKeyword(e.nativeEvent.text);
+
+    navigation.navigate("Search");
   };
 
   const onFilter = (label: string) => {

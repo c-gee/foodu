@@ -1,0 +1,7 @@
+{
+  "ext": "ts,json,gql",
+  "watch": [
+    "src/**/*.ts",
+    "src/**/*.gql"
+  ]
+}

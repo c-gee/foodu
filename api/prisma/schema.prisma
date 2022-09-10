@@ -9,3 +9,21 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+enum Gender {
+  FEMALE
+  MALE
+}
+
+model User {
+  id          BigInt    @id @default(autoincrement())
+  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @db.Timestamptz(3)
+  email       String    @unique
+  name        String?
+  nickname    String?
+  dateOfBirth DateTime? @db.Date
+  gender      Gender?
+  areaCode    String?
+  phone       String?
+}

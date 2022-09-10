@@ -1,0 +1,16 @@
+overwrite: true
+schema: "src/graphql/**/*.gql"
+generates:
+  src/graphql/generated/graphql.ts:
+    plugins:
+      - "typescript"
+      - "typescript-resolvers"
+    config:
+      mappers:
+        User: .prisma/client#User as UserModel
+      inputMaybeValue: undefined | T
+      scalars:
+        BigInt: bigint
+        EmailAddress: string
+        Date: Date
+        DateTime: Date

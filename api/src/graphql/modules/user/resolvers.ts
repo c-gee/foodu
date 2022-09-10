@@ -1,9 +1,9 @@
-import { Gender } from "@prisma/client";
 import { prisma } from "../../../lib/db";
+import { Resolvers } from "../../generated/graphql";
 
-export default {
+const resolvers: Resolvers = {
   Query: {
-    async userByEmail(parent: unknown, args: { email: string }) {
+    async userByEmail(_, args) {
       const user = await prisma.user.findUnique({
         where: {
           email: args.email
@@ -14,27 +14,16 @@ export default {
     }
   },
   Mutation: {
-    async createUser(
-      parent: unknown,
-      args: {
-        email: string;
-        name?: string;
-        nickname?: string;
-        gender?: Gender;
-        dateOfBirth?: Date;
-        areaCode?: string;
-        phone?: string;
-      }
-    ) {
+    async createUser(_, args) {
       const user = await prisma.user.create({
         data: {
           email: args.email,
-          name: args?.name,
-          nickname: args?.nickname,
-          gender: args?.gender,
-          dateOfBirth: args?.dateOfBirth,
-          areaCode: args?.areaCode,
-          phone: args?.phone
+          name: args.name,
+          nickname: args.nickname,
+          gender: args.gender,
+          dateOfBirth: args.dateOfBirth,
+          areaCode: args.areaCode,
+          phone: args.phone
         }
       });
 
@@ -42,3 +31,5 @@ export default {
     }
   }
 };
+
+export default resolvers;

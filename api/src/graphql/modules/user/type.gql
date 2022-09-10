@@ -1,0 +1,38 @@
+enum Gender {
+  MALE
+  FEMALE
+}
+
+scalar BigInt
+scalar Date
+scalar DateTime
+scalar EmailAddress
+
+type User {
+  id: BigInt!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  email: EmailAddress!
+  name: String
+  nickname: String
+  dateOfBirth: Date
+  gender: Gender
+  areaCode: String
+  phone: String
+}
+
+type Query {
+  userByEmail(email: EmailAddress): User
+}
+
+type Mutation {
+  createUser(
+    email: EmailAddress!
+    name: String
+    nickname: String
+    gender: Gender
+    dateOfBirth: Date
+    areaCode: String
+    phone: String
+  ): User
+}

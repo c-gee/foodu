@@ -12,6 +12,7 @@ import {
 } from "@expo-google-fonts/urbanist";
 
 import { RootStackNavigation } from "./src/navigation";
+import AuthContextProvider from "./src/contexts/AuthContext";
 import SearchContextProvider from "./src/contexts/SearchContext";
 
 SplashScreen.preventAutoHideAsync();
@@ -27,11 +28,6 @@ export default function App() {
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
       await SplashScreen.hideAsync();
     }
   }, [appIsReady]);
@@ -56,10 +52,12 @@ export default function App() {
   return (
     <SafeAreaProvider onLayout={onLayoutRootView}>
       <NavigationContainer>
-        <SearchContextProvider>
-          <RootStackNavigation />
-          <StatusBar style="auto" />
-        </SearchContextProvider>
+        <AuthContextProvider>
+          <SearchContextProvider>
+            <RootStackNavigation />
+            <StatusBar style="auto" />
+          </SearchContextProvider>
+        </AuthContextProvider>
       </NavigationContainer>
     </SafeAreaProvider>
   );

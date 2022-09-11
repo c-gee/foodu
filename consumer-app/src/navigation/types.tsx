@@ -8,6 +8,7 @@ import { MenuItem } from "../models/types";
 export type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
+  PhoneLogin: undefined;
   Home: undefined;
   SpecialOffers: undefined;
   Promos: undefined;

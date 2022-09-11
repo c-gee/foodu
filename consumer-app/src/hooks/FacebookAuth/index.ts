@@ -1,13 +1,8 @@
 import { useEffect, useState } from "react";
-import { makeRedirectUri, Prompt } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
-import * as Google from "expo-auth-session/providers/google";
-import {
-  GOOGLE_EXPO_CLIENT_ID,
-  GOOGLE_IOS_CLIENT_ID,
-  GOOGLE_ANDROID_CLIENT_ID,
-  GOOGLE_WEB_CLIENT_ID
-} from "@env";
+import * as Facebook from "expo-auth-session/providers/facebook";
+import { ResponseType, makeRedirectUri, Prompt } from "expo-auth-session";
+import { FACEBOOK_EXPO_CLIENT_ID } from "@env";
 
 type UserInfo = {
   sub: string;
@@ -16,18 +11,17 @@ type UserInfo = {
   picture?: string;
 };
 
-type GoogleProfile = {
-  provider: "google";
+type FacebookProfile = {
+  provider: "facebook";
   userInfo: UserInfo;
 };
 
 const environment = process.env;
 
 const config = {
-  expoClientId: GOOGLE_EXPO_CLIENT_ID,
-  iosClientId: GOOGLE_IOS_CLIENT_ID,
-  androidClientId: GOOGLE_ANDROID_CLIENT_ID,
-  webClientId: GOOGLE_WEB_CLIENT_ID,
+  clientId: FACEBOOK_EXPO_CLIENT_ID,
+  responseType: ResponseType.Token,
+  scopes: ["public_profile", "email"],
   redirectUri: makeRedirectUri({
     useProxy: environment.NODE_ENV !== "production"
   }),
@@ -36,13 +30,12 @@ const config = {
 
 WebBrowser.maybeCompleteAuthSession();
 
-const useGoogleAuth = () => {
+const useFacebookAuth = () => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [googleProfile, setGoogleProfile] = useState<GoogleProfile | null>(
-    null
-  );
+  const [facebookProfile, setFacebookProfile] =
+    useState<FacebookProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [_, response, promptAsync] = Google.useAuthRequest(config);
+  const [_, response, promptAsync] = Facebook.useAuthRequest(config);
 
   useEffect(() => {
     if (response?.type === "success" && response.authentication?.accessToken) {
@@ -50,9 +43,9 @@ const useGoogleAuth = () => {
 
       setAccessToken(accessToken);
     } else if (response?.type === "cancel" || response?.type === "dismiss") {
-      console.log("Google Authentication cancelled");
+      console.log("Facebook Authentication cancelled");
     } else if (response?.type == "error") {
-      console.log("Google Authentication error", response?.error?.message);
+      console.log("Facebook Authentication error", response?.error?.message);
 
       if (response?.error?.message) {
         setError(response?.error?.message);
@@ -65,50 +58,51 @@ const useGoogleAuth = () => {
 
     async function getAndSetProfile() {
       const userInfoResponse = await fetch(
-        "https://openidconnect.googleapis.com/v1/userinfo",
+        `https://graph.facebook.com/me/?fields=id,name,email,picture`,
         {
           headers: {
             Authorization: `Bearer ${accessToken}`
           }
         }
       );
+
       userInfoResponse
         .json()
         .then((data) => {
-          setGoogleProfile({
-            provider: "google",
+          setFacebookProfile({
+            provider: "facebook",
             userInfo: {
-              sub: data.sub,
+              sub: data.id,
               name: data?.name,
-              email: data?.email,
-              picture: data?.picture
+              email: data?.email, // might not be returned
+              picture: data?.picture?.data?.url
             }
           });
         })
         .catch((error) => {
-          console.log("Google UserInfo error", error);
-          setGoogleProfile(null);
+          console.log("Facebook UserInfo error", error);
+          setFacebookProfile(null);
         });
     }
 
     getAndSetProfile();
   }, [accessToken]);
 
-  const signInWithGoogle = async () => {
+  const loginWithFacebook = async () => {
     await promptAsync();
   };
 
-  const signOutGoogle = () => {
+  const signOutFacebook = () => {
     setAccessToken(null);
-    setGoogleProfile(null);
+    setFacebookProfile(null);
   };
 
   return {
-    googleProfile,
-    signInWithGoogle,
-    signOutGoogle,
+    facebookProfile,
+    loginWithFacebook,
+    signOutFacebook,
     error
   };
 };
 
-export default useGoogleAuth;
+export default useFacebookAuth;

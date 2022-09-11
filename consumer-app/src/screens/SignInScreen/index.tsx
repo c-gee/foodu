@@ -15,7 +15,7 @@ import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
 
 const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
-  const { onGoogleSignIn } = useAuth();
+  const { onGoogleSignIn, onFacebookLogin } = useAuth();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -46,7 +46,10 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
             Let's start
           </Text>
           <View className="py-6 flex space-y-4">
-            <TouchableOpacity className="h-[60px] w-full flex-row justify-center items-center space-x-2 rounded-2xl border-[1px] border-gray-200">
+            <TouchableOpacity
+              onPress={onFacebookLogin}
+              className="h-[60px] w-full flex-row justify-center items-center space-x-2 rounded-2xl border-[1px] border-gray-200"
+            >
               <FacebookIcon width={24} height={25} />
               <Text className="text-base text-gray-900 font-semibold">
                 Continue with Facebook

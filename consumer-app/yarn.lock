@@ -1052,16 +1052,7 @@
     debug "^4.1.0"
     globals "^11.1.0"
 
-"@babel/types@7.18.13":
-  version "7.18.13"
-  resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.18.13.tgz#30aeb9e514f4100f7c1cb6e5ba472b30e48f519a"
-  integrity sha512-ePqfTihzW0W6XAU+aMw2ykilisStJfDnsejDCXRchCcMJ4O0+8DhPXf2YUbZ6wjBlsEmZwLK/sPweWtu8hcJYQ==
-  dependencies:
-    "@babel/helper-string-parser" "^7.18.10"
-    "@babel/helper-validator-identifier" "^7.18.6"
-    to-fast-properties "^2.0.0"
-
-"@babel/types@^7.0.0", "@babel/types@^7.18.10", "@babel/types@^7.18.4", "@babel/types@^7.18.6", "@babel/types@^7.18.9", "@babel/types@^7.19.0", "@babel/types@^7.4.4":
+"@babel/types@7.19.0", "@babel/types@^7.0.0", "@babel/types@^7.18.10", "@babel/types@^7.18.4", "@babel/types@^7.18.6", "@babel/types@^7.18.9", "@babel/types@^7.19.0", "@babel/types@^7.4.4":
   version "7.19.0"
   resolved "https://registry.yarnpkg.com/@babel/types/-/types-7.19.0.tgz#75f21d73d73dc0351f3368d28db73465f4814600"
   integrity sha512-YuGopBq3ke25BVSiS6fgF49Ul9gH1x70Bcr6bqRLjWCkcX8Hre1/5+z+IiWOIerRMSSEfGZVB9z9kyq7wVs9YA==
@@ -1937,9 +1928,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@~18.0.14":
-  version "18.0.18"
-  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.18.tgz#9f16f33d57bc5d9dca848d12c3572110ff9429ac"
-  integrity sha512-6hI08umYs6NaiHFEEGioXnxJ+oEhY3eRz8VCUaudZmGdtvPviCJB8mgaMxaDWAdPSYd4eFavrPk2QIolwbLYrg==
+  version "18.0.19"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.19.tgz#269a5f35b9a73c69dfb0c7189017013ab02acbaa"
+  integrity sha512-BDc3Q+4Q3zsn7k9xZrKfjWyJsSlEDMs38gD1qp2eDazLCdcPqAT+vq1ND+Z8AGel/UiwzNUk8ptpywgNQcJ1MQ==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -5294,13 +5285,13 @@ nanomatch@^1.2.9:
     to-regex "^3.0.1"
 
 nativewind@^2.0.7:
-  version "2.0.9"
-  resolved "https://registry.yarnpkg.com/nativewind/-/nativewind-2.0.9.tgz#9f401f251a6c235dd331e604b6bf35580a19cf53"
-  integrity sha512-am8B/o/9phdP82ZonQ1K1hnUHkhEaaW5XFqBIwHASchXUZU30Dveg9d1DX6TOBhYxGnBjVO00IXuYFWnv8ulDg==
+  version "2.0.10"
+  resolved "https://registry.yarnpkg.com/nativewind/-/nativewind-2.0.10.tgz#32a3167a7983cc17df28e02f61f6359da56fe7b5"
+  integrity sha512-SF665+UTsojB4y/ujWCyR78j7qcgn1Np64ZXhMeeik/U3GUKz9JKQhrhz1tXp3hAKRVrWTWzDlFtDI/VHK/MqQ==
   dependencies:
     "@babel/generator" "^7.18.7"
     "@babel/helper-module-imports" "7.18.6"
-    "@babel/types" "7.18.13"
+    "@babel/types" "7.19.0"
     css-mediaquery "^0.1.2"
     css-to-react-native "^3.0.0"
     micromatch "^4.0.5"
@@ -6083,9 +6074,9 @@ react-native-gradle-plugin@^0.0.7:
   integrity sha512-+4JpbIx42zGTONhBTIXSyfyHICHC29VTvhkkoUOJAh/XHPEixpuBduYgf6Y4y9wsN1ARlQhBBoptTvXvAFQf5g==
 
 react-native-heroicons@^3.0.0:
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/react-native-heroicons/-/react-native-heroicons-3.0.0.tgz#6a2289c064cb083514c171163d1a0b21f2331255"
-  integrity sha512-vMwascAXrkVev8LjxpJPmpzbsaQFgY2luvta1jLrOekWRqGJxRSOcTs/PlSJCRMsiMV8NhFt8z6nqbPrKVc6Zg==
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/react-native-heroicons/-/react-native-heroicons-3.1.0.tgz#2eeb84a971ed3cc6952e055c44de6c993379db79"
+  integrity sha512-yP5Z3cQvcYY/A0ZTpoF+aiqC3MFXM1EALCZaFamuKL77RVX1f3K0peBWbTTuFLuBRFlJvvpQKhPTAw+FPvh+9A==
 
 react-native-iphone-x-helper@^1.0.3:
   version "1.3.1"

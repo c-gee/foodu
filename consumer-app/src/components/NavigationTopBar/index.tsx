@@ -2,7 +2,7 @@ import { View, Text, TouchableOpacity } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 
 type Props = {
-  title: string;
+  title?: string;
   icon?: "go_back" | "close";
   onPress?: () => void;
 };
@@ -19,11 +19,13 @@ const NavigationTopBar = ({ title, icon, onPress }: Props) => {
           />
         </TouchableOpacity>
       )}
-      <View className="flex-1">
-        <Text className="text-2xl text-gray-900 font-bold" numberOfLines={1}>
-          {title}
-        </Text>
-      </View>
+      {title && (
+        <View className="flex-1">
+          <Text className="text-2xl text-gray-900 font-bold" numberOfLines={1}>
+            {title}
+          </Text>
+        </View>
+      )}
     </View>
   );
 };

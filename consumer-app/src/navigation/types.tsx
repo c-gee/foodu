@@ -6,6 +6,7 @@ import type {
 import { MenuItem } from "../models/types";
 
 export type RootStackParamList = {
+  SignIn: undefined;
   Home: undefined;
   SpecialOffers: undefined;
   Promos: undefined;

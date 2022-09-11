@@ -16,14 +16,30 @@ enum Gender {
 }
 
 model User {
-  id          BigInt    @id @default(autoincrement())
-  createdAt   DateTime  @default(now()) @db.Timestamptz(3)
-  updatedAt   DateTime  @updatedAt @db.Timestamptz(3)
-  email       String    @unique
-  name        String?
-  nickname    String?
-  dateOfBirth DateTime? @db.Date
-  gender      Gender?
-  areaCode    String?
-  phone       String?
+  id             BigInt          @id @default(autoincrement())
+  createdAt      DateTime        @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime        @updatedAt @db.Timestamptz(3)
+  email          String?         @unique
+  name           String?
+  nickname       String?
+  dateOfBirth    DateTime?       @db.Date
+  gender         Gender?
+  areaCode       String?
+  phone          String?
+  picture        String?
+  socialProfiles SocialProfile[]
+}
+
+model SocialProfile {
+  sub       String
+  provider  String
+  createdAt DateTime @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @db.Timestamptz(3)
+  name      String?
+  email     String?
+  picture   String?
+  User      User     @relation(fields: [userId], references: [id])
+  userId    BigInt
+
+  @@id([provider, sub])
 }

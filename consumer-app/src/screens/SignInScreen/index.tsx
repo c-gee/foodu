@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import NavigationTopBar from "../../components/NavigationTopBar";
 import { useAuth } from "../../contexts/AuthContext";
 import { RootStackScreenProps } from "../../navigation/types";
 import SignInArt from "../../../assets/sign-in-art.svg";
@@ -25,13 +24,6 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
           justifyContent: "center"
         }}
       >
-        {navigation.canGoBack() && (
-          <NavigationTopBar
-            title=""
-            icon="go_back"
-            onPress={navigation.goBack}
-          />
-        )}
         <View className="px-6">
           <View className="py-6 self-center">
             <SignInArt
@@ -87,6 +79,9 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
                   }
                 })
               }}
+              onPress={() => {
+                navigation.navigate("PhoneLogin");
+              }}
             >
               <Text className="text-base text-white font-bold">
                 Sign in with Phone Number
@@ -97,7 +92,7 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
             <Text className="text-sm text-gray-500 font-regular">
               Don't have an account?
             </Text>
-            <TouchableOpacity className="">
+            <TouchableOpacity onPress={() => navigation.navigate("SignUp")}>
               <Text className="text-sm text-primary font-semibold">
                 Sign up
               </Text>

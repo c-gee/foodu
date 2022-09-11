@@ -11,6 +11,7 @@ import SearchScreen from "../screens/SearchScreen";
 import SearchFilterScreen from "../screens/SearchFilterScreen";
 import MenuItemScreen from "../screens/MenuItemScreen";
 import SignInScreen from "../screens/SignInScreen";
+import SignUpScreen from "../screens/SignUpScreen";
 import { useAuth } from "../contexts/AuthContext";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
@@ -27,6 +28,7 @@ export const RootStackNavigation = () => {
       {user === null ? (
         <RootStack.Group>
           <RootStack.Screen name="SignIn" component={SignInScreen} />
+          <RootStack.Screen name="SignUp" component={SignUpScreen} />
         </RootStack.Group>
       ) : (
         <>

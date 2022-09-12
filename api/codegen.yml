@@ -6,12 +6,15 @@ generates:
       - "typescript"
       - "typescript-resolvers"
     config:
+      mapperTypeSuffix: Model
       mappers:
-        User: .prisma/client#User as UserModel
-        SocialProfile: .prisma/client#SocialProfile as SocialProfileModel
-      inputMaybeValue: "T extends PromiseLike<infer U> ? Promise<U | null> : T | null"
+        User: .prisma/client#User
+        SocialProfile: .prisma/client#SocialProfile
+      inputMaybeValue: T | null
+      enumsAsConst: true
       scalars:
         BigInt: bigint
         EmailAddress: string
         Date: Date
         DateTime: Date
+        JWT: string

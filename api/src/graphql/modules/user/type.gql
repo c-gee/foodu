@@ -12,6 +12,7 @@ scalar BigInt
 scalar Date
 scalar DateTime
 scalar EmailAddress
+scalar JWT
 
 type User {
   id: BigInt!
@@ -39,20 +40,16 @@ type SocialProfile {
 }
 
 type Query {
-  userByEmail(email: EmailAddress!): User
+  userById(id: BigInt!): User
 }
 
 type Mutation {
   signUp(
     email: EmailAddress!
-    name: String
-    nickname: String
-    gender: Gender
-    dateOfBirth: Date
-    areaCode: String
-    phone: String
-    picture: String
-  ): User
+    name: String!
+    areaCode: String!
+    phone: String!
+  ): JWT
 
   signInByProvider(
     provider: Provider!
@@ -60,7 +57,7 @@ type Mutation {
     name: String
     email: String
     picture: String
-  ): User
+  ): JWT
 
-  signInByPhone(phone: String!): User
+  signInByPhone(phone: String!): JWT
 }

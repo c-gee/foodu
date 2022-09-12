@@ -1,12 +1,17 @@
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
+import e from "express";
 import { prisma } from "../../../lib/db";
+import { useJwt, JwtPayloadProvider } from "../../../lib/jwt";
 import { Resolvers } from "../../generated/graphql";
+
+const { generateToken } = useJwt();
 
 const resolvers: Resolvers = {
   Query: {
-    async userByEmail(_, args) {
+    async userById(_, args) {
       const user = await prisma.user.findUnique({
         where: {
-          email: args.email
+          id: args.id
         },
         include: {
           socialProfiles: true
@@ -18,23 +23,27 @@ const resolvers: Resolvers = {
   },
   Mutation: {
     async signUp(_, args) {
-      const user = await prisma.user.create({
-        data: {
-          email: args.email,
-          name: args.name,
-          nickname: args.nickname,
-          gender: args.gender,
-          dateOfBirth: args.dateOfBirth,
-          areaCode: args.areaCode,
-          phone: args.phone,
-          picture: args.picture
-        },
-        include: {
-          socialProfiles: true
-        }
-      });
+      try {
+        const user = await prisma.user.create({
+          data: {
+            email: args.email,
+            name: args.name,
+            areaCode: args.areaCode,
+            phone: args.phone
+          },
+          include: {
+            socialProfiles: true
+          }
+        });
 
-      return user;
+        return generateToken(user, { provider: "phone" });
+      } catch (error: unknown) {
+        if (error instanceof PrismaClientKnownRequestError) {
+          console.log("Error:", error);
+        }
+
+        return null;
+      }
     },
 
     async signInByProvider(_, args) {
@@ -62,17 +71,7 @@ const resolvers: Resolvers = {
 
         if (socialProfile.userId === null) {
           const createUser = await prisma.user.create({
-            data: {
-              socialProfiles: {
-                create: {
-                  sub: args.sub,
-                  provider: args.provider,
-                  name: args.name || null,
-                  email: args.email || null,
-                  picture: args.picture || null
-                }
-              }
-            }
+            data: {}
           });
 
           await prisma.socialProfile.update({
@@ -103,10 +102,22 @@ const resolvers: Resolvers = {
           });
         }
 
-        return user;
+        if (user) {
+          return generateToken(user, {
+            provider:
+              socialProfile.provider.toLowerCase() as JwtPayloadProvider,
+            sub: socialProfile.sub
+          });
+        } else {
+          return null;
+        }
       });
     },
 
+    /**
+     * Not complete yet!
+     * TODO: Implement OTP code verification
+     */
     async signInByPhone(_, args) {
       const user = await prisma.user.findUnique({
         where: {
@@ -117,7 +128,11 @@ const resolvers: Resolvers = {
         }
       });
 
-      return user;
+      if (user) {
+        return generateToken(user, { provider: "phone" });
+      } else {
+        return null;
+      }
     }
   }
 };

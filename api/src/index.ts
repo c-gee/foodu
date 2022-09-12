@@ -1,3 +1,7 @@
+import * as dotenv from "dotenv";
+
+dotenv.config();
+
 import "json-bigint-patch";
 import express from "express";
 import { createServer } from "@graphql-yoga/node";

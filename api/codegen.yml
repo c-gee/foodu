@@ -8,7 +8,8 @@ generates:
     config:
       mappers:
         User: .prisma/client#User as UserModel
-      inputMaybeValue: undefined | T
+        SocialProfile: .prisma/client#SocialProfile as SocialProfileModel
+      inputMaybeValue: "T extends PromiseLike<infer U> ? Promise<U | null> : T | null"
       scalars:
         BigInt: bigint
         EmailAddress: string

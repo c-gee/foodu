@@ -13,7 +13,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "prestart": "yarn generate",
-    "dev": "concurrently \"nodemon src/index.ts\" \"yarn codegen\"",
+    "dev": "nodemon src/index.ts",
+    "predev": "yarn generate",
     "generate": "yarn generate:prisma && yarn codegen",
     "generate:prisma": "prisma generate",
     "codegen": "graphql-codegen --config codegen.yml"

@@ -3,6 +3,11 @@ enum Gender {
   FEMALE
 }
 
+enum Provider {
+  GOOGLE
+  FACEBOOK
+}
+
 scalar BigInt
 scalar Date
 scalar DateTime
@@ -10,15 +15,27 @@ scalar EmailAddress
 
 type User {
   id: BigInt!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  email: EmailAddress!
+  createdAt: DateTime
+  updatedAt: DateTime
+  email: EmailAddress
   name: String
   nickname: String
   dateOfBirth: Date
   gender: Gender
   areaCode: String
   phone: String
+  picture: String
+  socialProfiles: [SocialProfile]
+}
+
+type SocialProfile {
+  sub: String!
+  provider: Provider!
+  createdAt: DateTime
+  updatedAt: DateTime
+  name: String
+  email: EmailAddress
+  picture: String
 }
 
 type Query {
@@ -26,7 +43,7 @@ type Query {
 }
 
 type Mutation {
-  createUser(
+  signUp(
     email: EmailAddress!
     name: String
     nickname: String
@@ -34,5 +51,16 @@ type Mutation {
     dateOfBirth: Date
     areaCode: String
     phone: String
+    picture: String
   ): User
+
+  signInByProvider(
+    provider: Provider!
+    sub: String!
+    name: String
+    email: String
+    picture: String
+  ): User
+
+  signInByPhone(phone: String!): User
 }

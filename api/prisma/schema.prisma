@@ -2,7 +2,8 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
+  previewFeatures = ["interactiveTransactions"]
 }
 
 datasource db {
@@ -15,6 +16,11 @@ enum Gender {
   MALE
 }
 
+enum Provider {
+  GOOGLE
+  FACEBOOK
+}
+
 model User {
   id             BigInt          @id @default(autoincrement())
   createdAt      DateTime        @default(now()) @db.Timestamptz(3)
@@ -25,21 +31,21 @@ model User {
   dateOfBirth    DateTime?       @db.Date
   gender         Gender?
   areaCode       String?
-  phone          String?
+  phone          String?         @unique
   picture        String?
   socialProfiles SocialProfile[]
 }
 
 model SocialProfile {
   sub       String
-  provider  String
+  provider  Provider
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
   name      String?
   email     String?
   picture   String?
-  User      User     @relation(fields: [userId], references: [id])
-  userId    BigInt
+  User      User?    @relation(fields: [userId], references: [id])
+  userId    BigInt?
 
   @@id([provider, sub])
 }

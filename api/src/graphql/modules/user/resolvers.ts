@@ -15,8 +15,12 @@ const {
 
 const resolvers: Resolvers = {
   Query: {
-    async user(_, { id }, { prisma }) {
-      const user = await findUserById(prisma, id);
+    async me(_, __, { prisma, currentUser }) {
+      if (currentUser === null) {
+        return Promise.reject(new GraphQLYogaError("Unauthenticated!"));
+      }
+
+      const user = await findUserById(prisma, currentUser.id);
 
       if (user) {
         return user;

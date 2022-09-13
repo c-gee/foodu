@@ -1,9 +1,11 @@
+import { GraphQLYogaError } from "@graphql-yoga/node";
 import {
   sign,
   verify,
   JwtPayload,
   SignOptions,
-  VerifyOptions
+  VerifyOptions,
+  JsonWebTokenError
 } from "jsonwebtoken";
 import { User } from "../graphql/generated/graphql";
 
@@ -12,6 +14,10 @@ type AuthMetadata = { provider: JwtPayloadProvider; sub?: string };
 type Payload = {
   sub: string;
   auth_metadata: AuthMetadata;
+};
+type JwtVerificationResult = {
+  tokenPayload: JwtPayload | null;
+  error?: JsonWebTokenError;
 };
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -40,7 +46,7 @@ const generateToken = (
   return sign(payload, JWT_SECRET, signOptions);
 };
 
-const validateToken = (token: string): JwtPayload => {
+const verifyToken = (token: string): JwtVerificationResult => {
   if (!JWT_SECRET) throw new Error("JWT Secret not set!!!");
 
   const verifyOptions: VerifyOptions = {
@@ -48,18 +54,27 @@ const validateToken = (token: string): JwtPayload => {
     complete: false
   };
 
-  return new Promise((resolve, reject) => {
-    verify(token, JWT_SECRET, verifyOptions, (error, decoded) => {
-      if (error) {
-        reject(error);
-      }
+  try {
+    const tokenPayload = verify(token, JWT_SECRET, verifyOptions);
 
-      resolve(decoded);
-    });
-  });
+    return {
+      tokenPayload: tokenPayload as JwtPayload
+    };
+  } catch (error: unknown) {
+    if (error instanceof JsonWebTokenError) {
+      return {
+        tokenPayload: null,
+        error
+      };
+    }
+
+    return {
+      tokenPayload: null
+    };
+  }
 };
 
 export const useJwt = () => ({
   generateToken,
-  validateToken
+  verifyToken
 });

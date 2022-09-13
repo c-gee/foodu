@@ -1,0 +1,75 @@
+enum Gender {
+  male
+  female
+}
+
+enum Provider {
+  google
+  facebook
+}
+
+scalar Date
+scalar DateTime
+scalar EmailAddress
+scalar JWT
+scalar JSON
+scalar IdentityData
+
+type User {
+  id: ID!
+  createdAt: DateTime
+  updatedAt: DateTime
+  email: EmailAddress
+  name: String
+  nickname: String
+  dateOfBirth: Date
+  gender: Gender
+  areaCode: String
+  phone: String
+  picture: String
+  identities: [Identity]
+}
+
+type Identity {
+  sub: String!
+  provider: Provider!
+  createdAt: DateTime
+  updatedAt: DateTime
+  identityData: IdentityData!
+}
+
+type Query {
+  user(id: ID!): User
+}
+
+type Mutation {
+  signUp(input: SignUpInput!): JWT
+
+  signInByProvider(input: SignInByProviderInput!): JWT
+
+  signInByPhone(input: SignInByPhoneInput!): JWT
+}
+
+input IdentityDataInput {
+  name: String
+  email: String
+  picture: String
+}
+
+input SignUpInput {
+  email: EmailAddress!
+  name: String!
+  areaCode: String!
+  phone: String!
+}
+
+input SignInByProviderInput {
+  provider: Provider!
+  sub: String!
+  identityData: IdentityDataInput!
+}
+
+input SignInByPhoneInput {
+  areaCode: String!
+  phone: String!
+}

@@ -1,20 +1,20 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
-import e from "express";
-import { prisma } from "../../../lib/db";
-import { useJwt, JwtPayloadProvider } from "../../../lib/jwt";
+import { GraphQLYogaError } from "@graphql-yoga/node";
+
 import { Resolvers } from "../../generated/graphql";
+import { useJwt } from "../../../lib/jwt";
 
 const { generateToken } = useJwt();
 
 const resolvers: Resolvers = {
   Query: {
-    async userById(_, args) {
+    async user(_, args, { prisma }) {
       const user = await prisma.user.findUnique({
         where: {
           id: args.id
         },
         include: {
-          socialProfiles: true
+          identities: true
         }
       });
 
@@ -22,61 +22,75 @@ const resolvers: Resolvers = {
     }
   },
   Mutation: {
-    async signUp(_, args) {
+    async signUp(_, { input }, { prisma }) {
       try {
         const user = await prisma.user.create({
           data: {
-            email: args.email,
-            name: args.name,
-            areaCode: args.areaCode,
-            phone: args.phone
+            email: input.email,
+            name: input.name,
+            areaCode: input.areaCode,
+            phone: input.phone
           },
           include: {
-            socialProfiles: true
+            identities: true
           }
         });
 
         return generateToken(user, { provider: "phone" });
       } catch (error: unknown) {
         if (error instanceof PrismaClientKnownRequestError) {
-          console.log("Error:", error);
+          if (error.code === "P2002") {
+            if (
+              (error.meta?.target as (string | undefined)[]).includes("email")
+            ) {
+              return Promise.reject(
+                new GraphQLYogaError("Account already exists for this email.")
+              );
+            }
+
+            if (
+              (error.meta?.target as (string | undefined)[]).includes("phone")
+            ) {
+              return Promise.reject(
+                new GraphQLYogaError(
+                  "Account already exists for this phone number."
+                )
+              );
+            }
+          }
         }
 
         return null;
       }
     },
 
-    async signInByProvider(_, args) {
+    async signInByProvider(_, { input }, { prisma }) {
       return await prisma.$transaction(async (prisma) => {
         let user;
 
-        const socialProfile = await prisma.socialProfile.upsert({
+        const identity = await prisma.identity.upsert({
           where: {
-            provider_sub: { provider: args.provider, sub: args.sub }
+            provider_sub: { provider: input.provider, sub: input.sub }
           },
           create: {
-            sub: args.sub,
-            provider: args.provider,
-            name: args.name || null,
-            email: args.email || null,
-            picture: args.picture || null,
+            sub: input.sub,
+            provider: input.provider,
+            identityData: input.identityData,
             userId: null
           },
           update: {
-            name: args.name || null,
-            email: args.email || null,
-            picture: args.picture || null
+            identityData: input.identityData
           }
         });
 
-        if (socialProfile.userId === null) {
+        if (identity.userId === null) {
           const createUser = await prisma.user.create({
             data: {}
           });
 
-          await prisma.socialProfile.update({
+          await prisma.identity.update({
             where: {
-              provider_sub: { provider: args.provider, sub: args.sub }
+              provider_sub: { provider: input.provider, sub: input.sub }
             },
             data: {
               userId: createUser.id
@@ -88,25 +102,24 @@ const resolvers: Resolvers = {
               id: createUser.id
             },
             include: {
-              socialProfiles: true
+              identities: true
             }
           });
         } else {
           user = await prisma.user.findUnique({
             where: {
-              id: socialProfile.userId
+              id: identity.userId
             },
             include: {
-              socialProfiles: true
+              identities: true
             }
           });
         }
 
         if (user) {
           return generateToken(user, {
-            provider:
-              socialProfile.provider.toLowerCase() as JwtPayloadProvider,
-            sub: socialProfile.sub
+            provider: identity.provider,
+            sub: identity.sub
           });
         } else {
           return null;
@@ -118,13 +131,13 @@ const resolvers: Resolvers = {
      * Not complete yet!
      * TODO: Implement OTP code verification
      */
-    async signInByPhone(_, args) {
+    async signInByPhone(_, { input }, { prisma }) {
       const user = await prisma.user.findUnique({
         where: {
-          phone: args.phone
+          areaCode_phone: { areaCode: input.areaCode, phone: input.phone }
         },
         include: {
-          socialProfiles: true
+          identities: true
         }
       });
 

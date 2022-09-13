@@ -15,8 +15,10 @@
     "prestart": "yarn generate",
     "dev": "NODE_ENV=development nodemon src/index.ts",
     "predev": "yarn generate",
-    "generate": "yarn generate:prisma && yarn codegen",
-    "generate:prisma": "prisma generate",
+    "generate": "yarn db:generate && yarn codegen",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:studio": "prisma studio",
     "codegen": "graphql-codegen --config codegen.yml",
     "build": "tsc"
   },

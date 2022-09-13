@@ -39,13 +39,15 @@ async function seedUsers() {
       areaCode: null,
       phone: null,
       picture: null,
-      socialProfiles: {
+      identities: {
         create: {
           sub: casual.integer(1000, 10000000).toString(),
-          provider: "GOOGLE",
-          name: casual.full_name,
-          email: casual.email.toLowerCase(),
-          picture: `https://i.pravatar.cc/${150}`
+          provider: "google",
+          identityData: {
+            name: casual.full_name,
+            email: casual.email.toLowerCase(),
+            picture: `https://i.pravatar.cc/${150}`
+          }
         }
       }
     }
@@ -61,21 +63,25 @@ async function seedUsers() {
       areaCode: null,
       phone: null,
       picture: null,
-      socialProfiles: {
+      identities: {
         create: [
           {
             sub: casual.integer(1000, 10000000).toString(),
-            provider: "FACEBOOK",
-            name: casual.full_name,
-            email: null, // can be null,
-            picture: `https://i.pravatar.cc/${150}`
+            provider: "facebook",
+            identityData: {
+              name: casual.full_name,
+              email: null, // can be null,
+              picture: `https://i.pravatar.cc/${150}`
+            }
           },
           {
             sub: casual.integer(1000, 10000000).toString(),
-            provider: "GOOGLE",
-            name: casual.full_name,
-            email: casual.email.toLowerCase(),
-            picture: `https://i.pravatar.cc/${150}`
+            provider: "google",
+            identityData: {
+              name: casual.full_name,
+              email: casual.email.toLowerCase(),
+              picture: `https://i.pravatar.cc/${150}`
+            }
           }
         ]
       }

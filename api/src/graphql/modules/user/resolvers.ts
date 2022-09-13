@@ -2,39 +2,33 @@ import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { GraphQLYogaError } from "@graphql-yoga/node";
 
 import { Resolvers } from "../../generated/graphql";
+import { useUser } from "../../../repositories/User";
 import { useJwt } from "../../../lib/jwt";
 
 const { generateToken } = useJwt();
+const {
+  createNewUser,
+  findUserById,
+  findUserByPhone,
+  findOrCreateUserWithIdentity
+} = useUser();
 
 const resolvers: Resolvers = {
   Query: {
-    async user(_, args, { prisma }) {
-      const user = await prisma.user.findUnique({
-        where: {
-          id: args.id
-        },
-        include: {
-          identities: true
-        }
-      });
+    async user(_, { id }, { prisma }) {
+      const user = await findUserById(prisma, id);
 
-      return user;
+      if (user) {
+        return user;
+      } else {
+        return Promise.reject(new GraphQLYogaError("No such user found."));
+      }
     }
   },
   Mutation: {
     async signUp(_, { input }, { prisma }) {
       try {
-        const user = await prisma.user.create({
-          data: {
-            email: input.email,
-            name: input.name,
-            areaCode: input.areaCode,
-            phone: input.phone
-          },
-          include: {
-            identities: true
-          }
-        });
+        const user = await createNewUser(prisma, input);
 
         return generateToken(user, { provider: "phone" });
       } catch (error: unknown) {
@@ -60,71 +54,28 @@ const resolvers: Resolvers = {
           }
         }
 
-        return null;
+        return Promise.reject(
+          new GraphQLYogaError("Oh no! There seems to be a problem.")
+        );
       }
     },
 
     async signInByProvider(_, { input }, { prisma }) {
-      return await prisma.$transaction(async (prisma) => {
-        let user;
+      const { user, identity } = await findOrCreateUserWithIdentity(
+        prisma,
+        input
+      );
 
-        const identity = await prisma.identity.upsert({
-          where: {
-            provider_sub: { provider: input.provider, sub: input.sub }
-          },
-          create: {
-            sub: input.sub,
-            provider: input.provider,
-            identityData: input.identityData,
-            userId: null
-          },
-          update: {
-            identityData: input.identityData
-          }
+      if (user) {
+        return generateToken(user, {
+          provider: identity.provider,
+          sub: identity.sub
         });
-
-        if (identity.userId === null) {
-          const createUser = await prisma.user.create({
-            data: {}
-          });
-
-          await prisma.identity.update({
-            where: {
-              provider_sub: { provider: input.provider, sub: input.sub }
-            },
-            data: {
-              userId: createUser.id
-            }
-          });
-
-          user = await prisma.user.findUnique({
-            where: {
-              id: createUser.id
-            },
-            include: {
-              identities: true
-            }
-          });
-        } else {
-          user = await prisma.user.findUnique({
-            where: {
-              id: identity.userId
-            },
-            include: {
-              identities: true
-            }
-          });
-        }
-
-        if (user) {
-          return generateToken(user, {
-            provider: identity.provider,
-            sub: identity.sub
-          });
-        } else {
-          return null;
-        }
-      });
+      } else {
+        return Promise.reject(
+          new GraphQLYogaError("Oh no! There seems to be a problem.")
+        );
+      }
     },
 
     /**
@@ -132,19 +83,12 @@ const resolvers: Resolvers = {
      * TODO: Implement OTP code verification
      */
     async signInByPhone(_, { input }, { prisma }) {
-      const user = await prisma.user.findUnique({
-        where: {
-          areaCode_phone: { areaCode: input.areaCode, phone: input.phone }
-        },
-        include: {
-          identities: true
-        }
-      });
+      const user = await findUserByPhone(prisma, input);
 
       if (user) {
         return generateToken(user, { provider: "phone" });
       } else {
-        return null;
+        return Promise.reject(new GraphQLYogaError("No such user found."));
       }
     }
   }

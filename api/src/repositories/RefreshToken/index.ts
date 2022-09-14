@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, RefreshToken } from "@prisma/client";
 
 import { TokenResponse, User } from "../../graphql/generated/graphql";
 import {
@@ -7,7 +7,27 @@ import {
   generateAccessToken
 } from "../../lib/jwt";
 
-const createRefreshToken = async (prisma: PrismaClient, userId: string) => {
+const revokeRefreshToken = async (
+  prisma: PrismaClient,
+  token: string,
+  userId: string
+): Promise<RefreshToken> => {
+  const refreshToken = await prisma.refreshToken.update({
+    where: {
+      token_userId: { token, userId }
+    },
+    data: {
+      revoked: true
+    }
+  });
+
+  return refreshToken;
+};
+
+const createRefreshToken = async (
+  prisma: PrismaClient,
+  userId: string
+): Promise<RefreshToken> => {
   const refreshToken = await prisma.refreshToken.create({
     data: {
       userId: userId,
@@ -33,5 +53,6 @@ const getTokensResponse = async (
 };
 
 export const useRefreshToken = () => ({
-  getTokensResponse
+  getTokensResponse,
+  revokeRefreshToken
 });

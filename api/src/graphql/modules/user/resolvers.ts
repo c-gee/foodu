@@ -12,7 +12,7 @@ const {
   findOrCreateUserWithIdentity
 } = useUser();
 
-const { getTokensResponse } = useRefreshToken();
+const { getTokensResponse, revokeRefreshToken } = useRefreshToken();
 
 const resolvers: Resolvers = {
   Query: {
@@ -95,6 +95,28 @@ const resolvers: Resolvers = {
       } else {
         return Promise.reject(new GraphQLYogaError("No such user found."));
       }
+    },
+
+    async signOut(_, { input }, { prisma, currentUser }) {
+      if (currentUser === null) {
+        return Promise.reject(new GraphQLYogaError("Unauthenticated!"));
+      }
+
+      if (input?.refreshToken) {
+        try {
+          await revokeRefreshToken(prisma, input.refreshToken, currentUser.id);
+        } catch (error) {
+          if (error instanceof PrismaClientKnownRequestError) {
+            if (error.code === "P2025") {
+              return Promise.reject(
+                new GraphQLYogaError("Invalid refresh token.")
+              );
+            }
+          }
+        }
+      }
+
+      return {};
     }
   }
 };

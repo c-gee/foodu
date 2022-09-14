@@ -1,8 +1,7 @@
 import { PrismaClient, User } from "@prisma/client";
 import { GraphQLYogaError, YogaInitialContext } from "@graphql-yoga/node";
-import { useJwt } from "../lib/jwt";
 
-const { verifyToken } = useJwt();
+import { verifyToken } from "../lib/jwt";
 
 const authenticateUser = async (
   prisma: PrismaClient,

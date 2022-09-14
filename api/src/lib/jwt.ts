@@ -1,4 +1,3 @@
-import { GraphQLYogaError } from "@graphql-yoga/node";
 import {
   sign,
   verify,
@@ -7,14 +6,19 @@ import {
   VerifyOptions,
   JsonWebTokenError
 } from "jsonwebtoken";
+import { v4 as uuidv4 } from "uuid";
+
 import { User } from "../graphql/generated/graphql";
 
-export type JwtPayloadProvider = "google" | "facebook" | "phone";
-type AuthMetadata = { provider: JwtPayloadProvider; sub?: string };
+type JwtPayloadProvider = "google" | "facebook" | "phone";
+
+export type AuthMetadata = { provider: JwtPayloadProvider; sub?: string };
+
 type Payload = {
   sub: string;
   auth_metadata: AuthMetadata;
 };
+
 type JwtVerificationResult = {
   tokenPayload: JwtPayload | null;
   error?: JsonWebTokenError;
@@ -23,9 +27,15 @@ type JwtVerificationResult = {
 const JWT_SECRET = process.env.JWT_SECRET;
 const ALGORITHM = "HS256";
 
-const generateToken = (
+export const generateRefreshToken = (): string => {
+  const refreshToken = uuidv4().replace(/-/g, "");
+
+  return refreshToken;
+};
+
+export const generateAccessToken = (
   user: User,
-  provider: { provider: JwtPayloadProvider; sub?: string }
+  provider: AuthMetadata
 ): string => {
   if (!JWT_SECRET) throw new Error("JWT Secret not set!!!");
 
@@ -46,7 +56,7 @@ const generateToken = (
   return sign(payload, JWT_SECRET, signOptions);
 };
 
-const verifyToken = (token: string): JwtVerificationResult => {
+export const verifyToken = (token: string): JwtVerificationResult => {
   if (!JWT_SECRET) throw new Error("JWT Secret not set!!!");
 
   const verifyOptions: VerifyOptions = {
@@ -73,8 +83,3 @@ const verifyToken = (token: string): JwtVerificationResult => {
     };
   }
 };
-
-export const useJwt = () => ({
-  generateToken,
-  verifyToken
-});

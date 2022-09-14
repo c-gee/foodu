@@ -3,15 +3,16 @@ import { GraphQLYogaError } from "@graphql-yoga/node";
 
 import { Resolvers } from "../../generated/graphql";
 import { useUser } from "../../../repositories/User";
-import { useJwt } from "../../../lib/jwt";
+import { useRefreshToken } from "../../../repositories/RefreshToken";
 
-const { generateToken } = useJwt();
 const {
   createNewUser,
   findUserById,
   findUserByPhone,
   findOrCreateUserWithIdentity
 } = useUser();
+
+const { getTokensResponse } = useRefreshToken();
 
 const resolvers: Resolvers = {
   Query: {
@@ -34,7 +35,7 @@ const resolvers: Resolvers = {
       try {
         const user = await createNewUser(prisma, input);
 
-        return generateToken(user, { provider: "phone" });
+        return getTokensResponse(prisma, user, { provider: "phone" });
       } catch (error: unknown) {
         if (error instanceof PrismaClientKnownRequestError) {
           if (error.code === "P2002") {
@@ -71,7 +72,7 @@ const resolvers: Resolvers = {
       );
 
       if (user) {
-        return generateToken(user, {
+        return getTokensResponse(prisma, user, {
           provider: identity.provider,
           sub: identity.sub
         });
@@ -90,7 +91,7 @@ const resolvers: Resolvers = {
       const user = await findUserByPhone(prisma, input);
 
       if (user) {
-        return generateToken(user, { provider: "phone" });
+        return getTokensResponse(prisma, user, { provider: "phone" });
       } else {
         return Promise.reject(new GraphQLYogaError("No such user found."));
       }

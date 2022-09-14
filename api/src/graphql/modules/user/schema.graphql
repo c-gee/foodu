@@ -8,12 +8,18 @@ enum Provider {
   facebook
 }
 
+scalar BigInt
 scalar Date
 scalar DateTime
 scalar EmailAddress
 scalar JWT
 scalar JSON
 scalar IdentityData
+
+type TokenResponse {
+  accessToken: JWT!
+  refreshToken: String!
+}
 
 type User {
   id: ID!
@@ -36,6 +42,16 @@ type Identity {
   createdAt: DateTime
   updatedAt: DateTime
   identityData: IdentityData!
+  userId: ID
+}
+
+type RefreshToken {
+  id: BigInt!
+  token: String!
+  revoked: Boolean!
+  createdAt: DateTime
+  updatedAt: DateTime
+  userId: ID!
 }
 
 type Query {
@@ -43,11 +59,9 @@ type Query {
 }
 
 type Mutation {
-  signUp(input: SignUpInput!): JWT
-
-  signInByProvider(input: SignInByProviderInput!): JWT
-
-  signInByPhone(input: SignInByPhoneInput!): JWT
+  signUp(input: SignUpInput!): TokenResponse
+  signInByProvider(input: SignInByProviderInput!): TokenResponse
+  signInByPhone(input: SignInByPhoneInput!): TokenResponse
 }
 
 input IdentityDataInput {

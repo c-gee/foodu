@@ -11,10 +11,12 @@ generates:
       mappers:
         User: "@prisma/client#User"
         Identity: "@prisma/client#Identity"
+        RefreshToken: "@prisma/client#RefreshToken"
       inputMaybeValue: T | null
       enumsAsConst: true
       scalars:
         IdentityData: ../modules/user/index#IdentityData
+        BigInt: bigint
         EmailAddress: string
         Date: Date
         DateTime: Date

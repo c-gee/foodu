@@ -1,5 +1,5 @@
 overwrite: true
-schema: "src/graphql/**/*.graphql"
+schema: src/graphql/**/*.graphql
 generates:
   src/graphql/generated/graphql.ts:
     plugins:
@@ -29,10 +29,9 @@ generates:
       enumsAsConst: true
       scalars:
         IdentityData: ../modules/user/index#IdentityData
+        JSON: "@prisma/client/index#Prisma.JsonObject"
+        EmptyResponse: ../modules/scalars#EmptyResponse
         BigInt: bigint
-        EmailAddress: string
         Date: Date
         DateTime: Date
         JWT: string
-        JSON: "@prisma/client/index#Prisma.JsonObject"
-        EmptyResponse: ../modules/scalars#EmptyResponse

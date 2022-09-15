@@ -1,12 +1,11 @@
 import { createModule, gql } from "graphql-modules";
-import { typeDefs } from "graphql-scalars";
+import { typeDefs, resolvers } from "graphql-scalars";
 
 export type EmptyResponse = { _?: boolean };
-
-const gqlDocumentNodes = gql([...typeDefs]);
 
 export const scalarsModule = createModule({
   id: "scalars-module",
   dirname: __dirname,
-  typeDefs: gqlDocumentNodes
+  typeDefs: [gql(typeDefs.join("\n"))],
+  resolvers: { ...resolvers }
 });

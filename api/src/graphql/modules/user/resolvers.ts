@@ -1,6 +1,13 @@
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { GraphQLYogaError } from "@graphql-yoga/node";
+import { ValidationError } from "yup";
 
+import {
+  signUpInputsSchema,
+  signInByProviderInput,
+  signInByPhoneSchema,
+  signOutSchema
+} from "./validator";
 import { Resolvers } from "../../generated/graphql";
 import { useUser } from "../../../repositories/User";
 import { useRefreshToken } from "../../../repositories/RefreshToken";
@@ -33,10 +40,16 @@ const resolvers: Resolvers = {
   Mutation: {
     async signUp(_, { input }, { prisma }) {
       try {
+        await signUpInputsSchema.validate(input);
+
         const user = await createNewUser(prisma, input);
 
         return getTokensResponse(prisma, user, { provider: "phone" });
       } catch (error: unknown) {
+        if (error instanceof ValidationError) {
+          return Promise.reject(new GraphQLYogaError(error.message));
+        }
+
         if (error instanceof PrismaClientKnownRequestError) {
           if (error.code === "P2002") {
             if (
@@ -66,17 +79,31 @@ const resolvers: Resolvers = {
     },
 
     async signInByProvider(_, { input }, { prisma }) {
-      const { user, identity } = await findOrCreateUserWithIdentity(
-        prisma,
-        input
-      );
+      try {
+        await signInByProviderInput.validate(input);
 
-      if (user) {
-        return getTokensResponse(prisma, user, {
-          provider: identity.provider,
-          sub: identity.sub
-        });
-      } else {
+        const { user, identity } = await findOrCreateUserWithIdentity(
+          prisma,
+          input
+        );
+
+        if (user) {
+          return getTokensResponse(prisma, user, {
+            provider: identity.provider,
+            sub: identity.sub
+          });
+        } else {
+          return Promise.reject(
+            new GraphQLYogaError(
+              "Hmm..., something is wrong. Please try again later, or contact support if the problem persist."
+            )
+          );
+        }
+      } catch (error: unknown) {
+        if (error instanceof ValidationError) {
+          return Promise.reject(new GraphQLYogaError(error.message));
+        }
+
         return Promise.reject(
           new GraphQLYogaError("Oh no! There seems to be a problem.")
         );
@@ -88,35 +115,55 @@ const resolvers: Resolvers = {
      * TODO: Implement OTP code verification
      */
     async signInByPhone(_, { input }, { prisma }) {
-      const user = await findUserByPhone(prisma, input);
+      try {
+        await signInByPhoneSchema.validate(input);
 
-      if (user) {
-        return getTokensResponse(prisma, user, { provider: "phone" });
-      } else {
-        return Promise.reject(new GraphQLYogaError("No such user found."));
+        const user = await findUserByPhone(prisma, input);
+
+        if (user) {
+          return getTokensResponse(prisma, user, { provider: "phone" });
+        } else {
+          return Promise.reject(new GraphQLYogaError("No such user found."));
+        }
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          return Promise.reject(new GraphQLYogaError(error.message));
+        }
+
+        return Promise.reject(
+          new GraphQLYogaError("Oh no! There seems to be a problem.")
+        );
       }
     },
 
     async signOut(_, { input }, { prisma, currentUser }) {
-      if (currentUser === null) {
-        return Promise.reject(new GraphQLYogaError("Unauthenticated!"));
-      }
+      try {
+        await signOutSchema.validate(input);
 
-      if (input?.refreshToken) {
-        try {
+        if (currentUser === null) {
+          return Promise.reject(new GraphQLYogaError("Unauthenticated!"));
+        }
+
+        if (input?.refreshToken) {
           await revokeRefreshToken(prisma, input.refreshToken, currentUser.id);
-        } catch (error) {
-          if (error instanceof PrismaClientKnownRequestError) {
-            if (error.code === "P2025") {
-              return Promise.reject(
-                new GraphQLYogaError("Invalid refresh token.")
-              );
-            }
+        }
+
+        return {};
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          return Promise.reject(new GraphQLYogaError(error.message));
+        }
+
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code === "P2025") {
+            return Promise.reject(
+              new GraphQLYogaError("Invalid refresh token.")
+            );
           }
         }
-      }
 
-      return {};
+        return Promise.reject(new GraphQLYogaError("Unknown error."));
+      }
     }
   }
 };

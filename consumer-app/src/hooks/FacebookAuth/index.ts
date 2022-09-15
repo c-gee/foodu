@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import * as WebBrowser from "expo-web-browser";
 import * as Facebook from "expo-auth-session/providers/facebook";
-import { ResponseType, makeRedirectUri, Prompt } from "expo-auth-session";
+import { makeRedirectUri } from "expo-auth-session";
 import { FACEBOOK_EXPO_CLIENT_ID } from "@env";
 
 type UserInfo = {
@@ -20,12 +20,10 @@ const environment = process.env;
 
 const config = {
   clientId: FACEBOOK_EXPO_CLIENT_ID,
-  responseType: ResponseType.Token,
   scopes: ["public_profile", "email"],
   redirectUri: makeRedirectUri({
     useProxy: environment.NODE_ENV !== "production"
-  }),
-  prompt: Prompt.Login
+  })
 };
 
 WebBrowser.maybeCompleteAuthSession();

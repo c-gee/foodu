@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { makeRedirectUri, Prompt } from "expo-auth-session";
+import { makeRedirectUri } from "expo-auth-session";
 import * as WebBrowser from "expo-web-browser";
 import * as Google from "expo-auth-session/providers/google";
 import {
@@ -30,8 +30,7 @@ const config = {
   webClientId: GOOGLE_WEB_CLIENT_ID,
   redirectUri: makeRedirectUri({
     useProxy: environment.NODE_ENV !== "production"
-  }),
-  prompt: Prompt.Login
+  })
 };
 
 WebBrowser.maybeCompleteAuthSession();
@@ -47,6 +46,8 @@ const useGoogleAuth = () => {
   useEffect(() => {
     if (response?.type === "success" && response.authentication?.accessToken) {
       const { accessToken } = response.authentication;
+
+      console.log(`response`, response);
 
       setAccessToken(accessToken);
     } else if (response?.type === "cancel" || response?.type === "dismiss") {

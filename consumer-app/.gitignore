@@ -11,6 +11,7 @@ npm-debug.*
 web-build/
 .env*
 *.log
+introspection.json
 *.generated.ts
 data
 

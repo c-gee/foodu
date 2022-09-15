@@ -2,7 +2,7 @@ overwrite: true
 schema: "http://localhost:4000/api"
 documents: "src/**/*.graphql"
 generates:
-  src/services/graphql/types.generated.ts:
+  src/features/graphql/types.generated.ts:
     plugins:
       - add:
           content: >
@@ -13,10 +13,16 @@ generates:
               * run `yarn codegen` for this file to be re-created
               */
       - typescript
+    config:
+      scalars:
+        BigInt: bigint
+        EmailAddress: string
+        Date: Date
+        DateTime: Date
   src/:
     preset: near-operation-file
     presetConfig:
-      baseTypesPath: services/graphql/types.generated.ts
+      baseTypesPath: features/graphql/types.generated.ts
     plugins:
       - add:
           content: >
@@ -29,5 +35,8 @@ generates:
              */
       - typescript-operations
       - typescript-rtk-query:
-          importBaseApiFrom: "../../services/baseApi"
+          importBaseApiFrom: ../api/baseApi
           exportHooks: true
+  src/features/graphql/introspection.json:
+    plugins:
+      - introspection

@@ -1,6 +1,8 @@
 import {
   createContext,
+  Dispatch,
   ReactNode,
+  SetStateAction,
   useContext,
   useEffect,
   useState
@@ -8,10 +10,10 @@ import {
 
 import useGoogleAuth from "../../hooks/GoogleAuth";
 import useFacebookAuth from "../../hooks/FacebookAuth";
-import { User } from "../../types/User";
+import { User } from "../../features/graphql/types.generated";
 
 type AuthProvider = "google" | "facebook";
-type SocialProfile = {
+type Identity = {
   provider: AuthProvider;
   sub?: string | number;
   email?: string;
@@ -24,6 +26,10 @@ type Auth = {
   onGoogleSignIn: () => void;
   onFacebookLogin: () => void;
   onSignOut: () => void;
+  accessToken: string | null;
+  setAccessToken: Dispatch<SetStateAction<string | null>>;
+  refreshToken: string | null;
+  setRefreshToken: Dispatch<SetStateAction<string | null>>;
 };
 
 const AuthContext = createContext<Auth>({
@@ -31,14 +37,18 @@ const AuthContext = createContext<Auth>({
   loading: false,
   onGoogleSignIn: () => {},
   onFacebookLogin: () => {},
-  onSignOut: () => {}
+  onSignOut: () => {},
+  accessToken: null,
+  setAccessToken: () => {},
+  refreshToken: null,
+  setRefreshToken: () => {}
 });
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [socialProfile, setSocialProfile] = useState<SocialProfile | null>(
-    null
-  );
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [identity, setIdentity] = useState<Identity | null>(null);
   const { googleProfile, signInWithGoogle, signOutGoogle } = useGoogleAuth();
   const { facebookProfile, loginWithFacebook, signOutFacebook } =
     useFacebookAuth();
@@ -47,14 +57,20 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (googleProfile === null || !googleProfile?.userInfo?.sub) return;
 
-    setSocialProfile(googleProfile);
+    setIdentity(googleProfile);
   }, [googleProfile]);
 
   useEffect(() => {
     if (facebookProfile === null || !facebookProfile?.userInfo?.sub) return;
 
-    setSocialProfile(facebookProfile);
+    setIdentity(facebookProfile);
   }, [facebookProfile]);
+
+  useEffect(() => {
+    if (refreshToken === null || refreshToken.length === 0) return;
+
+    // Save refresh token to device storage...
+  }, [refreshToken]);
 
   const onGoogleSignIn = async () => {
     setLoading(true);
@@ -81,9 +97,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onSignOut = () => {
-    if (socialProfile?.provider === "google") {
+    if (identity?.provider === "google") {
       signOutGoogle();
-    } else if (socialProfile?.provider === "facebook") {
+    } else if (identity?.provider === "facebook") {
       signOutFacebook();
     }
 
@@ -92,7 +108,17 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ loading, user, onGoogleSignIn, onFacebookLogin, onSignOut }}
+      value={{
+        loading,
+        user,
+        onGoogleSignIn,
+        onFacebookLogin,
+        onSignOut,
+        accessToken,
+        setAccessToken,
+        refreshToken,
+        setRefreshToken
+      }}
     >
       {children}
     </AuthContext.Provider>

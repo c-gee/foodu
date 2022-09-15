@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useCallback, useEffect, useState } from "react";
+import { Provider as ReduxToolkitProvider } from "react-redux";
 import * as SplashScreen from "expo-splash-screen";
 import {
   useFonts,
@@ -14,6 +15,7 @@ import {
 import { RootStackNavigation } from "./src/navigation";
 import AuthContextProvider from "./src/contexts/AuthContext";
 import SearchContextProvider from "./src/contexts/SearchContext";
+import store from "./src/store";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -52,12 +54,14 @@ export default function App() {
   return (
     <SafeAreaProvider onLayout={onLayoutRootView}>
       <NavigationContainer>
-        <AuthContextProvider>
-          <SearchContextProvider>
-            <RootStackNavigation />
-            <StatusBar style="auto" />
-          </SearchContextProvider>
-        </AuthContextProvider>
+        <ReduxToolkitProvider store={store}>
+          <AuthContextProvider>
+            <SearchContextProvider>
+              <RootStackNavigation />
+              <StatusBar style="auto" />
+            </SearchContextProvider>
+          </AuthContextProvider>
+        </ReduxToolkitProvider>
       </NavigationContainer>
     </SafeAreaProvider>
   );

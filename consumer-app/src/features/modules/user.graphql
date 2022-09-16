@@ -26,7 +26,12 @@ mutation signUp(
   signUp(
     input: { email: $email, name: $name, areaCode: $areaCode, phone: $phone }
   ) {
-    accessToken
-    refreshToken
+    userId
+  }
+}
+
+mutation signInByPhone($areaCode: String!, $phone: String!) {
+  signInByPhone(input: { areaCode: $areaCode, phone: $phone }) {
+    userId
   }
 }

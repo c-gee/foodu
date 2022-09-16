@@ -1,14 +1,7 @@
 import * as yup from "yup";
 import "yup-phone-lite";
 
-export const signUpInputsSchema = yup.object().shape({
-  name: yup.string().trim().required("Name is required"),
-  email: yup
-    .string()
-    .trim()
-    .lowercase()
-    .email("Invalid email")
-    .required("Email is required"),
+export const signInByPhoneSchema = yup.object().shape({
   areaCode: yup.string().trim().required("Area code is required"),
   phone: yup
     .string()

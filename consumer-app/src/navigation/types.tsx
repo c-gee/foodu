@@ -9,6 +9,7 @@ export type RootStackParamList = {
   SignIn: undefined;
   SignUp: undefined;
   PhoneLogin: undefined;
+  OTPCodeVerification: undefined;
   Home: undefined;
   SpecialOffers: undefined;
   Promos: undefined;

@@ -7,44 +7,35 @@ import {
   Platform,
   KeyboardAvoidingView,
   Alert,
-  TouchableHighlight,
-  TextInputProps
+  TouchableHighlight
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
 import { EnvelopeIcon, UserIcon } from "react-native-heroicons/solid";
-import BouncyCheckbox from "react-native-bouncy-checkbox";
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { signUpInputsSchema } from "./validator";
-import NavigationTopBar from "../../components/NavigationTopBar";
 import { useAuth } from "../../contexts/AuthContext";
 import { RootStackScreenProps } from "../../navigation/types";
+import NavigationTopBar from "../../components/NavigationTopBar";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import ControlledTextInput from "../../components/ControlledTextInput";
 import FooduLogo from "../../../assets/foodu-logo.svg";
 import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
+import { SignUpInput } from "../../features/graphql/types.generated";
 import { useSignUpMutation } from "../../features/modules/user.generated";
 
 const AREA_CODE = "+60";
 
-type SignInInputs = {
-  email: string;
-  name: string;
-  areaCode: string;
-  phone: string;
-};
-
 const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
-  const [rememberMe, setRememberMe] = useState(false);
-  const { onGoogleSignIn, onFacebookLogin, setAccessToken, setRefreshToken } =
-    useAuth();
+  const { onGoogleSignIn, onFacebookLogin } = useAuth();
   const [signUp, { isLoading }] = useSignUpMutation();
   const {
     control,
     handleSubmit,
     formState: { errors }
-  } = useForm<SignInInputs>({
+  } = useForm<SignUpInput>({
     defaultValues: {
       email: "",
       name: "",
@@ -54,17 +45,20 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
     resolver: yupResolver(signUpInputsSchema)
   });
 
-  const onSignUp = async (data: SignInInputs) => {
+  const onSignUp = async (data: SignUpInput) => {
     try {
       const response = await signUp(data);
 
       if ("data" in response && response.data?.signUp) {
-        const { accessToken, refreshToken } = response.data?.signUp;
+        const { userId } = response.data?.signUp;
 
-        setAccessToken(accessToken);
-
-        if (rememberMe) {
-          setRefreshToken(refreshToken);
+        if (userId) {
+          navigation.navigate("PhoneLogin");
+        } else {
+          Alert.alert(
+            "We have a little problem.",
+            "Please try again, or contact our support if the problem persist."
+          );
         }
       }
 
@@ -95,12 +89,8 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           paddingBottom: 24
         }}
       >
+        {isLoading && <FullScreenLoader />}
         <NavigationTopBar title="" icon="go_back" onPress={navigation.goBack} />
-        {isLoading && (
-          <View className="absolute flex-1 justify-center items-center">
-            <Text className="text-4xl text-gray-900 font-bold">Loading...</Text>
-          </View>
-        )}
         <KeyboardAvoidingView
           className="px-6 flex-1"
           behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -127,17 +117,11 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
                 className="text-base text-gray-800 font-semibold leading-5"
                 textAlignVertical="center"
               />
-              <Controller
+              <ControlledTextInput
                 name="phone"
                 control={control}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    className="text-base text-gray-800 font-semibold leading-5 pl-3"
-                    onChangeText={onChange}
-                    value={value}
-                    placeholder="00000000"
-                  />
-                )}
+                placeholder="100000000"
+                className="text-base text-gray-800 font-semibold leading-5 pl-3"
               />
               {errors?.phone?.message && (
                 <Text className="text-base text-red-600 font-regular leading-5 pl-3">
@@ -147,17 +131,11 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
             </View>
             <View className="flex-1 flex-row justify-start items-center h-14 bg-gray-200 rounded-2xl px-5 pl-6">
               <EnvelopeIcon color="#BDBDBD" size={20} />
-              <Controller
+              <ControlledTextInput
                 name="email"
                 control={control}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    className="text-base text-gray-800 font-semibold leading-5 pl-5"
-                    onChangeText={(text) => onChange(text.toLowerCase())}
-                    value={value}
-                    placeholder="Email"
-                  />
-                )}
+                placeholder="Email"
+                className="text-base text-gray-800 font-semibold leading-5 pl-5"
               />
               {errors?.email?.message && (
                 <Text className="text-base text-red-600 font-regular leading-5 pl-3">
@@ -167,50 +145,17 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
             </View>
             <View className="flex-1 flex-row justify-start items-center h-14 bg-gray-200 rounded-2xl px-5 pl-6">
               <UserIcon color="#BDBDBD" size={20} />
-              <Controller
+              <ControlledTextInput
                 name="name"
                 control={control}
-                render={({ field: { onChange, value } }) => (
-                  <TextInput
-                    className="text-base text-gray-800 font-semibold leading-5 pl-5"
-                    onChangeText={onChange}
-                    value={value}
-                    placeholder="Full Name"
-                  />
-                )}
+                placeholder="Full Name"
+                className="text-base text-gray-800 font-semibold leading-5 pl-5"
               />
               {errors?.name?.message && (
                 <Text className="text-base text-red-600 font-regular leading-5 pl-3">
                   {errors?.name?.message}
                 </Text>
               )}
-            </View>
-            <View className="flex-1 justify-center items-center py-1">
-              <BouncyCheckbox
-                size={25}
-                fillColor="#1BAC4B"
-                unfillColor="#FFFFFF"
-                text="Remember me"
-                iconStyle={{
-                  borderColor: "#1BAC4B",
-                  borderRadius: 8,
-                  width: 20,
-                  height: 20
-                }}
-                innerIconStyle={{
-                  borderWidth: 2,
-                  borderRadius: 8,
-                  width: 20,
-                  height: 20
-                }}
-                textStyle={{
-                  fontSize: 16,
-                  color: "#212121",
-                  fontFamily: "Urbanist_600SemiBold",
-                  textDecorationLine: "none"
-                }}
-                onPress={setRememberMe}
-              />
             </View>
           </View>
           <View className="py-1">

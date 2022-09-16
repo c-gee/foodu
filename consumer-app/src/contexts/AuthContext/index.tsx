@@ -30,6 +30,8 @@ type Auth = {
   setAccessToken: Dispatch<SetStateAction<string | null>>;
   refreshToken: string | null;
   setRefreshToken: Dispatch<SetStateAction<string | null>>;
+  rememberMe: boolean;
+  setRememberMe: Dispatch<SetStateAction<boolean>>;
 };
 
 const AuthContext = createContext<Auth>({
@@ -41,7 +43,9 @@ const AuthContext = createContext<Auth>({
   accessToken: null,
   setAccessToken: () => {},
   refreshToken: null,
-  setRefreshToken: () => {}
+  setRefreshToken: () => {},
+  rememberMe: false,
+  setRememberMe: () => {}
 });
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
@@ -49,6 +53,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [identity, setIdentity] = useState<Identity | null>(null);
+  const [rememberMe, setRememberMe] = useState(false);
   const { googleProfile, signInWithGoogle, signOutGoogle } = useGoogleAuth();
   const { facebookProfile, loginWithFacebook, signOutFacebook } =
     useFacebookAuth();
@@ -69,14 +74,18 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     if (refreshToken === null || refreshToken.length === 0) return;
 
-    // Save refresh token to device storage...
-  }, [refreshToken]);
+    if (rememberMe) {
+      console.log("Saving Refresh Token", refreshToken);
+      // Save refresh token to device storage...
+    }
+  }, [refreshToken, rememberMe]);
 
   const onGoogleSignIn = async () => {
     setLoading(true);
 
     try {
       await signInWithGoogle();
+      setRememberMe(true);
     } catch (error) {
       console.log("Authentication error", error);
     } finally {
@@ -89,6 +98,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     try {
       await loginWithFacebook();
+      setRememberMe(true);
     } catch (error) {
       console.log("Authentication error", error);
     } finally {
@@ -117,7 +127,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         accessToken,
         setAccessToken,
         refreshToken,
-        setRefreshToken
+        setRefreshToken,
+        rememberMe,
+        setRememberMe
       }}
     >
       {children}

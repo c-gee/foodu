@@ -6,8 +6,14 @@ export const api = userApi.enhanceEndpoints({
     me: {
       providesTags: ["User"]
     },
-    signUp: {}
+    signUp: {},
+    signInByPhone: {}
   }
 });
 
-export const { useMeQuery, useLazyMeQuery, useSignUpMutation } = api;
+export const {
+  useMeQuery,
+  useLazyMeQuery,
+  useSignUpMutation,
+  useSignInByPhoneMutation
+} = api;

@@ -21,8 +21,7 @@ async function seedUsers() {
         email: casual.email.toLowerCase(),
         gender: casual.random_value(Gender),
         dateOfBirth: new Date(casual.date("YYYY-MM-DD")),
-        areaCode: "+60",
-        phone: casual.integer(100000000, 199999999).toString(),
+        phone: "+60" + casual.integer(100000000, 199999999).toString(),
         picture: `https://i.pravatar.cc/${150}`
       }
     });
@@ -36,7 +35,6 @@ async function seedUsers() {
       email: null,
       gender: null,
       dateOfBirth: null,
-      areaCode: null,
       phone: null,
       picture: null,
       identities: {
@@ -60,7 +58,6 @@ async function seedUsers() {
       email: casual.email.toLowerCase(),
       gender: null,
       dateOfBirth: null,
-      areaCode: null,
       phone: null,
       picture: null,
       identities: {

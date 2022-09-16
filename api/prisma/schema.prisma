@@ -30,13 +30,11 @@ model User {
   nickname      String?
   dateOfBirth   DateTime?      @db.Date
   gender        Gender?
-  areaCode      String?
-  phone         String?
+  phone         String?        @unique
   picture       String?
   identities    Identity[]
   refreshTokens RefreshToken[]
 
-  @@unique([areaCode, phone])
   @@map("users")
 }
 

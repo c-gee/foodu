@@ -14,7 +14,6 @@ CREATE TABLE "users" (
     "nickname" TEXT,
     "dateOfBirth" DATE,
     "gender" "Gender",
-    "areaCode" TEXT,
     "phone" TEXT,
     "picture" TEXT,
 
@@ -37,7 +36,7 @@ CREATE TABLE "identities" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_areaCode_phone_key" ON "users"("areaCode", "phone");
+CREATE UNIQUE INDEX "users_phone_key" ON "users"("phone");
 
 -- AddForeignKey
 ALTER TABLE "identities" ADD CONSTRAINT "identities_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE SET NULL ON UPDATE CASCADE;

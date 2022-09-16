@@ -33,6 +33,15 @@ export const signInByPhoneSchema = yup.object().shape({
     .required("Phone number is required")
 });
 
+export const verifyPhoneOTPInputSchema = yup.object().shape({
+  areaCode: yup.string().required("Area code is required"),
+  phone: yup
+    .string()
+    .phone("MY", "Invalid phone number")
+    .required("Phone number is required"),
+  code: yup.string().required("OTP code is required")
+});
+
 export const signOutSchema = yup.object().shape({
   refreshToken: yup.string()
 });

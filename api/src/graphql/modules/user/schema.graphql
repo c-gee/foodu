@@ -15,6 +15,10 @@ scalar JWT
 scalar JSON
 scalar IdentityData
 
+type UserIdResponse {
+  userId: ID!
+}
+
 type TokenResponse {
   accessToken: JWT!
   refreshToken: String!
@@ -58,9 +62,10 @@ type Query {
 }
 
 type Mutation {
-  signUp(input: SignUpInput!): TokenResponse
+  signUp(input: SignUpInput!): UserIdResponse
+  signInByPhone(input: SignInByPhoneInput!): UserIdResponse
   signInByProvider(input: SignInByProviderInput!): TokenResponse
-  signInByPhone(input: SignInByPhoneInput!): TokenResponse
+  verifyPhoneOTP(input: VerifyPhoneOTPInput!): TokenResponse
   signOut(input: SignOutInput): EmptyResponse
 }
 
@@ -90,4 +95,10 @@ input SignInByPhoneInput {
 
 input SignOutInput {
   refreshToken: String
+}
+
+input VerifyPhoneOTPInput {
+  areaCode: String!
+  phone: String!
+  code: String!
 }

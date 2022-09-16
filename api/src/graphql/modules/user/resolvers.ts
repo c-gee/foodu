@@ -1,3 +1,4 @@
+import { VERIFICATION_STATUS } from "./../../../lib/twilio";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { ValidationError } from "yup";
 
@@ -5,12 +6,14 @@ import {
   signUpInputsSchema,
   signInByProviderInput,
   signInByPhoneSchema,
-  signOutSchema
+  signOutSchema,
+  verifyPhoneOTPInputSchema
 } from "./validator";
 import { handleError } from "../errors";
 import { Resolvers, ErrorType } from "../../generated/graphql";
 import { useUser } from "../../../repositories/User";
 import { useRefreshToken } from "../../../repositories/RefreshToken";
+import { sendVerification, verifyOTP } from "../../../lib/twilio";
 
 const {
   createNewUser,
@@ -44,7 +47,7 @@ const resolvers: Resolvers = {
 
         const user = await createNewUser(prisma, input);
 
-        return getTokensResponse(prisma, user, { provider: "phone" });
+        return { userId: user.id };
       } catch (error: unknown) {
         if (error instanceof ValidationError) {
           return handleError(ErrorType.InvalidInputError, error.message);
@@ -93,7 +96,7 @@ const resolvers: Resolvers = {
         } else {
           return handleError(
             ErrorType.InternalServerError,
-            "Hmm..., something is wrong. Please try again later, or contact support if the problem persist."
+            "Hmm..., something is wrong. Please try again later, or contact support if the problem persists."
           );
         }
       } catch (error: unknown) {
@@ -105,10 +108,6 @@ const resolvers: Resolvers = {
       }
     },
 
-    /**
-     * Not complete yet!
-     * TODO: Implement OTP code verification
-     */
     async signInByPhone(_, { input }, { prisma }) {
       try {
         await signInByPhoneSchema.validate(input);
@@ -116,7 +115,55 @@ const resolvers: Resolvers = {
         const user = await findUserByPhone(prisma, input);
 
         if (user) {
-          return getTokensResponse(prisma, user, { provider: "phone" });
+          const verification = await sendVerification(
+            input.areaCode,
+            input.phone
+          );
+
+          if (verification.status === VERIFICATION_STATUS.pending) {
+            return { userId: user.id };
+          } else {
+            return handleError(
+              ErrorType.InternalServerError,
+              "Hmm..., something is wrong. Please try again later, or contact support if the problem persists."
+            );
+          }
+        } else {
+          return handleError(ErrorType.NotFoundError, "No such user found.");
+        }
+      } catch (error: unknown) {
+        if (error instanceof ValidationError) {
+          return handleError(ErrorType.InvalidInputError, error.message);
+        }
+
+        return handleError(ErrorType.UnknownError);
+      }
+    },
+
+    async verifyPhoneOTP(_, { input }, { prisma }) {
+      try {
+        await verifyPhoneOTPInputSchema.validate(input);
+
+        const user = await findUserByPhone(prisma, {
+          areaCode: input.areaCode,
+          phone: input.phone
+        });
+
+        if (user) {
+          const verification = await verifyOTP(
+            input.areaCode,
+            input.phone,
+            input.code
+          );
+
+          if (verification.status === VERIFICATION_STATUS.approved) {
+            return getTokensResponse(prisma, user, { provider: "phone" });
+          } else {
+            return handleError(
+              ErrorType.AuthenticationError,
+              "Phone OTP verification failed."
+            );
+          }
         } else {
           return handleError(ErrorType.NotFoundError, "No such user found.");
         }

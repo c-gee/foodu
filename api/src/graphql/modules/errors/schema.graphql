@@ -1,0 +1,8 @@
+enum ErrorType {
+  InvalidInputError
+  NotFoundError
+  AuthenticationError
+  NotAllowedError
+  UnknownError
+  InternalServerError
+}

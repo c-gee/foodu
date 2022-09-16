@@ -14,7 +14,6 @@ scalar DateTime
 scalar JWT
 scalar JSON
 scalar IdentityData
-scalar EmptyResponse
 
 type TokenResponse {
   accessToken: JWT!
@@ -79,7 +78,7 @@ input SignUpInput {
 }
 
 input SignInByProviderInput {
-  provider: Provider!
+  provider: String!
   sub: String!
   identityData: IdentityDataInput!
 }

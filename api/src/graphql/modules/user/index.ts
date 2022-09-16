@@ -11,9 +11,11 @@ export type IdentityData =
     }
   | Prisma.JsonValue;
 
-export const userModule = createModule({
+const userModule = createModule({
   id: "user-module",
   dirname: __dirname,
   typeDefs: loadFilesSync(join(__dirname, "./*.graphql")),
   resolvers: loadFilesSync(join(__dirname, "./resolvers.ts"))
 });
+
+export default userModule;

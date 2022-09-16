@@ -1,7 +1,10 @@
 import { createApplication } from "graphql-modules";
-import { scalarsModule } from "./modules/scalars";
-import { userModule } from "./modules/user";
+
 import { PrismaClient, User } from "@prisma/client";
+
+import errorsModule from "./modules/errors";
+import scalarsModule from "./modules/scalars";
+import userModule from "./modules/user";
 
 export type GraphQLContext = {
   prisma: PrismaClient;
@@ -9,7 +12,7 @@ export type GraphQLContext = {
 };
 
 export const graphQLApp = createApplication({
-  modules: [scalarsModule, userModule]
+  modules: [errorsModule, scalarsModule, userModule]
 });
 
 export const schema = graphQLApp.schema;

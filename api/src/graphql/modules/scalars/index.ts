@@ -1,11 +1,19 @@
-import { createModule, gql } from "graphql-modules";
-import { typeDefs, resolvers } from "graphql-scalars";
+import { createModule } from "graphql-modules";
+import { typeDefs as scalarTypeDefs, resolvers } from "graphql-scalars";
+import { mergeTypeDefs } from "@graphql-tools/merge";
+import { loadFilesSync } from "@graphql-tools/load-files";
+import { join } from "path";
 
-export type EmptyResponse = { _?: boolean };
+const customScalars = loadFilesSync(join(__dirname, "./schema.graphql"));
+const typeDefs = mergeTypeDefs([scalarTypeDefs.join("\n"), customScalars]);
 
-export const scalarsModule = createModule({
+const scalarsModule = createModule({
   id: "scalars-module",
   dirname: __dirname,
-  typeDefs: [gql(typeDefs.join("\n"))],
+  typeDefs: typeDefs,
   resolvers: { ...resolvers }
 });
+
+export default scalarsModule;
+
+export type EmptyResponse = { _?: boolean };

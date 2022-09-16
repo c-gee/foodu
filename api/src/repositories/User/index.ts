@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import {
+  Provider,
   SignInByPhoneInput,
   SignInByProviderInput,
   SignUpInput
@@ -55,11 +56,11 @@ const findOrCreateUserWithIdentity = async (
 
   const identity = await prisma.identity.upsert({
     where: {
-      provider_sub: { provider: input.provider, sub: input.sub }
+      provider_sub: { provider: input.provider as Provider, sub: input.sub }
     },
     create: {
       sub: input.sub,
-      provider: input.provider,
+      provider: input.provider as Provider,
       identityData: input.identityData,
       userId: null
     },
@@ -75,7 +76,7 @@ const findOrCreateUserWithIdentity = async (
 
     await prisma.identity.update({
       where: {
-        provider_sub: { provider: input.provider, sub: input.sub }
+        provider_sub: { provider: input.provider as Provider, sub: input.sub }
       },
       data: {
         userId: createUser.id

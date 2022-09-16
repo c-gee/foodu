@@ -1,12 +1,12 @@
 import { View, Text } from "react-native";
 import React from "react";
 
-const OTPCodeVerificationScreen = () => {
+const OTPCodeVerficationScreen = () => {
   return (
     <View>
-      <Text>OTPCodeVerificationScreen</Text>
+      <Text>OTPCodeVerficationScreen</Text>
     </View>
   );
 };
 
-export default OTPCodeVerificationScreen;
+export default OTPCodeVerficationScreen;

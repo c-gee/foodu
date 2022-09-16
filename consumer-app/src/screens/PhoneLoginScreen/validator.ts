@@ -1,11 +1,12 @@
 import * as yup from "yup";
-import "yup-phone-lite";
+import "yup-phone";
+import { yupPhoneTransformer } from "../../utils";
 
 export const signInByPhoneSchema = yup.object().shape({
-  areaCode: yup.string().trim().required("Area code is required"),
   phone: yup
     .string()
     .trim()
-    .phone("MY", "Invalid phone number")
+    .transform(yupPhoneTransformer)
+    .phone("MY", true, "Invalid phone number")
     .required("Phone number is required")
 });

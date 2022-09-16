@@ -1,5 +1,6 @@
 import * as yup from "yup";
-import "yup-phone-lite";
+import "yup-phone";
+import { yupPhoneTransformer } from "../../utils";
 
 export const signUpInputsSchema = yup.object().shape({
   name: yup.string().trim().required("Name is required"),
@@ -9,10 +10,10 @@ export const signUpInputsSchema = yup.object().shape({
     .lowercase()
     .email("Invalid email")
     .required("Email is required"),
-  areaCode: yup.string().trim().required("Area code is required"),
   phone: yup
     .string()
     .trim()
-    .phone("MY", "Invalid phone number")
+    .transform(yupPhoneTransformer)
+    .phone("MY", true, "Invalid phone number")
     .required("Phone number is required")
 });

@@ -1,7 +1,8 @@
 import * as yup from "yup";
-import "yup-phone-lite";
+import "yup-phone";
 
 import { Provider } from "../../generated/graphql";
+import { yupPhoneTransformer } from "../../../utils";
 
 const providers = Object.values(Provider);
 
@@ -13,11 +14,11 @@ export const signUpInputsSchema = yup.object().shape({
     .lowercase()
     .email("Invalid email")
     .required("Email is required"),
-  areaCode: yup.string().trim().required("Area code is required"),
   phone: yup
     .string()
     .trim()
-    .phone("MY", "Invalid phone number")
+    .transform(yupPhoneTransformer)
+    .phone("MY", true, "Invalid phone number")
     .required("Phone number is required")
 });
 
@@ -36,20 +37,20 @@ export const signInByProviderInput = yup.object().shape({
 });
 
 export const signInByPhoneSchema = yup.object().shape({
-  areaCode: yup.string().trim().required("Area code is required"),
   phone: yup
     .string()
     .trim()
-    .phone("MY", "Invalid phone number")
+    .transform(yupPhoneTransformer)
+    .phone("MY", true, "Invalid phone number")
     .required("Phone number is required")
 });
 
 export const verifyPhoneOTPInputSchema = yup.object().shape({
-  areaCode: yup.string().trim().required("Area code is required"),
   phone: yup
     .string()
     .trim()
-    .phone("MY", "Invalid phone number")
+    .transform(yupPhoneTransformer)
+    .phone("MY", true, "Invalid phone number")
     .required("Phone number is required"),
   code: yup.string().trim().required("OTP code is required")
 });

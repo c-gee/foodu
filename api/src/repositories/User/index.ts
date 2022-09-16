@@ -6,13 +6,14 @@ import {
   SignUpInput
 } from "../../graphql/generated/graphql";
 
+import { phoneFormatter } from "../../utils";
+
 const createNewUser = async (prisma: PrismaClient, input: SignUpInput) => {
   const user = await prisma.user.create({
     data: {
       email: input.email.toLowerCase().trim(),
       name: input.name.trim(),
-      areaCode: input.areaCode.trim(),
-      phone: input.phone.trim()
+      phone: phoneFormatter(input.phone.trim())
     }
   });
 
@@ -38,10 +39,7 @@ const findUserByPhone = async (
 ) => {
   const user = await prisma.user.findUnique({
     where: {
-      areaCode_phone: {
-        areaCode: input.areaCode.trim(),
-        phone: input.phone.trim()
-      }
+      phone: input.phone.trim()
     },
     include: {
       identities: true

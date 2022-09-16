@@ -9,7 +9,7 @@ const client = twilio(accountSid, authToken, {
   lazyLoading: true
 });
 
-const formatPhone = (areaCode: string, phone: string): string => {
+const phoneToUse = (phone: string): string => {
   if (
     process.env?.NODE_ENV &&
     process.env?.NODE_ENV === "development" &&
@@ -19,9 +19,7 @@ const formatPhone = (areaCode: string, phone: string): string => {
   }
 
   const formatted =
-    process.env.NODE_ENV === "development"
-      ? testReceiverPhone
-      : `${areaCode}${phone}`;
+    process.env.NODE_ENV === "development" ? testReceiverPhone : phone;
 
   return formatted;
 };
@@ -32,7 +30,7 @@ export const VERIFICATION_STATUS = {
   canceled: "canceled"
 };
 
-export const sendVerification = async (areaCode: string, phone: string) => {
+export const sendVerification = async (phone: string) => {
   if (!serviceSid) {
     throw new Error("Verify Service SID not set!");
   }
@@ -40,18 +38,14 @@ export const sendVerification = async (areaCode: string, phone: string) => {
   const verification = await client.verify.v2
     .services(serviceSid)
     .verifications.create({
-      to: formatPhone(areaCode, phone),
+      to: phoneToUse(phone),
       channel: "sms"
     });
 
   return verification;
 };
 
-export const verifyOTP = async (
-  areaCode: string,
-  phone: string,
-  code: string
-) => {
+export const verifyOTP = async (phone: string, code: string) => {
   if (!serviceSid) {
     throw new Error("Verify Service SID not set!");
   }
@@ -59,7 +53,7 @@ export const verifyOTP = async (
   const verification = await client.verify.v2
     .services(serviceSid)
     .verificationChecks.create({
-      to: formatPhone(areaCode, phone),
+      to: phoneToUse(phone),
       code: code
     });
 

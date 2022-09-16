@@ -26,7 +26,7 @@ import GoogleIcon from "../../../assets/google-icon.svg";
 import { SignUpInput } from "../../features/graphql/types.generated";
 import { useSignUpMutation } from "../../features/modules/user.generated";
 
-const AREA_CODE = "+60";
+const COUNTRY_CODE = "+60";
 
 const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
   const { onGoogleSignIn, onFacebookLogin } = useAuth();
@@ -39,7 +39,6 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
     defaultValues: {
       email: "",
       name: "",
-      areaCode: AREA_CODE,
       phone: ""
     },
     resolver: yupResolver(signUpInputsSchema)
@@ -113,7 +112,7 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           <View className="py-6 flex space-y-5">
             <View className="flex flex-1 flex-row justify-start items-center h-[60px] bg-gray-200 rounded-2xl px-5">
               <TextInput
-                value={AREA_CODE}
+                value={COUNTRY_CODE}
                 className="text-base text-gray-800 font-semibold leading-5"
                 textAlignVertical="center"
               />

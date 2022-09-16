@@ -25,7 +25,7 @@ import { SignInByPhoneInput } from "../../features/graphql/types.generated";
 import { useSignInByPhoneMutation } from "../../features/modules/user.generated";
 import ControlledTextInput from "../../components/ControlledTextInput";
 
-const AREA_CODE = "+60";
+const COUNTRY_CODE = "+60";
 
 const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
   const { onGoogleSignIn, onFacebookLogin, rememberMe, setRememberMe } =
@@ -37,7 +37,6 @@ const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
     formState: { errors }
   } = useForm<SignInByPhoneInput>({
     defaultValues: {
-      areaCode: AREA_CODE,
       phone: ""
     },
     resolver: yupResolver(signInByPhoneSchema)
@@ -110,7 +109,7 @@ const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           <View className="py-6 flex space-y-5">
             <View className="flex flex-1 flex-row justify-start items-center h-[60px] bg-gray-200 rounded-2xl px-5">
               <TextInput
-                value={AREA_CODE}
+                value={COUNTRY_CODE}
                 className="text-base leading-5"
                 textAlignVertical="center"
               />

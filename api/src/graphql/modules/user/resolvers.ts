@@ -115,10 +115,7 @@ const resolvers: Resolvers = {
         const user = await findUserByPhone(prisma, input);
 
         if (user) {
-          const verification = await sendVerification(
-            input.areaCode,
-            input.phone
-          );
+          const verification = await sendVerification(input.phone);
 
           if (verification.status === VERIFICATION_STATUS.pending) {
             return { userId: user.id };
@@ -145,16 +142,11 @@ const resolvers: Resolvers = {
         await verifyPhoneOTPInputSchema.validate(input);
 
         const user = await findUserByPhone(prisma, {
-          areaCode: input.areaCode,
           phone: input.phone
         });
 
         if (user) {
-          const verification = await verifyOTP(
-            input.areaCode,
-            input.phone,
-            input.code
-          );
+          const verification = await verifyOTP(input.phone, input.code);
 
           if (verification.status === VERIFICATION_STATUS.approved) {
             return getTokensResponse(prisma, user, { provider: "phone" });

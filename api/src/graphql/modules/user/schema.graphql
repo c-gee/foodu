@@ -37,7 +37,6 @@ type User {
   nickname: String
   dateOfBirth: Date
   gender: Gender
-  areaCode: String
   phone: String
   picture: String
   identities: [Identity]
@@ -82,7 +81,6 @@ input IdentityDataInput {
 input SignUpInput {
   email: String!
   name: String!
-  areaCode: String!
   phone: String!
 }
 
@@ -93,7 +91,6 @@ input SignInByProviderInput {
 }
 
 input SignInByPhoneInput {
-  areaCode: String!
   phone: String!
 }
 
@@ -102,7 +99,6 @@ input SignOutInput {
 }
 
 input VerifyPhoneOTPInput {
-  areaCode: String!
   phone: String!
   code: String!
 }

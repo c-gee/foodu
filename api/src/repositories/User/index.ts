@@ -9,10 +9,10 @@ import {
 const createNewUser = async (prisma: PrismaClient, input: SignUpInput) => {
   const user = await prisma.user.create({
     data: {
-      email: input.email,
-      name: input.name,
-      areaCode: input.areaCode,
-      phone: input.phone
+      email: input.email.toLowerCase().trim(),
+      name: input.name.trim(),
+      areaCode: input.areaCode.trim(),
+      phone: input.phone.trim()
     }
   });
 
@@ -22,7 +22,7 @@ const createNewUser = async (prisma: PrismaClient, input: SignUpInput) => {
 const findUserById = async (prisma: PrismaClient, id: string) => {
   const user = await prisma.user.findUnique({
     where: {
-      id: id
+      id: id.trim()
     },
     include: {
       identities: true
@@ -38,7 +38,10 @@ const findUserByPhone = async (
 ) => {
   const user = await prisma.user.findUnique({
     where: {
-      areaCode_phone: { areaCode: input.areaCode, phone: input.phone }
+      areaCode_phone: {
+        areaCode: input.areaCode.trim(),
+        phone: input.phone.trim()
+      }
     },
     include: {
       identities: true
@@ -56,11 +59,14 @@ const findOrCreateUserWithIdentity = async (
 
   const identity = await prisma.identity.upsert({
     where: {
-      provider_sub: { provider: input.provider as Provider, sub: input.sub }
+      provider_sub: {
+        provider: input.provider.trim() as Provider,
+        sub: input.sub.trim()
+      }
     },
     create: {
-      sub: input.sub,
-      provider: input.provider as Provider,
+      sub: input.sub.trim(),
+      provider: input.provider.trim() as Provider,
       identityData: input.identityData,
       userId: null
     },
@@ -76,7 +82,10 @@ const findOrCreateUserWithIdentity = async (
 
     await prisma.identity.update({
       where: {
-        provider_sub: { provider: input.provider as Provider, sub: input.sub }
+        provider_sub: {
+          provider: input.provider.trim() as Provider,
+          sub: input.sub.trim()
+        }
       },
       data: {
         userId: createUser.id

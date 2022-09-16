@@ -14,7 +14,7 @@ const revokeRefreshToken = async (
 ): Promise<RefreshToken> => {
   const refreshToken = await prisma.refreshToken.update({
     where: {
-      token_userId: { token, userId }
+      token_userId: { token: token.trim(), userId: userId.trim() }
     },
     data: {
       revoked: true
@@ -30,7 +30,7 @@ const createRefreshToken = async (
 ): Promise<RefreshToken> => {
   const refreshToken = await prisma.refreshToken.create({
     data: {
-      userId: userId,
+      userId: userId.trim(),
       token: generateRefreshToken()
     }
   });

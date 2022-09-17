@@ -25,5 +25,13 @@ mutation signUp($email: String!, $name: String!, $phone: String!) {
 mutation signInByPhone($phone: String!) {
   signInByPhone(input: { phone: $phone }) {
     userId
+    phone
+  }
+}
+
+mutation verifyPhoneOtp($phone: String!, $code: String!) {
+  verifyPhoneOtp(input: { phone: $phone, code: $code }) {
+    accessToken
+    refreshToken
   }
 }

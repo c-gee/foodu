@@ -110,6 +110,8 @@ const resolvers: Resolvers = {
 
     async signInByPhone(_, { input }, { prisma }) {
       try {
+        console.log("signInByPhone", input);
+
         await signInByPhoneSchema.validate(input);
 
         const user = await findUserByPhone(prisma, input);
@@ -118,7 +120,7 @@ const resolvers: Resolvers = {
           const verification = await sendVerification(input.phone);
 
           if (verification.status === VERIFICATION_STATUS.pending) {
-            return { userId: user.id };
+            return { userId: user.id, phone: user.phone as string };
           } else {
             return handleError(
               ErrorType.InternalServerError,
@@ -133,11 +135,16 @@ const resolvers: Resolvers = {
           return handleError(ErrorType.InvalidInputError, error.message);
         }
 
-        return handleError(ErrorType.UnknownError);
+        console.log("signInByPhone", error);
+
+        return handleError(
+          ErrorType.UnknownError,
+          "Hmm..., something is wrong. Please try again later, or contact support if the problem persists."
+        );
       }
     },
 
-    async verifyPhoneOTP(_, { input }, { prisma }) {
+    async verifyPhoneOtp(_, { input }, { prisma }) {
       try {
         await verifyPhoneOTPInputSchema.validate(input);
 

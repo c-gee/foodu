@@ -7,12 +7,14 @@ import {
   useEffect,
   useState
 } from "react";
+import * as SecureStore from "expo-secure-store";
 
 import useGoogleAuth from "../../hooks/GoogleAuth";
 import useFacebookAuth from "../../hooks/FacebookAuth";
 import { User } from "../../features/graphql/types.generated";
 
 type AuthProvider = "google" | "facebook";
+
 type Identity = {
   provider: AuthProvider;
   sub?: string | number;
@@ -20,6 +22,12 @@ type Identity = {
   name?: string;
   picture?: string;
 };
+
+type Tokens = {
+  accessToken: string;
+  refreshToken: string;
+};
+
 type Auth = {
   user: User | null;
   loading: boolean;
@@ -32,21 +40,26 @@ type Auth = {
   setRefreshToken: Dispatch<SetStateAction<string | null>>;
   rememberMe: boolean;
   setRememberMe: Dispatch<SetStateAction<boolean>>;
+  saveTokens: ({ accessToken, refreshToken }: Tokens) => void;
 };
 
 const AuthContext = createContext<Auth>({
   user: null,
   loading: false,
-  onGoogleSignIn: () => {},
-  onFacebookLogin: () => {},
-  onSignOut: () => {},
+  onGoogleSignIn: async () => {},
+  onFacebookLogin: async () => {},
+  onSignOut: async () => {},
   accessToken: null,
   setAccessToken: () => {},
   refreshToken: null,
   setRefreshToken: () => {},
   rememberMe: false,
-  setRememberMe: () => {}
+  setRememberMe: () => {},
+  saveTokens: async ({ accessToken, refreshToken }: Tokens) => {}
 });
+
+const ACCESS_TOKEN_KEY = "foodu-access-token";
+const REFRESH_TOKEN_KEY = "foodu-refresh-token";
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -71,14 +84,23 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     setIdentity(facebookProfile);
   }, [facebookProfile]);
 
-  useEffect(() => {
-    if (refreshToken === null || refreshToken.length === 0) return;
-
-    if (rememberMe) {
-      console.log("Saving Refresh Token", refreshToken);
-      // Save refresh token to device storage...
+  const saveTokens = async ({ accessToken, refreshToken }: Tokens) => {
+    if (!accessToken || accessToken === null || accessToken.length === 0) {
+      throw "Access token not given!";
     }
-  }, [refreshToken, rememberMe]);
+
+    if (!accessToken || refreshToken === null || accessToken.length === 0) {
+      throw "Refresh token not given!";
+    }
+
+    await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
+    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+  };
+
+  const resetTokens = () => {
+    setAccessToken(null);
+    setRefreshToken(null);
+  };
 
   const onGoogleSignIn = async () => {
     setLoading(true);
@@ -106,14 +128,18 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const onSignOut = () => {
+  const onSignOut = async () => {
+    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+
+    resetTokens();
+    setUser(null);
+
     if (identity?.provider === "google") {
       signOutGoogle();
     } else if (identity?.provider === "facebook") {
       signOutFacebook();
     }
-
-    setUser(null);
   };
 
   return (
@@ -129,7 +155,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         refreshToken,
         setRefreshToken,
         rememberMe,
-        setRememberMe
+        setRememberMe,
+        saveTokens
       }}
     >
       {children}

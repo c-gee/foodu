@@ -47,10 +47,10 @@ const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
       const response = await signInByPhone(data);
 
       if ("data" in response && response.data?.signInByPhone) {
-        const { userId } = response.data?.signInByPhone;
+        const { userId, phone } = response.data?.signInByPhone;
 
-        if (userId) {
-          navigation.navigate("OTPCodeVerification");
+        if (userId && phone) {
+          navigation.navigate("OTPCodeVerification", { phone });
         } else {
           Alert.alert(
             "We have a little problem.",

@@ -23,3 +23,19 @@ export const yupPhoneTransformer = (
     return phoneFormatter(value);
   }
 };
+
+export const maskText = (
+  text: string,
+  startPosition: number,
+  stopPositon: number
+): string => {
+  if (startPosition >= stopPositon) {
+    throw new Error("Start position cannot be greater than stop position!");
+  }
+  const stopAt = text.length > stopPositon ? stopPositon : text.length;
+  const start = text.slice(0, startPosition);
+  const masked = text.slice(startPosition, stopPositon).replace(/./g, "*");
+  const end = text.slice(stopAt);
+
+  return start + masked + end;
+};

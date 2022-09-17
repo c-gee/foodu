@@ -11,7 +11,6 @@ enum Provider {
 scalar BigInt
 scalar Date
 scalar DateTime
-scalar JWT
 scalar JSON
 scalar IdentityData
 
@@ -25,7 +24,7 @@ type SignInByPhoneResponse {
 }
 
 type TokenResponse {
-  accessToken: JWT!
+  accessToken: String!
   refreshToken: String!
 }
 type User {
@@ -66,9 +65,9 @@ type Query {
 
 type Mutation {
   signUp(input: SignUpInput!): UserIdResponse
-  signInByPhone(input: SignInByPhoneInput!): UserIdResponse
+  signInByPhone(input: SignInByPhoneInput!): SignInByPhoneResponse
   signInByProvider(input: SignInByProviderInput!): TokenResponse
-  verifyPhoneOTP(input: VerifyPhoneOTPInput!): TokenResponse
+  verifyPhoneOtp(input: VerifyPhoneOTPInput!): TokenResponse
   signOut(input: SignOutInput): EmptyResponse
 }
 

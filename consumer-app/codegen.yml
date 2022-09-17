@@ -16,7 +16,6 @@ generates:
     config:
       scalars:
         BigInt: bigint
-        EmailAddress: string
         Date: Date
         DateTime: Date
   src/:

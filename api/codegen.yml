@@ -34,4 +34,3 @@ generates:
         BigInt: bigint
         Date: Date
         DateTime: Date
-        JWT: string

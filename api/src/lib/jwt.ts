@@ -1,6 +1,7 @@
 import {
   sign,
   verify,
+  decode,
   JwtPayload,
   SignOptions,
   VerifyOptions,
@@ -14,7 +15,7 @@ type JwtPayloadProvider = "google" | "facebook" | "phone";
 
 export type AuthMetadata = { provider: JwtPayloadProvider; sub?: string };
 
-type Payload = {
+export type PayloadWithAuthMetadata = {
   sub: string;
   auth_metadata: AuthMetadata;
 };
@@ -35,14 +36,14 @@ export const generateRefreshToken = (): string => {
 
 export const generateAccessToken = (
   user: User,
-  provider: AuthMetadata
+  authMetadata: AuthMetadata
 ): string => {
   if (!JWT_SECRET) throw new Error("JWT Secret not set!!!");
 
-  const payload: Payload = {
+  const payload: PayloadWithAuthMetadata = {
     sub: user.id.toString(), // Internal user id
     auth_metadata: {
-      ...provider
+      ...authMetadata
     }
   };
 
@@ -82,4 +83,9 @@ export const verifyToken = (token: string): JwtVerificationResult => {
       tokenPayload: null
     };
   }
+};
+
+export const decodeToken = (token: string) => {
+  const decoded = decode(token);
+  return decoded;
 };

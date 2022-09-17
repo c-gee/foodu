@@ -7,6 +7,27 @@ import {
   generateAccessToken
 } from "../../lib/jwt";
 
+type TokenRequest = {
+  prisma: PrismaClient;
+  user: User;
+  authMetadata: AuthMetadata;
+  reusableToken?: RefreshToken;
+};
+
+const findRefreshToken = async (
+  prisma: PrismaClient,
+  token: string,
+  userId: string
+): Promise<RefreshToken> => {
+  const refreshToken = await prisma.refreshToken.findUniqueOrThrow({
+    where: {
+      token_userId: { token: token.trim(), userId: userId.trim() }
+    }
+  });
+
+  return refreshToken;
+};
+
 const revokeRefreshToken = async (
   prisma: PrismaClient,
   token: string,
@@ -38,13 +59,16 @@ const createRefreshToken = async (
   return refreshToken;
 };
 
-const getTokensResponse = async (
-  prisma: PrismaClient,
-  user: User,
-  provider: AuthMetadata
-): Promise<TokenResponse> => {
-  const accessToken = generateAccessToken(user, provider);
-  const refreshToken = (await createRefreshToken(prisma, user.id)).token;
+const getTokensResponse = async ({
+  prisma,
+  user,
+  authMetadata,
+  reusableToken
+}: TokenRequest): Promise<TokenResponse> => {
+  const accessToken = generateAccessToken(user, authMetadata);
+  const refreshToken = reusableToken
+    ? reusableToken.token
+    : (await createRefreshToken(prisma, user.id)).token;
 
   return {
     accessToken,
@@ -53,6 +77,7 @@ const getTokensResponse = async (
 };
 
 export const useRefreshToken = () => ({
+  findRefreshToken,
   getTokensResponse,
   revokeRefreshToken
 });

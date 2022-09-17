@@ -1,4 +1,5 @@
 import * as yup from "yup";
+import { RefreshToken } from "../graphql/generated/graphql";
 
 export const COUNTRY_CODE = "+60";
 
@@ -16,10 +17,29 @@ export const phoneFormatter = (phone: string) => {
 
 export const yupPhoneTransformer = (
   value: unknown,
-  currenValue: unknown,
+  _currenValue: unknown,
   context: yup.StringSchema
 ): string | undefined => {
   if (context.isType(value) && value !== null && typeof value === "string") {
     return phoneFormatter(value);
   }
+};
+
+const REFRESH_TOKEN_VALID_DAYS = 90;
+
+const isTokenExpired = (tokenCreatedDate: Date): boolean => {
+  const daysAgoInMs = REFRESH_TOKEN_VALID_DAYS * 24 * 60 * 60 * 1000;
+  const daysAgoTimestamp = new Date().getTime() - daysAgoInMs;
+  const tokenCreatedAtTimestamp = tokenCreatedDate.getTime();
+
+  if (daysAgoTimestamp > tokenCreatedAtTimestamp) {
+    return true;
+  }
+  return false;
+};
+
+export const isTokenRefreshable = (token: RefreshToken): boolean => {
+  if (!token.createdAt) return false;
+
+  return !token.revoked && !isTokenExpired(token.createdAt);
 };

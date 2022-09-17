@@ -45,7 +45,7 @@ export const signInByPhoneSchema = yup.object().shape({
     .required("Phone number is required")
 });
 
-export const verifyPhoneOTPInputSchema = yup.object().shape({
+export const verifyPhoneOtpInputSchema = yup.object().shape({
   phone: yup
     .string()
     .trim()
@@ -53,6 +53,11 @@ export const verifyPhoneOTPInputSchema = yup.object().shape({
     .phone("MY", true, "Invalid phone number")
     .required("Phone number is required"),
   code: yup.string().trim().required("OTP code is required")
+});
+
+export const refreshTokensSchema = yup.object().shape({
+  refreshToken: yup.string().trim().required("Refresh token is required"),
+  accessToken: yup.string().trim().required("Access token is required")
 });
 
 export const signOutSchema = yup.object().shape({

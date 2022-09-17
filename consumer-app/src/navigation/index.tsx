@@ -19,7 +19,7 @@ import { useAuth } from "../contexts/AuthContext";
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootStackNavigation = () => {
-  const { user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <RootStack.Navigator
@@ -27,7 +27,7 @@ export const RootStackNavigation = () => {
         headerShown: false
       }}
     >
-      {user === null ? (
+      {!isAuthenticated ? (
         <RootStack.Group>
           <RootStack.Screen name="SignIn" component={SignInScreen} />
           <RootStack.Screen name="SignUp" component={SignUpScreen} />

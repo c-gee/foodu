@@ -8,7 +8,8 @@ export const api = userApi.enhanceEndpoints({
     },
     signUp: {},
     signInByPhone: {},
-    verifyPhoneOtp: {}
+    verifyPhoneOtp: {},
+    signInByProvider: {}
   }
 });
 
@@ -17,5 +18,6 @@ export const {
   useLazyMeQuery,
   useSignUpMutation,
   useSignInByPhoneMutation,
-  useVerifyPhoneOtpMutation
+  useVerifyPhoneOtpMutation,
+  useSignInByProviderMutation
 } = api;

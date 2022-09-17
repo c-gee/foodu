@@ -3,18 +3,24 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Platform
+  Platform,
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { useAuth } from "../../contexts/AuthContext";
+import FullScreenLoader from "../../components/FullScreenLoader";
+import useGoogleAuth from "../../hooks/GoogleAuth";
+import useFacebookAuth from "../../hooks/FacebookAuth";
+import useProvidersAuth from "../../hooks/ProvidersAuth";
 import { RootStackScreenProps } from "../../navigation/types";
 import SignInArt from "../../../assets/sign-in-art.svg";
 import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
 
 const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
-  const { onGoogleSignIn, onFacebookLogin } = useAuth();
+  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
+  const { signInWithGoogle } = useGoogleAuth();
+  const { loginWithFacebook } = useFacebookAuth();
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -24,6 +30,7 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
           justifyContent: "center"
         }}
       >
+        {(authLoading || isSignInByProviderLoading) && <FullScreenLoader />}
         <View className="px-6">
           <View className="py-6 self-center">
             <SignInArt
@@ -39,7 +46,7 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
           </Text>
           <View className="py-6 flex space-y-4">
             <TouchableOpacity
-              onPress={onFacebookLogin}
+              onPress={loginWithFacebook}
               className="h-[60px] w-full flex-row justify-center items-center space-x-2 rounded-2xl border-[1px] border-gray-200"
             >
               <FacebookIcon width={24} height={25} />
@@ -48,7 +55,7 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={onGoogleSignIn}
+              onPress={signInWithGoogle}
               className="h-[60px] w-full flex-row justify-center items-center space-x-2 rounded-2xl border-[1px] border-gray-200"
             >
               <GoogleIcon width={24} height={25} />

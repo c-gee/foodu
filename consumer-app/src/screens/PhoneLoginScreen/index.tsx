@@ -16,6 +16,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { signInByPhoneSchema } from "./validator";
 import NavigationTopBar from "../../components/NavigationTopBar";
 import { useAuth } from "../../contexts/AuthContext";
+import useFacebookAuth from "../../hooks/FacebookAuth";
+import useGoogleAuth from "../../hooks/GoogleAuth";
+import useProvidersAuth from "../../hooks/ProvidersAuth";
 import { RootStackScreenProps } from "../../navigation/types";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import FooduLogo from "../../../assets/foodu-logo.svg";
@@ -28,8 +31,10 @@ import ControlledTextInput from "../../components/ControlledTextInput";
 const COUNTRY_CODE = "+60";
 
 const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
-  const { onGoogleSignIn, onFacebookLogin, rememberMe, setRememberMe } =
-    useAuth();
+  const { rememberMe, setRememberMe } = useAuth();
+  const { signInWithGoogle } = useGoogleAuth();
+  const { loginWithFacebook } = useFacebookAuth();
+  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
   const [signInByPhone, { isLoading }] = useSignInByPhoneMutation();
   const {
     control,
@@ -86,7 +91,9 @@ const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           paddingBottom: 24
         }}
       >
-        {isLoading && <FullScreenLoader />}
+        {(isLoading || authLoading || isSignInByProviderLoading) && (
+          <FullScreenLoader />
+        )}
         <NavigationTopBar title="" icon="go_back" onPress={navigation.goBack} />
         <KeyboardAvoidingView
           className="px-6 flex-1"
@@ -185,13 +192,13 @@ const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           </View>
           <View className="py-2 flex-row justify-center items-center space-x-5">
             <TouchableOpacity
-              onPress={onFacebookLogin}
+              onPress={loginWithFacebook}
               className="h-[60px] basis-1/3 justify-center items-center rounded-2xl border-[1px] border-gray-200"
             >
               <FacebookIcon width={24} height={25} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={onGoogleSignIn}
+              onPress={signInWithGoogle}
               className="h-[60px] basis-1/3 justify-center items-center rounded-2xl border-[1px] border-gray-200"
             >
               <GoogleIcon width={24} height={25} />

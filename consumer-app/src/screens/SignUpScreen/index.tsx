@@ -15,11 +15,13 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 
 import { signUpInputsSchema } from "./validator";
-import { useAuth } from "../../contexts/AuthContext";
-import { RootStackScreenProps } from "../../navigation/types";
+import useGoogleAuth from "../../hooks/GoogleAuth";
+import useFacebookAuth from "../../hooks/FacebookAuth";
+import useProvidersAuth from "../../hooks/ProvidersAuth";
 import NavigationTopBar from "../../components/NavigationTopBar";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import ControlledTextInput from "../../components/ControlledTextInput";
+import { RootStackScreenProps } from "../../navigation/types";
 import FooduLogo from "../../../assets/foodu-logo.svg";
 import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
@@ -29,7 +31,9 @@ import { useSignUpMutation } from "../../features/modules/user.generated";
 const COUNTRY_CODE = "+60";
 
 const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
-  const { onGoogleSignIn, onFacebookLogin } = useAuth();
+  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
+  const { signInWithGoogle } = useGoogleAuth();
+  const { loginWithFacebook } = useFacebookAuth();
   const [signUp, { isLoading }] = useSignUpMutation();
   const {
     control,
@@ -88,7 +92,9 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           paddingBottom: 24
         }}
       >
-        {isLoading && <FullScreenLoader />}
+        {(isLoading || authLoading || isSignInByProviderLoading) && (
+          <FullScreenLoader />
+        )}
         <NavigationTopBar title="" icon="go_back" onPress={navigation.goBack} />
         <KeyboardAvoidingView
           className="px-6 flex-1"
@@ -108,7 +114,6 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
               Create New Account
             </Text>
           </View>
-
           <View className="py-6 flex space-y-5">
             <View className="flex flex-1 flex-row justify-start items-center h-[60px] bg-gray-200 rounded-2xl px-5">
               <TextInput
@@ -188,13 +193,13 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           </View>
           <View className="py-2 flex-row justify-center items-center space-x-5">
             <TouchableOpacity
-              onPress={onFacebookLogin}
+              onPress={loginWithFacebook}
               className="h-[60px] basis-1/3 justify-center items-center rounded-2xl border-[1px] border-gray-200"
             >
               <FacebookIcon width={24} height={25} />
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={onGoogleSignIn}
+              onPress={signInWithGoogle}
               className="h-[60px] basis-1/3 justify-center items-center rounded-2xl border-[1px] border-gray-200"
             >
               <GoogleIcon width={24} height={25} />

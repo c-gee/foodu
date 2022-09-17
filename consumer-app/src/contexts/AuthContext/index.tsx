@@ -9,19 +9,19 @@ import {
 } from "react";
 import * as SecureStore from "expo-secure-store";
 
-import useGoogleAuth from "../../hooks/GoogleAuth";
-import useFacebookAuth from "../../hooks/FacebookAuth";
-import { User } from "../../features/graphql/types.generated";
-
 type AuthProvider = "google" | "facebook";
 
-type Identity = {
+export type Identity = {
   provider: AuthProvider;
-  sub?: string | number;
-  email?: string;
-  name?: string;
-  picture?: string;
+  sub: string;
+  identityData: {
+    email?: string;
+    name?: string;
+    picture?: string;
+  };
 };
+
+type AsyncFn = (...args: any[]) => Promise<any>;
 
 type Tokens = {
   accessToken: string;
@@ -29,11 +29,18 @@ type Tokens = {
 };
 
 type Auth = {
-  user: User | null;
-  loading: boolean;
-  onGoogleSignIn: () => void;
-  onFacebookLogin: () => void;
-  onSignOut: () => void;
+  isAuthenticated: boolean;
+  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  authLoading: boolean;
+  withProviderSignIn: <T extends AsyncFn>(
+    signInWithProviderFn: T
+  ) => Promise<void>;
+  withProviderSignOut: (signOutProviderFn: () => void) => Promise<void>;
+  signOut: () => Promise<void>;
+  identity: Identity | null;
+  setIdentity: Dispatch<SetStateAction<Identity | null>>;
+  authError: string | null;
+  setAuthError: Dispatch<SetStateAction<string | null>>;
   accessToken: string | null;
   setAccessToken: Dispatch<SetStateAction<string | null>>;
   refreshToken: string | null;
@@ -44,11 +51,16 @@ type Auth = {
 };
 
 const AuthContext = createContext<Auth>({
-  user: null,
-  loading: false,
-  onGoogleSignIn: async () => {},
-  onFacebookLogin: async () => {},
-  onSignOut: async () => {},
+  isAuthenticated: false,
+  setIsAuthenticated: () => {},
+  authLoading: false,
+  withProviderSignIn: async () => {},
+  withProviderSignOut: async () => {},
+  signOut: async () => {},
+  identity: null,
+  setIdentity: () => {},
+  authError: null,
+  setAuthError: () => {},
   accessToken: null,
   setAccessToken: () => {},
   refreshToken: null,
@@ -62,27 +74,13 @@ const ACCESS_TOKEN_KEY = "foodu-access-token";
 const REFRESH_TOKEN_KEY = "foodu-refresh-token";
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
   const [identity, setIdentity] = useState<Identity | null>(null);
   const [rememberMe, setRememberMe] = useState(false);
-  const { googleProfile, signInWithGoogle, signOutGoogle } = useGoogleAuth();
-  const { facebookProfile, loginWithFacebook, signOutFacebook } =
-    useFacebookAuth();
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (googleProfile === null || !googleProfile?.userInfo?.sub) return;
-
-    setIdentity(googleProfile);
-  }, [googleProfile]);
-
-  useEffect(() => {
-    if (facebookProfile === null || !facebookProfile?.userInfo?.sub) return;
-
-    setIdentity(facebookProfile);
-  }, [facebookProfile]);
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   const saveTokens = async ({ accessToken, refreshToken }: Tokens) => {
     if (!accessToken || accessToken === null || accessToken.length === 0) {
@@ -102,54 +100,46 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     setRefreshToken(null);
   };
 
-  const onGoogleSignIn = async () => {
-    setLoading(true);
+  const withProviderSignIn = async <T extends AsyncFn>(
+    signInWithProviderFn: T
+  ) => {
+    setAuthLoading(true);
 
     try {
-      await signInWithGoogle();
-      setRememberMe(true);
-    } catch (error) {
-      console.log("Authentication error", error);
+      await signInWithProviderFn();
+    } catch (error: unknown) {
+      console.log("Provider authentication error", error);
+      setAuthError("Authentication failed with provider.");
     } finally {
-      setLoading(false);
+      setAuthLoading(false);
     }
   };
 
-  const onFacebookLogin = async () => {
-    setLoading(true);
-
-    try {
-      await loginWithFacebook();
-      setRememberMe(true);
-    } catch (error) {
-      console.log("Authentication error", error);
-    } finally {
-      setLoading(false);
-    }
+  const withProviderSignOut = async (signOutProviderFn: () => void) => {
+    signOutProviderFn();
+    signOut();
   };
 
-  const onSignOut = async () => {
+  const signOut = async () => {
     await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
     await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
-
     resetTokens();
-    setUser(null);
-
-    if (identity?.provider === "google") {
-      signOutGoogle();
-    } else if (identity?.provider === "facebook") {
-      signOutFacebook();
-    }
+    setIsAuthenticated(false);
   };
 
   return (
     <AuthContext.Provider
       value={{
-        loading,
-        user,
-        onGoogleSignIn,
-        onFacebookLogin,
-        onSignOut,
+        isAuthenticated,
+        setIsAuthenticated,
+        authLoading,
+        withProviderSignIn,
+        withProviderSignOut,
+        signOut,
+        identity,
+        setIdentity,
+        authError,
+        setAuthError,
         accessToken,
         setAccessToken,
         refreshToken,

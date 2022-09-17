@@ -9,17 +9,7 @@ import {
   GOOGLE_WEB_CLIENT_ID
 } from "@env";
 
-type UserInfo = {
-  sub: string;
-  email?: string;
-  name?: string;
-  picture?: string;
-};
-
-type GoogleProfile = {
-  provider: "google";
-  userInfo: UserInfo;
-};
+import { useAuth } from "../../contexts/AuthContext/index";
 
 const environment = process.env;
 
@@ -36,79 +26,77 @@ const config = {
 WebBrowser.maybeCompleteAuthSession();
 
 const useGoogleAuth = () => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [googleProfile, setGoogleProfile] = useState<GoogleProfile | null>(
+  const [googleAccessToken, setGoogleAccessToken] = useState<string | null>(
     null
   );
-  const [error, setError] = useState<string | null>(null);
+  const { withProviderSignIn, withProviderSignOut, setIdentity, setAuthError } =
+    useAuth();
   const [_, response, promptAsync] = Google.useAuthRequest(config);
 
   useEffect(() => {
     if (response?.type === "success" && response.authentication?.accessToken) {
       const { accessToken } = response.authentication;
 
-      console.log(`response`, response);
-
-      setAccessToken(accessToken);
+      setGoogleAccessToken(accessToken);
     } else if (response?.type === "cancel" || response?.type === "dismiss") {
       console.log("Google Authentication cancelled");
     } else if (response?.type == "error") {
       console.log("Google Authentication error", response?.error?.message);
 
       if (response?.error?.message) {
-        setError(response?.error?.message);
+        setAuthError(response?.error?.message);
       }
     }
   }, [response]);
 
   useEffect(() => {
-    if (accessToken === null) return;
+    if (googleAccessToken === null) return;
 
     async function getAndSetProfile() {
       const userInfoResponse = await fetch(
         "https://openidconnect.googleapis.com/v1/userinfo",
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${googleAccessToken}`
           }
         }
       );
       userInfoResponse
         .json()
         .then((data) => {
-          setGoogleProfile({
+          setIdentity({
+            sub: data.sub,
             provider: "google",
-            userInfo: {
-              sub: data.sub,
+            identityData: {
               name: data?.name,
               email: data?.email,
               picture: data?.picture
             }
           });
         })
-        .catch((error) => {
-          console.log("Google UserInfo error", error);
-          setGoogleProfile(null);
+        .catch((error: unknown) => {
+          setIdentity(null);
+          setAuthError("Google authentication unsuccesful.");
         });
     }
 
     getAndSetProfile();
-  }, [accessToken]);
+  }, [googleAccessToken]);
 
   const signInWithGoogle = async () => {
-    await promptAsync();
+    await withProviderSignIn(promptAsync);
   };
 
   const signOutGoogle = () => {
-    setAccessToken(null);
-    setGoogleProfile(null);
+    withProviderSignOut(() => {
+      setGoogleAccessToken(null);
+      setIdentity(null);
+    });
   };
 
   return {
-    googleProfile,
     signInWithGoogle,
-    signOutGoogle,
-    error
+    signOutGoogle
   };
 };
 

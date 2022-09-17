@@ -4,6 +4,8 @@ import * as Facebook from "expo-auth-session/providers/facebook";
 import { makeRedirectUri } from "expo-auth-session";
 import { FACEBOOK_EXPO_CLIENT_ID } from "@env";
 
+import { useAuth } from "../../contexts/AuthContext/index";
+
 type UserInfo = {
   sub: string;
   email?: string;
@@ -29,37 +31,36 @@ const config = {
 WebBrowser.maybeCompleteAuthSession();
 
 const useFacebookAuth = () => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [facebookProfile, setFacebookProfile] =
-    useState<FacebookProfile | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [facebookAccessToken, setFacebookAccessToken] = useState<string | null>(
+    null
+  );
+  const { withProviderSignIn, withProviderSignOut, setIdentity, setAuthError } =
+    useAuth();
   const [_, response, promptAsync] = Facebook.useAuthRequest(config);
 
   useEffect(() => {
     if (response?.type === "success" && response.authentication?.accessToken) {
       const { accessToken } = response.authentication;
 
-      setAccessToken(accessToken);
+      setFacebookAccessToken(accessToken);
     } else if (response?.type === "cancel" || response?.type === "dismiss") {
       console.log("Facebook Authentication cancelled");
     } else if (response?.type == "error") {
-      console.log("Facebook Authentication error", response?.error?.message);
-
       if (response?.error?.message) {
-        setError(response?.error?.message);
+        setAuthError(response?.error?.message);
       }
     }
   }, [response]);
 
   useEffect(() => {
-    if (accessToken === null) return;
+    if (facebookAccessToken === null) return;
 
     async function getAndSetProfile() {
       const userInfoResponse = await fetch(
         `https://graph.facebook.com/me/?fields=id,name,email,picture`,
         {
           headers: {
-            Authorization: `Bearer ${accessToken}`
+            Authorization: `Bearer ${facebookAccessToken}`
           }
         }
       );
@@ -67,39 +68,39 @@ const useFacebookAuth = () => {
       userInfoResponse
         .json()
         .then((data) => {
-          setFacebookProfile({
+          setIdentity({
+            sub: data.id,
             provider: "facebook",
-            userInfo: {
-              sub: data.id,
+            identityData: {
               name: data?.name,
               email: data?.email, // might not be returned
               picture: data?.picture?.data?.url
             }
           });
         })
-        .catch((error) => {
-          console.log("Facebook UserInfo error", error);
-          setFacebookProfile(null);
+        .catch((error: unknown) => {
+          setIdentity(null);
+          setAuthError("Facebook authentication unsuccesful.");
         });
     }
 
     getAndSetProfile();
-  }, [accessToken]);
+  }, [facebookAccessToken]);
 
   const loginWithFacebook = async () => {
-    await promptAsync();
+    await withProviderSignIn(promptAsync);
   };
 
   const signOutFacebook = () => {
-    setAccessToken(null);
-    setFacebookProfile(null);
+    withProviderSignOut(() => {
+      setFacebookAccessToken(null);
+      setIdentity(null);
+    });
   };
 
   return {
-    facebookProfile,
     loginWithFacebook,
-    signOutFacebook,
-    error
+    signOutFacebook
   };
 };
 

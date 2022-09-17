@@ -29,6 +29,19 @@ mutation signInByPhone($phone: String!) {
   }
 }
 
+mutation signInByProvider(
+  $sub: String!
+  $provider: String!
+  $identityData: IdentityDataInput!
+) {
+  signInByProvider(
+    input: { sub: $sub, provider: $provider, identityData: $identityData }
+  ) {
+    accessToken
+    refreshToken
+  }
+}
+
 mutation verifyPhoneOtp($phone: String!, $code: String!) {
   verifyPhoneOtp(input: { phone: $phone, code: $code }) {
     accessToken

@@ -22,6 +22,8 @@ import {
 import { useAuth } from "../../contexts/AuthContext";
 
 const CODE_LENGTH = 4;
+const CODE_EXPIRES_IN = 60;
+const initialCode = new Array(CODE_LENGTH).fill(0);
 
 const OTPCodeVerificationScreen = ({
   route,
@@ -29,16 +31,21 @@ const OTPCodeVerificationScreen = ({
 }: RootStackScreenProps<"OTPCodeVerification">) => {
   const { phone } = route.params;
   const [code, setCode] = useState<string>("");
-  const [countDown, setCountDown] = useState<number>(60);
+  const [countDown, setCountDown] = useState<number>(CODE_EXPIRES_IN);
   const [inputFocused, setInputFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const countDownRef = useRef<NodeJS.Timer>();
-  const { setAccessToken, setRefreshToken, saveTokens, rememberMe } = useAuth();
+  const {
+    isAuthenticated,
+    setIsAuthenticated,
+    setAccessToken,
+    setRefreshToken,
+    saveTokens,
+    rememberMe
+  } = useAuth();
   const [verify, { isLoading }] = useVerifyPhoneOtpMutation();
   const [resendCode, { isLoading: isResendCodeLoading }] =
     useSignInByPhoneMutation();
-
-  const initialCode = new Array(CODE_LENGTH).fill(0);
 
   useEffect(() => {
     resetCountDown();
@@ -52,7 +59,15 @@ const OTPCodeVerificationScreen = ({
     }
   }, [countDown]);
 
+  useEffect(() => {
+    if (isAuthenticated) navigation.navigate("Home");
+  }, [isAuthenticated]);
+
   const resetCountDown = () => {
+    if (countDown === 0) {
+      setCountDown(CODE_EXPIRES_IN);
+    }
+
     countDownRef.current = setInterval(() => {
       setCountDown((prev) => prev - 1);
     }, 1000);
@@ -65,20 +80,16 @@ const OTPCodeVerificationScreen = ({
       if ("data" in response && response.data?.verifyPhoneOtp) {
         const { accessToken, refreshToken } = response.data?.verifyPhoneOtp;
 
-        console.log("onVerify", accessToken);
-        console.log("refreshToken", refreshToken);
-
         if (accessToken && refreshToken) {
           setAccessToken(accessToken);
           setRefreshToken(refreshToken);
+          setIsAuthenticated(true);
 
           if (rememberMe) {
             saveTokens({
               accessToken,
               refreshToken
             });
-
-            navigation.navigate("Home");
           }
         } else {
           Alert.alert(

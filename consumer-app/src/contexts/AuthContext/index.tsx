@@ -8,6 +8,8 @@ import {
 } from "react";
 import * as SecureStore from "expo-secure-store";
 import { User } from "../../features/graphql/types.generated";
+import { useAppDispatch } from "../../hooks/Redux/index";
+import { loadAccessToken } from "../../features/auth/authSlice";
 
 type AuthProvider = "google" | "facebook";
 
@@ -29,6 +31,8 @@ type Tokens = {
 };
 
 type Auth = {
+  isTokensLoaded: boolean;
+  setTokensLoaded: Dispatch<SetStateAction<boolean>>;
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
   isAuthenticated: boolean;
@@ -54,6 +58,8 @@ type Auth = {
 };
 
 const AuthContext = createContext<Auth>({
+  isTokensLoaded: false,
+  setTokensLoaded: () => {},
   user: null,
   setUser: () => {},
   isAuthenticated: false,
@@ -81,6 +87,7 @@ const REFRESH_TOKEN_KEY = "foodu-refresh-token";
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [isTokensLoaded, setTokensLoaded] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
@@ -88,29 +95,30 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
 
   const reloadTokens = async () => {
-    const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
-    const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+    try {
+      const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
+      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
 
-    console.log("reloadTokens", accessToken);
-    console.log("refreshToken", refreshToken);
-
-    if (refreshToken !== null) {
-      setAccessToken(refreshToken);
-    }
-
-    if (accessToken !== null) {
+      setRefreshToken(refreshToken);
       setAccessToken(accessToken);
+
+      dispatch(loadAccessToken(accessToken));
+    } catch (error: unknown) {
+      console.log("Loading Tokens error", error);
+    } finally {
+      setTokensLoaded(true);
     }
   };
 
   const saveTokens = async ({ accessToken, refreshToken }: Tokens) => {
-    if (!accessToken || accessToken === null || accessToken.length === 0) {
+    if (!accessToken || accessToken.length === 0) {
       throw "Access token not given!";
     }
 
-    if (!accessToken || refreshToken === null || accessToken.length === 0) {
+    if (!accessToken || accessToken.length === 0) {
       throw "Refresh token not given!";
     }
 
@@ -153,6 +161,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AuthContext.Provider
       value={{
+        isTokensLoaded,
+        setTokensLoaded,
         user,
         setUser,
         isAuthenticated,

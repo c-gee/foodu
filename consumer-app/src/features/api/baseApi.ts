@@ -2,6 +2,8 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query";
 import { ClientError, GraphQLClient } from "graphql-request";
 
+import { RootState } from "../../store";
+
 export const client = new GraphQLClient("http://localhost:4000/api");
 
 export const api = createApi({
@@ -17,6 +19,17 @@ export const api = createApi({
         message: errorMessage,
         stack
       };
+    },
+    prepareHeaders: (headers, { getState }) => {
+      console.log("prepareHeaders called", headers);
+      console.log("Root state", getState());
+      const accessToken = (getState() as RootState).auth.accessToken;
+
+      if (accessToken) {
+        headers.set("authorization", `Bearer ${accessToken}`);
+      }
+
+      return headers;
     }
   }),
   endpoints: () => ({})

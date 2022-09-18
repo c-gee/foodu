@@ -4,10 +4,10 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
-  useEffect,
   useState
 } from "react";
 import * as SecureStore from "expo-secure-store";
+import { User } from "../../features/graphql/types.generated";
 
 type AuthProvider = "google" | "facebook";
 
@@ -29,6 +29,8 @@ type Tokens = {
 };
 
 type Auth = {
+  user: User | null;
+  setUser: Dispatch<SetStateAction<User | null>>;
   isAuthenticated: boolean;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
   authLoading: boolean;
@@ -48,9 +50,12 @@ type Auth = {
   rememberMe: boolean;
   setRememberMe: Dispatch<SetStateAction<boolean>>;
   saveTokens: ({ accessToken, refreshToken }: Tokens) => void;
+  reloadTokens: () => Promise<void>;
 };
 
 const AuthContext = createContext<Auth>({
+  user: null,
+  setUser: () => {},
   isAuthenticated: false,
   setIsAuthenticated: () => {},
   authLoading: false,
@@ -67,13 +72,15 @@ const AuthContext = createContext<Auth>({
   setRefreshToken: () => {},
   rememberMe: false,
   setRememberMe: () => {},
-  saveTokens: async ({ accessToken, refreshToken }: Tokens) => {}
+  saveTokens: async ({ accessToken, refreshToken }: Tokens) => {},
+  reloadTokens: async () => {}
 });
 
 const ACCESS_TOKEN_KEY = "foodu-access-token";
 const REFRESH_TOKEN_KEY = "foodu-refresh-token";
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [refreshToken, setRefreshToken] = useState<string | null>(null);
@@ -81,6 +88,22 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [rememberMe, setRememberMe] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+
+  const reloadTokens = async () => {
+    const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
+    const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+
+    console.log("reloadTokens", accessToken);
+    console.log("refreshToken", refreshToken);
+
+    if (refreshToken !== null) {
+      setAccessToken(refreshToken);
+    }
+
+    if (accessToken !== null) {
+      setAccessToken(accessToken);
+    }
+  };
 
   const saveTokens = async ({ accessToken, refreshToken }: Tokens) => {
     if (!accessToken || accessToken === null || accessToken.length === 0) {
@@ -130,6 +153,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   return (
     <AuthContext.Provider
       value={{
+        user,
+        setUser,
         isAuthenticated,
         setIsAuthenticated,
         authLoading,
@@ -146,7 +171,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         setRefreshToken,
         rememberMe,
         setRememberMe,
-        saveTokens
+        saveTokens,
+        reloadTokens
       }}
     >
       {children}

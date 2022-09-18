@@ -9,6 +9,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import FullScreenLoader from "../../components/FullScreenLoader";
+import { useAuth } from "../../contexts/AuthContext/index";
 import useGoogleAuth from "../../hooks/GoogleAuth";
 import useFacebookAuth from "../../hooks/FacebookAuth";
 import useProvidersAuth from "../../hooks/ProvidersAuth";
@@ -16,11 +17,25 @@ import { RootStackScreenProps } from "../../navigation/types";
 import SignInArt from "../../../assets/sign-in-art.svg";
 import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
+import { useEffect } from "react";
 
 const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
+  const { user, setUser, reloadTokens, accessToken, refreshToken } = useAuth();
   const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
+
+  // useEffect(() => {
+  //   console.log("reloading tokens");
+  //   reloadTokens();
+  // }, []);
+
+  // useEffect(() => {
+  //   if (!accessToken || !refreshToken) return;
+
+  //   console.log("SignInScreen accessToken", accessToken);
+  //   console.log("SignInScreen refreshToken", refreshToken);
+  // }, [accessToken, refreshToken]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">

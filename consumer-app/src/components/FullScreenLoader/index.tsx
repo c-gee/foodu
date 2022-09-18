@@ -1,17 +1,33 @@
-import { View, Dimensions, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, StyleSheet } from "react-native";
 
-const FullScreenLoader = () => {
+type Props = {
+  position?: "top" | "center" | "bottom";
+};
+
+const FullScreenLoader = ({ position = "center" }: Props) => {
   return (
     <View
-      className="absolute flex-1 justify-center items-center z-50 bg-slate-50/40"
-      style={{
-        width: "100%",
-        height: Dimensions.get("window").height
-      }}
+      className={`w-screen h-screen absolute z-50 bg-slate-50/40 flex items-center ${
+        position === "center" && "justify-center"
+      }`}
     >
-      <ActivityIndicator size="large" color="#1BAC4B" />
+      <View style={styles[position]}>
+        <ActivityIndicator size="large" color="#1BAC4B" />
+      </View>
     </View>
   );
 };
 
 export default FullScreenLoader;
+
+const styles = StyleSheet.create({
+  top: {
+    position: "absolute",
+    top: 100
+  },
+  bottom: {
+    position: "absolute",
+    bottom: 100
+  },
+  center: {}
+});

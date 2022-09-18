@@ -47,7 +47,9 @@ const useProvidersAuth = () => {
               "Please try again, or contact our support if the problem persist."
             );
           }
-        } else if ("error" in response) {
+        }
+
+        if ("error" in response) {
           if (response.error.message) {
             Alert.alert("We have a little problem.", response.error.message);
           } else {

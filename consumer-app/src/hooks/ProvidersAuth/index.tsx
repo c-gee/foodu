@@ -1,23 +1,24 @@
+import { Alert } from "react-native";
 import { useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
 
+import { useAppSelector } from "../Redux";
+import useUserData from "../UserData/index";
 import { Identity, useAuth } from "../../contexts/AuthContext";
 import { useSignInByProviderMutation } from "../../features/modules/user.generated";
-import { Alert } from "react-native";
 
 const useProvidersAuth = () => {
-  const {
-    isAuthenticated,
-    setIsAuthenticated,
-    authLoading,
-    authError,
-    setAuthError,
-    identity,
-    saveTokens
-  } = useAuth();
+  const { authLoading, authError, setAuthError, identity, saveTokens } =
+    useAuth();
   const [signInByProvider, { isLoading: isSignInByProviderLoading }] =
     useSignInByProviderMutation();
-  const navigation = useNavigation();
+  const { isLoadingUserData, loadUser } = useUserData();
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+
+  useEffect(() => {
+    if (!accessToken) return;
+
+    loadUser();
+  }, [accessToken]);
 
   useEffect(() => {
     if (identity === null) return;
@@ -34,8 +35,6 @@ const useProvidersAuth = () => {
               accessToken,
               refreshToken
             });
-
-            setIsAuthenticated(true);
           } else {
             Alert.alert(
               "We have a little problem.",
@@ -82,12 +81,15 @@ const useProvidersAuth = () => {
   }, [authError]);
 
   useEffect(() => {
-    if (isAuthenticated) navigation.navigate("Home");
-  }, [isAuthenticated]);
+    if (!accessToken) return;
+
+    loadUser();
+  }, [accessToken]);
 
   return {
     authLoading,
-    isSignInByProviderLoading
+    isSignInByProviderLoading,
+    isLoadingUserData
   };
 };
 

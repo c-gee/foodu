@@ -13,6 +13,7 @@ import {
   loadAccessToken,
   loadRefreshToken
 } from "../../features/auth/authSlice";
+import { useRefreshTokensMutation } from "../../features/modules/user.generated";
 
 type AuthProvider = "google" | "facebook";
 
@@ -37,9 +38,8 @@ type Auth = {
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
   isTokensLoaded: boolean;
-  setTokensLoaded: Dispatch<SetStateAction<boolean>>;
   isAuthenticated: boolean;
-  setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  setAuthenticated: Dispatch<SetStateAction<boolean>>;
   rememberMe: boolean;
   setRememberMe: Dispatch<SetStateAction<boolean>>;
   authLoading: boolean;
@@ -51,10 +51,9 @@ type Auth = {
   setIdentity: Dispatch<SetStateAction<Identity | null>>;
   authError: string | null;
   setAuthError: Dispatch<SetStateAction<string | null>>;
-  accessToken: string | null;
-  refreshToken: string | null;
   saveTokens: ({ accessToken, refreshToken }: Tokens) => void;
   reloadTokens: () => Promise<void>;
+  refreshAuthTokens: () => Promise<void>;
   signOut: () => Promise<void>;
 };
 
@@ -62,9 +61,8 @@ const AuthContext = createContext<Auth>({
   user: null,
   setUser: () => {},
   isTokensLoaded: false,
-  setTokensLoaded: () => {},
   isAuthenticated: false,
-  setIsAuthenticated: () => {},
+  setAuthenticated: () => {},
   rememberMe: false,
   setRememberMe: () => {},
   authLoading: false,
@@ -74,10 +72,9 @@ const AuthContext = createContext<Auth>({
   setIdentity: () => {},
   authError: null,
   setAuthError: () => {},
-  accessToken: null,
-  refreshToken: null,
   saveTokens: async ({ accessToken, refreshToken }: Tokens) => {},
   reloadTokens: async () => {},
+  refreshAuthTokens: async () => {},
   signOut: async () => {}
 });
 
@@ -88,7 +85,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   // For general authentication
   const [user, setUser] = useState<User | null>(null);
   const [isTokensLoaded, setTokensLoaded] = useState<boolean>(false);
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [isAuthenticated, setAuthenticated] = useState<boolean>(false);
   const [rememberMe, setRememberMe] = useState<boolean>(false);
 
   // For provider authentications
@@ -100,6 +97,41 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const dispatch = useAppDispatch();
+  const [refreshTokens] = useRefreshTokensMutation();
+
+  const refreshAuthTokens = async () => {
+    if (!refreshToken || !accessToken) {
+      throw new Error("Both refresh token and access token are required");
+    }
+
+    try {
+      const response = await refreshTokens({
+        refreshToken,
+        accessToken
+      });
+
+      if ("data" in response && response.data?.refreshTokens) {
+        const { accessToken, refreshToken } = response.data?.refreshTokens;
+
+        if (accessToken && refreshToken) {
+          saveTokens({
+            accessToken,
+            refreshToken
+          });
+        } else {
+          resetTokens();
+        }
+      } else if ("error" in response) {
+        resetTokens();
+
+        throw new Error("Failed to refresh tokens");
+      }
+    } catch (error: unknown) {
+      // Refresh token already expired...
+      resetTokens();
+      throw new Error("Error when refreshing tokens");
+    }
+  };
 
   const reloadTokens = async () => {
     try {
@@ -128,17 +160,19 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       throw "Refresh token not given!";
     }
 
-    await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
-    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
     dispatch(loadAccessToken(accessToken));
     dispatch(loadRefreshToken(refreshToken));
+
+    await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
+    await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
   };
 
   const resetTokens = async () => {
-    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
-    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
     dispatch(loadAccessToken(null));
     dispatch(loadRefreshToken(null));
+
+    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
   };
 
   const withProviderSignIn = async <T extends AsyncFn>(
@@ -163,18 +197,17 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const signOut = async () => {
     await resetTokens();
-    setIsAuthenticated(false);
+    setAuthenticated(false);
   };
 
   return (
     <AuthContext.Provider
       value={{
         isTokensLoaded,
-        setTokensLoaded,
         user,
         setUser,
         isAuthenticated,
-        setIsAuthenticated,
+        setAuthenticated,
         rememberMe,
         setRememberMe,
         authLoading,
@@ -184,10 +217,9 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         setIdentity,
         authError,
         setAuthError,
-        accessToken,
-        refreshToken,
         saveTokens,
         reloadTokens,
+        refreshAuthTokens,
         signOut
       }}
     >

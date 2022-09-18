@@ -31,7 +31,8 @@ import { useSignUpMutation } from "../../features/modules/user.generated";
 const COUNTRY_CODE = "+60";
 
 const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
-  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
+  const { authLoading, isSignInByProviderLoading, isLoadingUserData } =
+    useProvidersAuth();
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
   const [signUp, { isLoading }] = useSignUpMutation();
@@ -92,9 +93,10 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           paddingBottom: 24
         }}
       >
-        {(isLoading || authLoading || isSignInByProviderLoading) && (
-          <FullScreenLoader />
-        )}
+        {(isLoading ||
+          authLoading ||
+          isSignInByProviderLoading ||
+          isLoadingUserData) && <FullScreenLoader />}
         <NavigationTopBar title="" icon="go_back" onPress={navigation.goBack} />
         <KeyboardAvoidingView
           className="px-6 flex-1"

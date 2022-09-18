@@ -34,7 +34,8 @@ const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
   const { rememberMe, setRememberMe } = useAuth();
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
-  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
+  const { authLoading, isSignInByProviderLoading, isLoadingUserData } =
+    useProvidersAuth();
   const [signInByPhone, { isLoading }] = useSignInByPhoneMutation();
   const {
     control,
@@ -91,9 +92,10 @@ const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
           paddingBottom: 24
         }}
       >
-        {(isLoading || authLoading || isSignInByProviderLoading) && (
-          <FullScreenLoader />
-        )}
+        {(isLoading ||
+          authLoading ||
+          isSignInByProviderLoading ||
+          isLoadingUserData) && <FullScreenLoader />}
         <NavigationTopBar title="" icon="go_back" onPress={navigation.goBack} />
         <KeyboardAvoidingView
           className="px-6 flex-1"

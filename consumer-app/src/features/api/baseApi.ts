@@ -21,8 +21,6 @@ export const api = createApi({
       };
     },
     prepareHeaders: (headers, { getState }) => {
-      console.log("prepareHeaders called", headers);
-      console.log("Root state", getState());
       const accessToken = (getState() as RootState).auth.accessToken;
 
       if (accessToken) {

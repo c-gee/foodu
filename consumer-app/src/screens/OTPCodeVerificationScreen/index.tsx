@@ -20,6 +20,9 @@ import {
   useSignInByPhoneMutation
 } from "../../features/modules/user.generated";
 import { useAuth } from "../../contexts/AuthContext";
+import useUserData from "../../hooks/UserData";
+import { useAppDispatch, useAppSelector } from "../../hooks/Redux";
+import { loadAccessToken } from "../../features/auth/authSlice";
 
 const CODE_LENGTH = 4;
 const CODE_EXPIRES_IN = 60;
@@ -35,11 +38,13 @@ const OTPCodeVerificationScreen = ({
   const [inputFocused, setInputFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const countDownRef = useRef<NodeJS.Timer>();
-  const { isAuthenticated, setIsAuthenticated, saveTokens, rememberMe } =
-    useAuth();
+  const { saveTokens, rememberMe } = useAuth();
   const [verify, { isLoading }] = useVerifyPhoneOtpMutation();
   const [resendCode, { isLoading: isResendCodeLoading }] =
     useSignInByPhoneMutation();
+  const { isLoadingUserData, loadUser } = useUserData();
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     resetCountDown();
@@ -54,8 +59,10 @@ const OTPCodeVerificationScreen = ({
   }, [countDown]);
 
   useEffect(() => {
-    if (isAuthenticated) navigation.navigate("Home");
-  }, [isAuthenticated]);
+    if (!accessToken) return;
+
+    loadUser();
+  }, [accessToken]);
 
   const resetCountDown = () => {
     if (countDown === 0) {
@@ -75,13 +82,13 @@ const OTPCodeVerificationScreen = ({
         const { accessToken, refreshToken } = response.data?.verifyPhoneOtp;
 
         if (accessToken && refreshToken) {
-          setIsAuthenticated(true);
-
           if (rememberMe) {
             saveTokens({
               accessToken,
               refreshToken
             });
+          } else {
+            dispatch(loadAccessToken(accessToken));
           }
         } else {
           Alert.alert(
@@ -183,7 +190,9 @@ const OTPCodeVerificationScreen = ({
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      {(isLoading || isResendCodeLoading) && <FullScreenLoader />}
+      {(isLoading || isResendCodeLoading || isLoadingUserData) && (
+        <FullScreenLoader />
+      )}
       <NavigationTopBar
         title="OTP Code Verification"
         icon="go_back"

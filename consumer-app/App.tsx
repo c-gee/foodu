@@ -12,18 +12,18 @@ import store from "./src/store";
 export default function App() {
   return (
     <SafeAreaProvider>
-      <ReduxToolkitProvider store={store}>
-        <AuthContextProvider>
-          <NavigationContainer>
+      <NavigationContainer>
+        <ReduxToolkitProvider store={store}>
+          <AuthContextProvider>
             <AnimatedAppLoader>
               <SearchContextProvider>
                 <RootStackNavigation />
                 <StatusBar style="auto" />
               </SearchContextProvider>
             </AnimatedAppLoader>
-          </NavigationContainer>
-        </AuthContextProvider>
-      </ReduxToolkitProvider>
+          </AuthContextProvider>
+        </ReduxToolkitProvider>
+      </NavigationContainer>
     </SafeAreaProvider>
   );
 }

@@ -48,3 +48,12 @@ mutation verifyPhoneOtp($phone: String!, $code: String!) {
     refreshToken
   }
 }
+
+mutation refreshTokens($refreshToken: String!, $accessToken: String!) {
+  refreshTokens(
+    input: { refreshToken: $refreshToken, accessToken: $accessToken }
+  ) {
+    accessToken
+    refreshToken
+  }
+}

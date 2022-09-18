@@ -3,11 +3,13 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
+  isUserLoaded: boolean;
 };
 
 const initialState: AuthState = {
   accessToken: null,
-  refreshToken: null
+  refreshToken: null,
+  isUserLoaded: false
 };
 
 const authSlice = createSlice({
@@ -19,10 +21,14 @@ const authSlice = createSlice({
     },
     loadRefreshToken(state, action: PayloadAction<string | null>) {
       state.refreshToken = action.payload;
+    },
+    setUserLoaded(state, action: PayloadAction<boolean>) {
+      state.isUserLoaded = action.payload;
     }
   }
 });
 
-export const { loadAccessToken, loadRefreshToken } = authSlice.actions;
+export const { loadAccessToken, loadRefreshToken, setUserLoaded } =
+  authSlice.actions;
 
 export default authSlice.reducer;

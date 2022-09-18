@@ -13,7 +13,7 @@ import {
 
 import FullScreenLoader from "../FullScreenLoader";
 import { useAuth } from "../../contexts/AuthContext";
-import { useMeQuery } from "../../features/modules/user.generated";
+import useUserData from "../../hooks/UserData";
 
 const SPLASH_URI = "../../../assets/splash.png";
 
@@ -29,24 +29,23 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 });
 
 const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
-  const { setUser, reloadTokens, isTokensLoaded, accessToken } = useAuth();
+  const { isTokensLoaded, reloadTokens, refreshAuthTokens } = useAuth();
+  const [newAccessTokenLoaded, setNewAccessTokenLoaded] =
+    useState<boolean>(false);
   const opacityAnimation = useMemo(() => new Animated.Value(1), []);
   const scaleAnimation = useMemo(() => new Animated.Value(1), []);
-  const [isAppReady, setIsAppReady] = useState(false);
-  const [isUserLoaded, setUserLoaded] = useState(false);
-  const [skipUserQuery, setSkipUserQuery] = useState(true);
+  const [isAppReady, setAppReady] = useState<boolean>(false);
+  const [isTokensRefreshed, setTokensRefreshed] = useState<boolean>(false);
   const [isSplashAnimationComplete, setSplashAnimationComplete] =
-    useState(false);
+    useState<boolean>(false);
   let [fontsLoaded] = useFonts({
     Urbanist_400Regular,
     Urbanist_500Medium,
     Urbanist_600SemiBold,
     Urbanist_700Bold
   });
-  const { data: userData, error: userError } = useMeQuery(
-    {},
-    { skip: skipUserQuery }
-  );
+
+  const { isUserLoaded, setUserLoadingComplete, loadUser } = useUserData();
 
   useEffect(() => {
     reloadTokens();
@@ -54,33 +53,31 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
 
   useEffect(() => {
     if (!isTokensLoaded) return;
+    if (isTokensRefreshed) return;
 
-    console.log("AnimatedSplashScreen accessToken", accessToken);
-
-    if (accessToken) {
-      setSkipUserQuery(false);
-    } else {
-      setUserLoaded(true);
+    async function refreshTokens() {
+      try {
+        await refreshAuthTokens();
+        setNewAccessTokenLoaded(true);
+      } catch (error: unknown) {
+        setUserLoadingComplete();
+      } finally {
+        setTokensRefreshed(true);
+      }
     }
-  }, [isTokensLoaded]);
+
+    refreshTokens();
+  }, [isTokensLoaded, isTokensRefreshed]);
 
   useEffect(() => {
-    if (userData && userData.me) {
-      console.log("data", userData);
-      setUser(userData.me);
-      setUserLoaded(true);
-    }
+    if (!isTokensRefreshed) return;
+    if (!newAccessTokenLoaded) return;
 
-    if (userError) {
-      console.log("userError", userError?.message);
-
-      // Try to refresh the tokens??
-      setUserLoaded(true);
-    }
-  }, [userData, userError]);
+    loadUser();
+  }, [isTokensRefreshed, newAccessTokenLoaded]);
 
   useEffect(() => {
-    if (isAppReady) {
+    if (isAppReady && isUserLoaded) {
       Animated.timing(opacityAnimation, {
         toValue: 0,
         duration: 500,
@@ -92,29 +89,26 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
         useNativeDriver: true
       }).start(() => setSplashAnimationComplete(true));
     }
-  }, [isAppReady]);
+  }, [isAppReady, isUserLoaded]);
 
   const onResourcesLoaded = useCallback(async () => {
     try {
       await SplashScreen.hideAsync();
 
-      console.log("isUserLoaded", isUserLoaded);
-
       if (!fontsLoaded) return;
-      if (!isUserLoaded) return;
 
       await Promise.all([]);
     } catch (error: unknown) {
       console.log("onResourcesLoaded error", error);
     }
 
-    setIsAppReady(true);
-  }, [fontsLoaded, isUserLoaded]);
+    setAppReady(true);
+  }, [fontsLoaded]);
 
   return (
     <View className="flex-1">
-      {isAppReady && children}
-      {!isSplashAnimationComplete && (
+      {isAppReady && isUserLoaded && children}
+      {(!isSplashAnimationComplete || !isUserLoaded) && (
         <>
           <FullScreenLoader position="bottom" transparent={true} />
           <Animated.View

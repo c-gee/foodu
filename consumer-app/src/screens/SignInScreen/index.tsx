@@ -18,7 +18,8 @@ import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
 
 const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
-  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
+  const { authLoading, isSignInByProviderLoading, isLoadingUserData } =
+    useProvidersAuth();
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
 
@@ -30,7 +31,9 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
           justifyContent: "center"
         }}
       >
-        {(authLoading || isSignInByProviderLoading) && <FullScreenLoader />}
+        {(authLoading || isSignInByProviderLoading || isLoadingUserData) && (
+          <FullScreenLoader />
+        )}
         <View className="px-6">
           <View className="py-6 self-center">
             <SignInArt

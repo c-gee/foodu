@@ -35,14 +35,8 @@ const OTPCodeVerificationScreen = ({
   const [inputFocused, setInputFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const countDownRef = useRef<NodeJS.Timer>();
-  const {
-    isAuthenticated,
-    setIsAuthenticated,
-    setAccessToken,
-    setRefreshToken,
-    saveTokens,
-    rememberMe
-  } = useAuth();
+  const { isAuthenticated, setIsAuthenticated, saveTokens, rememberMe } =
+    useAuth();
   const [verify, { isLoading }] = useVerifyPhoneOtpMutation();
   const [resendCode, { isLoading: isResendCodeLoading }] =
     useSignInByPhoneMutation();
@@ -81,8 +75,6 @@ const OTPCodeVerificationScreen = ({
         const { accessToken, refreshToken } = response.data?.verifyPhoneOtp;
 
         if (accessToken && refreshToken) {
-          setAccessToken(accessToken);
-          setRefreshToken(refreshToken);
           setIsAuthenticated(true);
 
           if (rememberMe) {

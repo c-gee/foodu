@@ -13,8 +13,6 @@ const useProvidersAuth = () => {
     authError,
     setAuthError,
     identity,
-    setAccessToken,
-    setRefreshToken,
     saveTokens
   } = useAuth();
   const [signInByProvider, { isLoading: isSignInByProviderLoading }] =
@@ -32,9 +30,6 @@ const useProvidersAuth = () => {
           const { accessToken, refreshToken } = response.data?.signInByProvider;
 
           if (accessToken && refreshToken) {
-            setAccessToken(accessToken);
-            setRefreshToken(refreshToken);
-
             saveTokens({
               accessToken,
               refreshToken

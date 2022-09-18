@@ -8,8 +8,11 @@ import {
 } from "react";
 import * as SecureStore from "expo-secure-store";
 import { User } from "../../features/graphql/types.generated";
-import { useAppDispatch } from "../../hooks/Redux/index";
-import { loadAccessToken } from "../../features/auth/authSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/Redux/index";
+import {
+  loadAccessToken,
+  loadRefreshToken
+} from "../../features/auth/authSlice";
 
 type AuthProvider = "google" | "facebook";
 
@@ -31,81 +34,84 @@ type Tokens = {
 };
 
 type Auth = {
-  isTokensLoaded: boolean;
-  setTokensLoaded: Dispatch<SetStateAction<boolean>>;
   user: User | null;
   setUser: Dispatch<SetStateAction<User | null>>;
+  isTokensLoaded: boolean;
+  setTokensLoaded: Dispatch<SetStateAction<boolean>>;
   isAuthenticated: boolean;
   setIsAuthenticated: Dispatch<SetStateAction<boolean>>;
+  rememberMe: boolean;
+  setRememberMe: Dispatch<SetStateAction<boolean>>;
   authLoading: boolean;
   withProviderSignIn: <T extends AsyncFn>(
     signInWithProviderFn: T
   ) => Promise<void>;
   withProviderSignOut: (signOutProviderFn: () => void) => Promise<void>;
-  signOut: () => Promise<void>;
   identity: Identity | null;
   setIdentity: Dispatch<SetStateAction<Identity | null>>;
   authError: string | null;
   setAuthError: Dispatch<SetStateAction<string | null>>;
   accessToken: string | null;
-  setAccessToken: Dispatch<SetStateAction<string | null>>;
   refreshToken: string | null;
-  setRefreshToken: Dispatch<SetStateAction<string | null>>;
-  rememberMe: boolean;
-  setRememberMe: Dispatch<SetStateAction<boolean>>;
   saveTokens: ({ accessToken, refreshToken }: Tokens) => void;
   reloadTokens: () => Promise<void>;
+  signOut: () => Promise<void>;
 };
 
 const AuthContext = createContext<Auth>({
-  isTokensLoaded: false,
-  setTokensLoaded: () => {},
   user: null,
   setUser: () => {},
+  isTokensLoaded: false,
+  setTokensLoaded: () => {},
   isAuthenticated: false,
   setIsAuthenticated: () => {},
+  rememberMe: false,
+  setRememberMe: () => {},
   authLoading: false,
   withProviderSignIn: async () => {},
   withProviderSignOut: async () => {},
-  signOut: async () => {},
   identity: null,
   setIdentity: () => {},
   authError: null,
   setAuthError: () => {},
   accessToken: null,
-  setAccessToken: () => {},
   refreshToken: null,
-  setRefreshToken: () => {},
-  rememberMe: false,
-  setRememberMe: () => {},
   saveTokens: async ({ accessToken, refreshToken }: Tokens) => {},
-  reloadTokens: async () => {}
+  reloadTokens: async () => {},
+  signOut: async () => {}
 });
 
 const ACCESS_TOKEN_KEY = "foodu-access-token";
 const REFRESH_TOKEN_KEY = "foodu-refresh-token";
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
+  // For general authentication
   const [user, setUser] = useState<User | null>(null);
   const [isTokensLoaded, setTokensLoaded] = useState<boolean>(false);
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [accessToken, setAccessToken] = useState<string | null>(null);
-  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [rememberMe, setRememberMe] = useState<boolean>(false);
+
+  // For provider authentications
   const [identity, setIdentity] = useState<Identity | null>(null);
-  const [rememberMe, setRememberMe] = useState(false);
   const [authLoading, setAuthLoading] = useState(false);
   const [authError, setAuthError] = useState<string | null>(null);
+
+  // For redux store RTK queries
+  const accessToken = useAppSelector((state) => state.auth.accessToken);
+  const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const dispatch = useAppDispatch();
 
   const reloadTokens = async () => {
     try {
-      const accessToken = await SecureStore.getItemAsync(ACCESS_TOKEN_KEY);
-      const refreshToken = await SecureStore.getItemAsync(REFRESH_TOKEN_KEY);
+      const accessTokenFromStore = await SecureStore.getItemAsync(
+        ACCESS_TOKEN_KEY
+      );
+      const refreshTokenFromStore = await SecureStore.getItemAsync(
+        REFRESH_TOKEN_KEY
+      );
 
-      setRefreshToken(refreshToken);
-      setAccessToken(accessToken);
-
-      dispatch(loadAccessToken(accessToken));
+      dispatch(loadAccessToken(accessTokenFromStore));
+      dispatch(loadRefreshToken(refreshTokenFromStore));
     } catch (error: unknown) {
       console.log("Loading Tokens error", error);
     } finally {
@@ -124,11 +130,15 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
     await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
+    dispatch(loadAccessToken(accessToken));
+    dispatch(loadRefreshToken(refreshToken));
   };
 
-  const resetTokens = () => {
-    setAccessToken(null);
-    setRefreshToken(null);
+  const resetTokens = async () => {
+    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+    dispatch(loadAccessToken(null));
+    dispatch(loadRefreshToken(null));
   };
 
   const withProviderSignIn = async <T extends AsyncFn>(
@@ -152,9 +162,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const signOut = async () => {
-    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
-    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
-    resetTokens();
+    await resetTokens();
     setIsAuthenticated(false);
   };
 
@@ -167,22 +175,20 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         setUser,
         isAuthenticated,
         setIsAuthenticated,
+        rememberMe,
+        setRememberMe,
         authLoading,
         withProviderSignIn,
         withProviderSignOut,
-        signOut,
         identity,
         setIdentity,
         authError,
         setAuthError,
         accessToken,
-        setAccessToken,
         refreshToken,
-        setRefreshToken,
-        rememberMe,
-        setRememberMe,
         saveTokens,
-        reloadTokens
+        reloadTokens,
+        signOut
       }}
     >
       {children}

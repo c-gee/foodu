@@ -13,9 +13,7 @@ import {
 
 import FullScreenLoader from "../FullScreenLoader";
 import { useAuth } from "../../contexts/AuthContext";
-import { useAppSelector, useAppDispatch } from "../../hooks/Redux/index";
 import { useMeQuery } from "../../features/modules/user.generated";
-import { loadAccessToken } from "../../features/auth/authSlice";
 
 const SPLASH_URI = "../../../assets/splash.png";
 
@@ -31,7 +29,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 });
 
 const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
-  const { setUser, reloadTokens, isTokensLoaded } = useAuth();
+  const { setUser, reloadTokens, isTokensLoaded, accessToken } = useAuth();
   const opacityAnimation = useMemo(() => new Animated.Value(1), []);
   const scaleAnimation = useMemo(() => new Animated.Value(1), []);
   const [isAppReady, setIsAppReady] = useState(false);
@@ -45,8 +43,6 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     Urbanist_600SemiBold,
     Urbanist_700Bold
   });
-  const dispatch = useAppDispatch();
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
   const { data: userData, error: userError } = useMeQuery(
     {},
     { skip: skipUserQuery }
@@ -59,7 +55,7 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
   useEffect(() => {
     if (!isTokensLoaded) return;
 
-    console.log("accessToken", accessToken);
+    console.log("AnimatedSplashScreen accessToken", accessToken);
 
     if (accessToken) {
       setSkipUserQuery(false);
@@ -77,8 +73,6 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
 
     if (userError) {
       console.log("userError", userError?.message);
-      // Access token already expired
-      dispatch(loadAccessToken(null));
 
       // Try to refresh the tokens??
       setUserLoaded(true);

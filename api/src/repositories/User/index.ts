@@ -1,9 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import {
+  Gender,
   Provider,
   SignInByPhoneInput,
   SignInByProviderInput,
-  SignUpInput
+  SignUpInput,
+  UpdateProfileInput
 } from "../../graphql/generated/graphql";
 
 import { phoneFormatter } from "../../utils";
@@ -112,9 +114,33 @@ const findOrCreateUserWithIdentity = async (
   return { user, identity };
 };
 
+const updateUserProfile = async (
+  prisma: PrismaClient,
+  input: UpdateProfileInput,
+  userId: string
+) => {
+  const user = await prisma.user.update({
+    where: {
+      id: userId
+    },
+    data: {
+      email: input.email.toLowerCase().trim(),
+      name: input.name.trim(),
+      nickname: input.nickname?.trim(),
+      phone: phoneFormatter(input.phone.trim()),
+      dateOfBirth: input?.dateOfBirth && new Date(input.dateOfBirth),
+      gender: input.gender as Gender,
+      picture: input.picture
+    }
+  });
+
+  return user;
+};
+
 export const useUser = () => ({
   createNewUser,
   findUserById,
   findUserByPhone,
-  findOrCreateUserWithIdentity
+  findOrCreateUserWithIdentity,
+  updateUserProfile
 });

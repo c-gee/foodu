@@ -68,8 +68,9 @@ type Mutation {
   signInByPhone(input: SignInByPhoneInput!): SignInByPhoneResponse
   signInByProvider(input: SignInByProviderInput!): TokenResponse
   verifyPhoneOtp(input: VerifyPhoneOtpInput!): TokenResponse
-  refreshTokens(input: RefreshTokensInput): TokenResponse
+  refreshTokens(input: RefreshTokensInput!): TokenResponse
   signOut(input: SignOutInput): EmptyResponse
+  updateProfile(input: updateProfileInput!): User
 }
 
 input IdentityDataInput {
@@ -106,4 +107,14 @@ input VerifyPhoneOtpInput {
 input RefreshTokensInput {
   refreshToken: String!
   accessToken: String!
+}
+
+input updateProfileInput {
+  email: String!
+  name: String!
+  nickname: String
+  phone: String!
+  dateOfBirth: String
+  gender: String
+  picture: String
 }

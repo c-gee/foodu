@@ -63,3 +63,23 @@ export const refreshTokensSchema = yup.object().shape({
 export const signOutSchema = yup.object().shape({
   refreshToken: yup.string().trim()
 });
+
+export const updateProfileSchema = yup.object().shape({
+  name: yup.string().trim().required("Name is required"),
+  nickname: yup.string().trim().nullable(),
+  dateOfBirth: yup.date().nullable(),
+  email: yup
+    .string()
+    .trim()
+    .lowercase()
+    .email("Invalid email")
+    .required("Email is required"),
+  phone: yup
+    .string()
+    .trim()
+    .transform(yupPhoneTransformer)
+    .phone("MY", true, "Invalid phone number")
+    .required("Phone number is required"),
+  gender: yup.string().trim().nullable(),
+  picture: yup.string().trim().nullable()
+});

@@ -8,7 +8,8 @@ import {
   signInByPhoneSchema,
   signOutSchema,
   refreshTokensSchema,
-  verifyPhoneOtpInputSchema
+  verifyPhoneOtpInputSchema,
+  updateProfileSchema
 } from "./validator";
 import { handleError } from "../errors";
 import { Resolvers, ErrorType } from "../../generated/graphql";
@@ -22,7 +23,8 @@ const {
   createNewUser,
   findUserById,
   findUserByPhone,
-  findOrCreateUserWithIdentity
+  findOrCreateUserWithIdentity,
+  updateUserProfile
 } = useUser();
 
 const { findRefreshToken, getTokensResponse, revokeRefreshToken } =
@@ -253,11 +255,11 @@ const resolvers: Resolvers = {
 
     async signOut(_, { input }, { prisma, currentUser }) {
       try {
-        await signOutSchema.validate(input);
-
         if (currentUser === null) {
           return handleError(ErrorType.AuthenticationError);
         }
+
+        await signOutSchema.validate(input);
 
         if (input?.refreshToken) {
           await revokeRefreshToken(prisma, input.refreshToken, currentUser.id);
@@ -275,6 +277,47 @@ const resolvers: Resolvers = {
               ErrorType.InvalidInputError,
               "Invalid refresh token."
             );
+          }
+        }
+
+        return handleError(ErrorType.UnknownError);
+      }
+    },
+    async updateProfile(_, { input }, { prisma, currentUser }) {
+      try {
+        if (currentUser === null) {
+          return handleError(ErrorType.AuthenticationError);
+        }
+
+        await updateProfileSchema.validate(input);
+
+        const user = await updateUserProfile(prisma, input, currentUser.id);
+
+        return user;
+      } catch (error: unknown) {
+        if (error instanceof ValidationError) {
+          return handleError(ErrorType.InvalidInputError, error.message);
+        }
+
+        if (error instanceof PrismaClientKnownRequestError) {
+          if (error.code === "P2002") {
+            if (
+              (error.meta?.target as (string | undefined)[]).includes("email")
+            ) {
+              return handleError(
+                ErrorType.InvalidInputError,
+                "Other account already exists for this email."
+              );
+            }
+
+            if (
+              (error.meta?.target as (string | undefined)[]).includes("phone")
+            ) {
+              return handleError(
+                ErrorType.InvalidInputError,
+                "Other account already exists for this phone number."
+              );
+            }
           }
         }
 

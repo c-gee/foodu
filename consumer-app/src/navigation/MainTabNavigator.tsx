@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Foundation } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { HomeIcon } from "react-native-heroicons/solid";
 import { HomeIcon as HomeIconOutline } from "react-native-heroicons/outline";
@@ -7,8 +6,8 @@ import { HomeIcon as HomeIconOutline } from "react-native-heroicons/outline";
 import HomeScreen from "../screens/HomeScreen";
 import MessageScreen from "../screens/MessageScreen";
 import OrdersScreen from "../screens/OrdersScreen";
-import ProfileScreen from "../screens/ProfileScreen";
 import WalletScreen from "../screens/WalletScreen";
+import ProfileStackNavigator from "./ProfileStackNavigator";
 
 const Tab = createBottomTabNavigator();
 
@@ -74,9 +73,10 @@ const MainTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
+        name="ProfileStack"
+        component={ProfileStackNavigator}
         options={{
+          tabBarLabel: "Profile",
           tabBarIcon: ({ focused }) => (
             <Ionicons
               name={focused ? "person" : "person-outline"}
@@ -84,9 +84,6 @@ const MainTabNavigator = () => {
               color={focused ? "#1BAC4B" : "#9E9E9E"}
             />
           )
-        }}
-        initialParams={{
-          screenTitle: "Profile"
         }}
       />
     </Tab.Navigator>

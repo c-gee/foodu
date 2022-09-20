@@ -64,18 +64,6 @@ const OTPCodeVerificationScreen = ({
     loadUser();
   }, [accessToken]);
 
-  useEffect(() => {
-    if (!user) return;
-
-    if (!user?.email || !user?.phone) {
-      navigation.navigate("FillYourProfile", {
-        screenTitle: "Fill Your Profile"
-      });
-    } else {
-      setAuthenticated(true);
-    }
-  }, [user]);
-
   const resetCountDown = () => {
     if (countDown === 0) {
       setCountDown(CODE_EXPIRES_IN);

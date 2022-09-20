@@ -25,18 +25,6 @@ const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
 
-  useEffect(() => {
-    if (!user) return;
-
-    console.log("user", user);
-
-    if (!user?.email || !user?.phone) {
-      navigation.navigate("FillYourProfile", {
-        screenTitle: "Fill Your Profile"
-      });
-    }
-  }, [user, user?.email, user?.phone]);
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView

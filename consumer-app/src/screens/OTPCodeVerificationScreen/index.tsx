@@ -38,12 +38,12 @@ const OTPCodeVerificationScreen = ({
   const [inputFocused, setInputFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const countDownRef = useRef<NodeJS.Timer>();
-  const { saveTokens, rememberMe } = useAuth();
+  const { user, setAuthenticated, saveTokens, rememberMe, accessToken } =
+    useAuth();
   const [verify, { isLoading }] = useVerifyPhoneOtpMutation();
   const [resendCode, { isLoading: isResendCodeLoading }] =
     useSignInByPhoneMutation();
   const { isLoadingUserData, loadUser } = useUserData();
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -63,6 +63,18 @@ const OTPCodeVerificationScreen = ({
 
     loadUser();
   }, [accessToken]);
+
+  useEffect(() => {
+    if (!user) return;
+
+    if (!user?.email || !user?.phone) {
+      navigation.navigate("FillYourProfile", {
+        screenTitle: "Fill Your Profile"
+      });
+    } else {
+      setAuthenticated(true);
+    }
+  }, [user]);
 
   const resetCountDown = () => {
     if (countDown === 0) {

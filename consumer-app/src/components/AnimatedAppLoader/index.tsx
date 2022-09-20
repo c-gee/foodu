@@ -29,13 +29,18 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 });
 
 const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
-  const { isTokensLoaded, reloadTokens, refreshAuthTokens } = useAuth();
+  const {
+    isTokensLoaded,
+    reloadTokens,
+    refreshAuthTokens,
+    refreshToken,
+    accessToken
+  } = useAuth();
   const [newAccessTokenLoaded, setNewAccessTokenLoaded] =
     useState<boolean>(false);
   const opacityAnimation = useMemo(() => new Animated.Value(1), []);
   const scaleAnimation = useMemo(() => new Animated.Value(1), []);
   const [isAppReady, setAppReady] = useState<boolean>(false);
-  const [isTokensRefreshed, setTokensRefreshed] = useState<boolean>(false);
   const [isSplashAnimationComplete, setSplashAnimationComplete] =
     useState<boolean>(false);
   let [fontsLoaded] = useFonts({
@@ -53,28 +58,35 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
 
   useEffect(() => {
     if (!isTokensLoaded) return;
-    if (isTokensRefreshed) return;
+    if (isUserLoaded) return;
+
+    if (!refreshToken || !accessToken) {
+      setUserLoadingComplete();
+    }
 
     async function refreshTokens() {
       try {
-        await refreshAuthTokens();
-        setNewAccessTokenLoaded(true);
+        const response = await refreshAuthTokens();
+
+        if (response) {
+          setNewAccessTokenLoaded(true);
+        }
       } catch (error: unknown) {
-        setUserLoadingComplete();
+        // Ignore error, will show sign in screen
+        console.log(error);
       } finally {
-        setTokensRefreshed(true);
+        setUserLoadingComplete();
       }
     }
 
     refreshTokens();
-  }, [isTokensLoaded, isTokensRefreshed]);
+  }, [isTokensLoaded, isUserLoaded]);
 
   useEffect(() => {
-    if (!isTokensRefreshed) return;
     if (!newAccessTokenLoaded) return;
 
     loadUser();
-  }, [isTokensRefreshed, newAccessTokenLoaded]);
+  }, [newAccessTokenLoaded]);
 
   useEffect(() => {
     if (isAppReady && isUserLoaded) {

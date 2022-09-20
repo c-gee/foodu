@@ -10,7 +10,8 @@ export const api = userApi.enhanceEndpoints({
     signInByPhone: {},
     verifyPhoneOtp: {},
     signInByProvider: {},
-    refreshTokens: {}
+    refreshTokens: {},
+    signOut: {}
   }
 });
 
@@ -21,5 +22,6 @@ export const {
   useSignInByPhoneMutation,
   useVerifyPhoneOtpMutation,
   useSignInByProviderMutation,
-  useRefreshTokensMutation
+  useRefreshTokensMutation,
+  useSignOutMutation
 } = api;

@@ -11,16 +11,31 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import useGoogleAuth from "../../hooks/GoogleAuth";
 import useFacebookAuth from "../../hooks/FacebookAuth";
 import useProvidersAuth from "../../hooks/ProvidersAuth";
+import { useAuth } from "../../contexts/AuthContext";
 import { RootStackScreenProps } from "../../navigation/types";
 import SignInArt from "../../../assets/sign-in-art.svg";
 import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
+import { useEffect } from "react";
 
 const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
+  const { user } = useAuth();
   const { authLoading, isSignInByProviderLoading, isLoadingUserData } =
     useProvidersAuth();
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
+
+  useEffect(() => {
+    if (!user) return;
+
+    console.log("user", user);
+
+    if (!user?.email || !user?.phone) {
+      navigation.navigate("FillYourProfile", {
+        screenTitle: "Fill Your Profile"
+      });
+    }
+  }, [user, user?.email, user?.phone]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">

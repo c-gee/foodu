@@ -4,6 +4,7 @@ import {
   ReactNode,
   SetStateAction,
   useContext,
+  useEffect,
   useState
 } from "react";
 import * as SecureStore from "expo-secure-store";
@@ -11,9 +12,14 @@ import { User } from "../../features/graphql/types.generated";
 import { useAppDispatch, useAppSelector } from "../../hooks/Redux/index";
 import {
   loadAccessToken,
-  loadRefreshToken
+  loadRefreshToken,
+  logOut as authLogOut
 } from "../../features/auth/authSlice";
-import { useRefreshTokensMutation } from "../../features/modules/user.generated";
+import {
+  api,
+  useRefreshTokensMutation,
+  useSignOutMutation
+} from "../../features/modules/user.generated";
 
 type AuthProvider = "google" | "facebook";
 
@@ -51,10 +57,14 @@ type Auth = {
   setIdentity: Dispatch<SetStateAction<Identity | null>>;
   authError: string | null;
   setAuthError: Dispatch<SetStateAction<string | null>>;
+  refreshToken: string | null;
+  accessToken: string | null;
   saveTokens: ({ accessToken, refreshToken }: Tokens) => void;
   reloadTokens: () => Promise<void>;
-  refreshAuthTokens: () => Promise<void>;
-  signOut: () => Promise<void>;
+  resetTokens: () => Promise<void>;
+  refreshAuthTokens: () => Promise<boolean>;
+  logOut: () => Promise<void>;
+  isSignOutLoading: boolean;
 };
 
 const AuthContext = createContext<Auth>({
@@ -72,10 +82,14 @@ const AuthContext = createContext<Auth>({
   setIdentity: () => {},
   authError: null,
   setAuthError: () => {},
+  refreshToken: null,
+  accessToken: null,
   saveTokens: async ({ accessToken, refreshToken }: Tokens) => {},
   reloadTokens: async () => {},
-  refreshAuthTokens: async () => {},
-  signOut: async () => {}
+  resetTokens: async () => {},
+  refreshAuthTokens: async () => false,
+  logOut: async () => {},
+  isSignOutLoading: false
 });
 
 const ACCESS_TOKEN_KEY = "foodu-access-token";
@@ -98,11 +112,22 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const dispatch = useAppDispatch();
   const [refreshTokens] = useRefreshTokensMutation();
+  const [
+    signOut,
+    { data: signOutData, error: signOutError, isLoading: isSignOutLoading }
+  ] = useSignOutMutation();
 
-  const refreshAuthTokens = async () => {
-    if (!refreshToken || !accessToken) {
-      throw new Error("Both refresh token and access token are required");
+  useEffect(() => {
+    if (refreshToken) return;
+
+    if (signOutData || signOutError) {
+      logOut();
     }
+  }, [signOutData, signOutError, refreshToken]);
+
+  const refreshAuthTokens = async (): Promise<boolean> => {
+    if (!refreshToken || !accessToken)
+      throw new Error("Both refresh token and access token are required.");
 
     try {
       const response = await refreshTokens({
@@ -114,22 +139,26 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         const { accessToken, refreshToken } = response.data?.refreshTokens;
 
         if (accessToken && refreshToken) {
-          saveTokens({
+          await saveTokens({
             accessToken,
             refreshToken
           });
-        } else {
-          resetTokens();
+
+          return true;
         }
+
+        resetTokens();
+        return false;
       } else if ("error" in response) {
         resetTokens();
-
-        throw new Error("Failed to refresh tokens");
+        return false;
       }
+
+      return false;
     } catch (error: unknown) {
       // Refresh token already expired...
       resetTokens();
-      throw new Error("Error when refreshing tokens");
+      return false;
     }
   };
 
@@ -168,11 +197,15 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const resetTokens = async () => {
+    try {
+      await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
+      await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
+    } catch (error) {
+      console.log("deleteItemAsync", error);
+    }
+
     dispatch(loadAccessToken(null));
     dispatch(loadRefreshToken(null));
-
-    await SecureStore.deleteItemAsync(ACCESS_TOKEN_KEY);
-    await SecureStore.deleteItemAsync(REFRESH_TOKEN_KEY);
   };
 
   const withProviderSignIn = async <T extends AsyncFn>(
@@ -192,12 +225,19 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
   const withProviderSignOut = async (signOutProviderFn: () => void) => {
     signOutProviderFn();
-    signOut();
+    logOut();
   };
 
-  const signOut = async () => {
-    await resetTokens();
-    setAuthenticated(false);
+  const logOut = async () => {
+    await Promise.all([
+      await signOut({ refreshToken }),
+      resetTokens(),
+      dispatch(authLogOut()),
+      dispatch(api.util.resetApiState())
+    ]).then(() => {
+      setUser(null);
+      setAuthenticated(false);
+    });
   };
 
   return (
@@ -217,10 +257,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
         setIdentity,
         authError,
         setAuthError,
+        refreshToken,
+        accessToken,
         saveTokens,
+        resetTokens,
         reloadTokens,
         refreshAuthTokens,
-        signOut
+        logOut,
+        isSignOutLoading
       }}
     >
       {children}

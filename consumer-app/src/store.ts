@@ -1,21 +1,33 @@
-import { configureStore } from "@reduxjs/toolkit";
+import {
+  AnyAction,
+  combineReducers,
+  configureStore,
+  Reducer
+} from "@reduxjs/toolkit";
 
 import { api as UserApi } from "./features/modules/user.generated";
 import authReducer from "./features/auth/authSlice";
 
+const combinedReducer = combineReducers({
+  [UserApi.reducerPath]: UserApi.reducer,
+  auth: authReducer
+});
+
+export type RootState = ReturnType<typeof combinedReducer>;
+export type AppDispatch = typeof store.dispatch;
+
+const rootReducer: Reducer = (state: RootState, action: AnyAction) => {
+  if (action.type === "auth/logOut") {
+    state = {} as RootState;
+  }
+
+  return combinedReducer(state, action);
+};
+
 const store = configureStore({
-  reducer: {
-    // Add the generated reducer as a specific top-level slice
-    [UserApi.reducerPath]: UserApi.reducer,
-    auth: authReducer
-  },
-  // Adding the api middleware enables caching, invalidation, polling,
-  // and other useful features of `rtk-query`.
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(UserApi.middleware)
 });
-
-export type RootState = ReturnType<typeof store.getState>;
-export type AppDispatch = typeof store.dispatch;
 
 export default store;

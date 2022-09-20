@@ -58,6 +58,10 @@ mutation refreshTokens($refreshToken: String!, $accessToken: String!) {
   }
 }
 
+mutation signOut($refreshToken: String) {
+  signOut(input: { refreshToken: $refreshToken })
+}
+
 mutation updateProfile(
   $email: String!
   $name: String!

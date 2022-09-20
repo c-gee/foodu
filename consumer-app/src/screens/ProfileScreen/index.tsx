@@ -10,6 +10,7 @@ import {
   Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -26,7 +27,10 @@ import {
   UpdateProfileInput,
   Gender
 } from "../../features/graphql/types.generated";
-import { useUpdateProfileMutation } from "../../features/modules/user.generated";
+import {
+  useSignOutMutation,
+  useUpdateProfileMutation
+} from "../../features/modules/user.generated";
 import { COUNTRY_CODE, phoneDisplayFormatter } from "../../utils";
 
 const genders = Object.entries(Gender).map(([label, value]) => ({
@@ -40,8 +44,9 @@ const ProfileScreen = ({
 }: RootStackScreenProps<"Profile" | "FillYourProfile">) => {
   const { screenTitle } = route.params;
   const { name } = route;
-  const { user, setUser, signOut } = useAuth();
+  const { user, setUser, logOut, isSignOutLoading } = useAuth();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+
   const {
     control,
     handleSubmit,
@@ -57,14 +62,6 @@ const ProfileScreen = ({
     },
     resolver: yupResolver(updateProfileSchema)
   });
-
-  const onNavigationPress = async () => {
-    if (name === "FillYourProfile") {
-      await signOut();
-    } else {
-      navigation.goBack();
-    }
-  };
 
   const onUpdate = async (data: UpdateProfileInput) => {
     try {
@@ -102,6 +99,14 @@ const ProfileScreen = ({
     }
   };
 
+  const onNavigationPress = async () => {
+    if (name === "FillYourProfile") {
+      logOut();
+    } else {
+      navigation.goBack();
+    }
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
@@ -111,7 +116,7 @@ const ProfileScreen = ({
           paddingBottom: 24
         }}
       >
-        {isLoading && <FullScreenLoader />}
+        {(isLoading || isSignOutLoading) && <FullScreenLoader />}
         <NavigationTopBar
           title={screenTitle}
           icon="go_back"

@@ -1,24 +1,22 @@
 import { Alert } from "react-native";
 import { useEffect } from "react";
 
-import { useAppSelector } from "../Redux";
 import useUserData from "../UserData/index";
 import { Identity, useAuth } from "../../contexts/AuthContext";
 import { useSignInByProviderMutation } from "../../features/modules/user.generated";
 
 const useProvidersAuth = () => {
-  const { authLoading, authError, setAuthError, identity, saveTokens } =
-    useAuth();
+  const {
+    authLoading,
+    authError,
+    setAuthError,
+    identity,
+    saveTokens,
+    accessToken
+  } = useAuth();
   const [signInByProvider, { isLoading: isSignInByProviderLoading }] =
     useSignInByProviderMutation();
   const { isLoadingUserData, loadUser } = useUserData();
-  const accessToken = useAppSelector((state) => state.auth.accessToken);
-
-  useEffect(() => {
-    if (!accessToken) return;
-
-    loadUser();
-  }, [accessToken]);
 
   useEffect(() => {
     if (identity === null) return;

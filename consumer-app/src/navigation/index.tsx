@@ -22,8 +22,6 @@ const RootStack = createNativeStackNavigator<RootStackParamList>();
 export const RootStackNavigation = () => {
   const { isAuthenticated, user } = useAuth();
 
-  console.log("isAuthenticated", isAuthenticated);
-
   return (
     <RootStack.Navigator
       screenOptions={{

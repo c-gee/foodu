@@ -24,11 +24,14 @@ const authSlice = createSlice({
     },
     setUserLoaded(state, action: PayloadAction<boolean>) {
       state.isUserLoaded = action.payload;
+    },
+    logOut() {
+      return initialState;
     }
   }
 });
 
-export const { loadAccessToken, loadRefreshToken, setUserLoaded } =
+export const { loadAccessToken, loadRefreshToken, setUserLoaded, logOut } =
   authSlice.actions;
 
 export default authSlice.reducer;

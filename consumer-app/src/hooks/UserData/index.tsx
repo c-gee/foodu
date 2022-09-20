@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Alert } from "react-native";
 
 import { useAppDispatch, useAppSelector } from "../Redux";
 import { setUserLoaded } from "../../features/auth/authSlice";
@@ -7,7 +6,7 @@ import { useMeQuery } from "../../features/modules/user.generated";
 import { useAuth } from "../../contexts/AuthContext";
 
 const useUserData = () => {
-  const { setUser, setAuthenticated } = useAuth();
+  const { setUser, setAuthenticated, accessToken, refreshToken } = useAuth();
   const [skipUserQuery, setSkipUserQuery] = useState<boolean>(true);
   const {
     data: userData,
@@ -25,11 +24,9 @@ const useUserData = () => {
     }
 
     if (userError) {
+      setUser(null);
+      setAuthenticated(false);
       setUserLoadingComplete();
-      Alert.alert(
-        "We have a little problem.",
-        "Please try again, or contact our support if the problem persist."
-      );
     }
   }, [userData, userError]);
 
@@ -38,6 +35,7 @@ const useUserData = () => {
   };
 
   const loadUser = () => {
+    if (!accessToken) return;
     setSkipUserQuery(false);
   };
 
@@ -45,7 +43,8 @@ const useUserData = () => {
     isLoadingUserData,
     isUserLoaded,
     setUserLoadingComplete,
-    loadUser
+    loadUser,
+    setSkipUserQuery
   };
 };
 

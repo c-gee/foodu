@@ -6,7 +6,7 @@ import { useMeQuery } from "../../features/modules/user.generated";
 import { useAuth } from "../../contexts/AuthContext";
 
 const useUserData = () => {
-  const { setUser, setAuthenticated, accessToken, refreshToken } = useAuth();
+  const { setUser, setAuthenticated } = useAuth();
   const [skipUserQuery, setSkipUserQuery] = useState<boolean>(true);
   const {
     data: userData,
@@ -35,7 +35,6 @@ const useUserData = () => {
   };
 
   const loadUser = () => {
-    if (!accessToken) return;
     setSkipUserQuery(false);
   };
 

@@ -14,6 +14,17 @@ export const phoneFormatter = (phone: string) => {
   }
 };
 
+export const phoneDisplayFormatter = (
+  phone: string | undefined | null,
+  stripCountryCode: boolean
+) => {
+  if (phone?.startsWith(COUNTRY_CODE) && stripCountryCode) {
+    return phone.substring(3);
+  } else {
+    return phone;
+  }
+};
+
 export const yupPhoneTransformer = (
   value: unknown,
   currenValue: unknown,

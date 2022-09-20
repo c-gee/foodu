@@ -6,8 +6,7 @@ import {
   TouchableOpacity,
   Platform,
   KeyboardAvoidingView,
-  Alert,
-  TouchableHighlight
+  Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { EnvelopeIcon, UserIcon } from "react-native-heroicons/solid";
@@ -27,8 +26,7 @@ import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
 import { SignUpInput } from "../../features/graphql/types.generated";
 import { useSignUpMutation } from "../../features/modules/user.generated";
-
-const COUNTRY_CODE = "+60";
+import { COUNTRY_CODE } from "../../utils";
 
 const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
   const { authLoading, isSignInByProviderLoading, isLoadingUserData } =
@@ -165,7 +163,7 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
             </View>
           </View>
           <View className="py-1">
-            <TouchableHighlight
+            <TouchableOpacity
               onPress={handleSubmit(onSignUp)}
               className="flex justify-center items-center h-[58] bg-primary rounded-full shadow-md shadow-slate-300"
               style={{
@@ -184,7 +182,7 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
               }}
             >
               <Text className="text-base text-white font-bold">Sign up</Text>
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
           <View className="py-4 flex-1 flex-row justify-between items-center space-x-6">
             <View className="flex-1 h-[1px] bg-gray-200" />

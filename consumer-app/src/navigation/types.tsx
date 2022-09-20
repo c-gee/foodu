@@ -29,6 +29,8 @@ export type RootStackParamList = {
   MenuItem: {
     menuItem: MenuItem;
   };
+  FillYourProfile: { screenTitle?: string };
+  Profile: { screenTitle?: string };
 };
 
 export type RootStackNavigationProp<T extends keyof RootStackParamList> =

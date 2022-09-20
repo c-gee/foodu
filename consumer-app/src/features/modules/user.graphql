@@ -57,3 +57,33 @@ mutation refreshTokens($refreshToken: String!, $accessToken: String!) {
     refreshToken
   }
 }
+
+mutation updateProfile(
+  $email: String!
+  $name: String!
+  $nickname: String
+  $phone: String!
+  $gender: String
+  $dateOfBirth: String
+  $picture: String
+) {
+  updateProfile(
+    input: {
+      email: $email
+      name: $name
+      nickname: $nickname
+      phone: $phone
+      gender: $gender
+      dateOfBirth: $dateOfBirth
+      picture: $picture
+    }
+  ) {
+    id
+    name
+    nickname
+    phone
+    gender
+    dateOfBirth
+    picture
+  }
+}

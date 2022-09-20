@@ -15,11 +15,14 @@ import SignUpScreen from "../screens/SignUpScreen";
 import PhoneLoginScreen from "../screens/PhoneLoginScreen";
 import OTPCodeVerificationScreen from "../screens/OTPCodeVerificationScreen";
 import { useAuth } from "../contexts/AuthContext";
+import ProfileScreen from "../screens/ProfileScreen/index";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootStackNavigation = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
+
+  console.log("isAuthenticated", isAuthenticated);
 
   return (
     <RootStack.Navigator
@@ -35,6 +38,16 @@ export const RootStackNavigation = () => {
           <RootStack.Screen
             name="OTPCodeVerification"
             component={OTPCodeVerificationScreen}
+          />
+        </RootStack.Group>
+      ) : isAuthenticated && user && (!user.phone || !user.email) ? (
+        <RootStack.Group>
+          <RootStack.Screen
+            name="FillYourProfile"
+            component={ProfileScreen}
+            initialParams={{
+              screenTitle: "Fill Your profile"
+            }}
           />
         </RootStack.Group>
       ) : (
@@ -79,6 +92,15 @@ export const RootStackNavigation = () => {
               options={{ presentation: "fullScreenModal" }}
               initialParams={{
                 showSortByOnly: false
+              }}
+            />
+          </RootStack.Group>
+          <RootStack.Group>
+            <RootStack.Screen
+              name="Profile"
+              component={ProfileScreen}
+              initialParams={{
+                screenTitle: "Profile"
               }}
             />
           </RootStack.Group>

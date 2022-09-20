@@ -17,7 +17,7 @@ import SearchBar from "../../components/SearchBar";
 import SectionHeader from "../../components/SectionHeader";
 import SpecialOffer from "../../components/SpecialOffer";
 import { HorizontalMerchantCard } from "../../components/MerchantCard";
-import { RootStackScreenProps } from "../../navigation/types";
+import { MainTabScreenProps } from "../../navigation/types";
 import { useSearchContext } from "../../contexts/SearchContext";
 
 // To be fetched from API
@@ -47,7 +47,7 @@ const filters = [
   }
 ];
 
-const HomeScreen = ({ navigation }: RootStackScreenProps<"Home">) => {
+const HomeScreen = ({ navigation }: MainTabScreenProps<"Home">) => {
   const [filter, setFilter] = useState<string>(filters[0].label);
   const [filteredResults, setFilteredResults] = useState(merchants);
   const { setKeyword, setIsSearch } = useSearchContext();

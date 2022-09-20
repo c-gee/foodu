@@ -10,7 +10,6 @@ import {
   Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -22,15 +21,12 @@ import ControlledTextInput from "../../components/ControlledTextInput";
 import ControlledDatePicker from "../../components/ControlledDatePicker";
 import ControlledDropdownPicker from "../../components/ControlledDropdownPicker";
 import { useAuth } from "../../contexts/AuthContext";
-import { RootStackScreenProps } from "../../navigation/types";
+import { ProfileScreenProps } from "../../navigation/types";
 import {
   UpdateProfileInput,
   Gender
 } from "../../features/graphql/types.generated";
-import {
-  useSignOutMutation,
-  useUpdateProfileMutation
-} from "../../features/modules/user.generated";
+import { useUpdateProfileMutation } from "../../features/modules/user.generated";
 import { COUNTRY_CODE, phoneDisplayFormatter } from "../../utils";
 
 const genders = Object.entries(Gender).map(([label, value]) => ({
@@ -41,7 +37,7 @@ const genders = Object.entries(Gender).map(([label, value]) => ({
 const ProfileScreen = ({
   route,
   navigation
-}: RootStackScreenProps<"Profile" | "FillYourProfile">) => {
+}: ProfileScreenProps<"Profile" | "FillYourProfile">) => {
   const { screenTitle } = route.params;
   const { name } = route;
   const { user, setUser, logOut, isSignOutLoading } = useAuth();

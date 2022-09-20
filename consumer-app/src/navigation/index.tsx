@@ -1,7 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
+import MainTabNavigator from "./MainTabNavigator";
 import { RootStackParamList } from "./types";
-import HomeScreen from "../screens/HomeScreen";
 import MerchantScreen from "../screens/MerchantScreen";
 import SpecialOffersScreen from "../screens/SpecialOffersScreen";
 import PromosScreen from "../screens/PromosScreen";
@@ -20,7 +20,7 @@ import ProfileScreen from "../screens/ProfileScreen/index";
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 
 export const RootStackNavigation = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   return (
     <RootStack.Navigator
@@ -37,9 +37,6 @@ export const RootStackNavigation = () => {
             name="OTPCodeVerification"
             component={OTPCodeVerificationScreen}
           />
-        </RootStack.Group>
-      ) : isAuthenticated && user && (!user.phone || !user.email) ? (
-        <RootStack.Group>
           <RootStack.Screen
             name="FillYourProfile"
             component={ProfileScreen}
@@ -51,7 +48,7 @@ export const RootStackNavigation = () => {
       ) : (
         <>
           <RootStack.Group>
-            <RootStack.Screen name="Home" component={HomeScreen} />
+            <RootStack.Screen name="MainTab" component={MainTabNavigator} />
             <RootStack.Screen
               name="Merchant"
               component={MerchantScreen}
@@ -90,15 +87,6 @@ export const RootStackNavigation = () => {
               options={{ presentation: "fullScreenModal" }}
               initialParams={{
                 showSortByOnly: false
-              }}
-            />
-          </RootStack.Group>
-          <RootStack.Group>
-            <RootStack.Screen
-              name="Profile"
-              component={ProfileScreen}
-              initialParams={{
-                screenTitle: "Profile"
               }}
             />
           </RootStack.Group>

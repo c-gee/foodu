@@ -71,9 +71,7 @@ const ProfileScreen = ({ navigation }: ProfileStackScreenProps<"Profile">) => {
         title: "Profile",
         type: "Link" as ListItemRowType,
         onPress: () => {
-          navigation.navigate("ProfileUpdate", {
-            screenTitle: "Profile"
-          });
+          navigation.navigate("ProfileUpdate");
         }
       },
       {
@@ -153,11 +151,7 @@ const ProfileScreen = ({ navigation }: ProfileStackScreenProps<"Profile">) => {
             picture={user?.picture}
             name={user?.name}
             phone={user?.phone}
-            onEditPress={() =>
-              navigation.navigate("ProfileUpdate", {
-                screenTitle: "Profile"
-              })
-            }
+            onEditPress={() => navigation.navigate("ProfileUpdate")}
           />
           <View className="h-[1px] bg-gray-200" />
           <View className="py-3 flex justify-start">

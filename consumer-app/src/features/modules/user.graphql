@@ -63,9 +63,9 @@ mutation signOut($refreshToken: String) {
 }
 
 mutation updateProfile(
-  $email: String!
   $name: String!
   $nickname: String
+  $email: String!
   $phone: String!
   $gender: String
   $dateOfBirth: String
@@ -73,9 +73,9 @@ mutation updateProfile(
 ) {
   updateProfile(
     input: {
-      email: $email
       name: $name
       nickname: $nickname
+      email: $email
       phone: $phone
       gender: $gender
       dateOfBirth: $dateOfBirth
@@ -85,6 +85,7 @@ mutation updateProfile(
     id
     name
     nickname
+    email
     phone
     gender
     dateOfBirth

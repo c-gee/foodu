@@ -39,7 +39,7 @@ export type RootStackParamList = {
   MenuItem: {
     menuItem: MenuItem;
   };
-  FillYourProfile: { screenTitle?: string };
+  FillYourProfile: undefined;
 };
 
 export type ProfileStackParamList = {
@@ -47,18 +47,13 @@ export type ProfileStackParamList = {
   FavouriteRestaurants: undefined;
   OffersAndPromos: undefined;
   PaymentMethods: undefined;
-  ProfileUpdate: { screenTitle?: string };
+  ProfileUpdate: undefined;
   Address: undefined;
   Notification: undefined;
   Security: undefined;
   Language: undefined;
   HelpCenter: undefined;
   InviteFriends: undefined;
-};
-
-export type ProfileUpdateParamList = {
-  ProfileUpdate: { screenTitle?: string };
-  FillYourProfile: { screenTitle?: string };
 };
 
 export type RootStackScreenProps<T extends keyof RootStackParamList> =

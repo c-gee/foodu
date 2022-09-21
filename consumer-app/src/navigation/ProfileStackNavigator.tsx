@@ -17,9 +17,6 @@ const ProfileStackNavigator = () => {
       <ProfileStack.Screen
         name="ProfileUpdate"
         component={ProfileUpdateScreen}
-        initialParams={{
-          screenTitle: "Profile"
-        }}
       />
     </ProfileStack.Navigator>
   );

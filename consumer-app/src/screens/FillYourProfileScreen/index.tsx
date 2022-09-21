@@ -20,7 +20,7 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import ControlledTextInput from "../../components/ControlledTextInput";
 import ControlledDatePicker from "../../components/ControlledDatePicker";
 import ControlledDropdownPicker from "../../components/ControlledDropdownPicker";
-import { ProfileStackScreenProps } from "../../navigation/types";
+import { RootStackScreenProps } from "../../navigation/types";
 import useAuth from "../../hooks/Auth";
 import {
   UpdateProfileInput,
@@ -28,17 +28,28 @@ import {
 } from "../../features/graphql/types.generated";
 import { useUpdateProfileMutation } from "../../features/modules/user.generated";
 import { COUNTRY_CODE, phoneDisplayFormatter } from "../../utils";
+import { useEffect } from "react";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const genders = Object.entries(Gender).map(([label, value]) => ({
   label,
   value
 }));
 
-const ProfileUpdateScreen = ({
+const FillYourProfileScreen = ({
   navigation
-}: ProfileStackScreenProps<"ProfileUpdate">) => {
+}: RootStackScreenProps<"FillYourProfile">) => {
   const { user, setUser } = useAuth();
+  const { signOutApp } = useAuthContext();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
+
+  useEffect(() => {
+    if (!user?.email || !!user?.phone) return;
+
+    navigation.navigate("MainTab", {
+      screen: "Home"
+    });
+  }, [user?.email, user?.phone]);
 
   const {
     control,
@@ -65,7 +76,6 @@ const ProfileUpdateScreen = ({
 
         if (user) {
           setUser(user);
-          Alert.alert("All good.", "Your profile has been updated.");
         } else {
           Alert.alert(
             "We have a little problem.",
@@ -98,14 +108,14 @@ const ProfileUpdateScreen = ({
         contentContainerStyle={{
           flexGrow: 1,
           justifyContent: "flex-start",
-          paddingBottom: 24
+          paddingBottom: 12
         }}
       >
         {isLoading && <FullScreenLoader />}
         <NavigationTopBar
-          title="Profile"
+          title="Fill Your Profile"
           icon="go_back"
-          onPress={navigation.goBack}
+          onPress={signOutApp}
         />
         <View className="flex-1 justify-start items-center py-4">
           <View className="relative w-[160px] h-[160px] rounded-full">
@@ -238,7 +248,7 @@ const ProfileUpdateScreen = ({
                 })
               }}
             >
-              <Text className="text-base text-white font-bold">Update</Text>
+              <Text className="text-base text-white font-bold">Continue</Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -247,4 +257,4 @@ const ProfileUpdateScreen = ({
   );
 };
 
-export default ProfileUpdateScreen;
+export default FillYourProfileScreen;

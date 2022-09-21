@@ -34,7 +34,8 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     reloadTokens,
     refreshAuthTokens,
     refreshToken,
-    accessToken
+    accessToken,
+    setAuthenticated
   } = useAuth();
   const [newAccessTokenLoaded, setNewAccessTokenLoaded] =
     useState<boolean>(false);
@@ -58,11 +59,14 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
 
   useEffect(() => {
     if (!isTokensLoaded) return;
-    if (isUserLoaded) return;
 
     if (!refreshToken || !accessToken) {
       setUserLoadingComplete();
+      setAuthenticated(false);
+      return;
     }
+
+    if (isUserLoaded) return;
 
     async function refreshTokens() {
       try {

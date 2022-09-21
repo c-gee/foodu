@@ -8,6 +8,7 @@ import {
   useState
 } from "react";
 import * as SecureStore from "expo-secure-store";
+
 import { User } from "../../features/graphql/types.generated";
 import { useAppDispatch, useAppSelector } from "../../hooks/Redux/index";
 import {
@@ -111,7 +112,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const refreshToken = useAppSelector((state) => state.auth.refreshToken);
   const dispatch = useAppDispatch();
-  const [refreshTokens] = useRefreshTokensMutation();
+  const [refreshTokens, { reset: resetRefreshTokensMutation }] =
+    useRefreshTokensMutation();
   const [
     signOut,
     { data: signOutData, error: signOutError, isLoading: isSignOutLoading }
@@ -206,6 +208,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
 
     dispatch(loadAccessToken(null));
     dispatch(loadRefreshToken(null));
+    resetRefreshTokensMutation();
   };
 
   const withProviderSignIn = async <T extends AsyncFn>(

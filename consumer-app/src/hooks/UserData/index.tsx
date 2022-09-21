@@ -9,26 +9,28 @@ const useUserData = () => {
   const { setUser, setAuthenticated } = useAuth();
   const [skipUserQuery, setSkipUserQuery] = useState<boolean>(true);
   const {
-    data: userData,
-    error: userError,
-    isLoading: isLoadingUserData
+    data,
+    isLoading: isLoadingUserData,
+    error
   } = useMeQuery({}, { skip: skipUserQuery });
   const isUserLoaded = useAppSelector((state) => state.auth.isUserLoaded);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (userData && userData.me) {
-      setUser(userData.me);
+    if (data && data.me) {
+      setUser(data.me);
       setAuthenticated(true);
       setUserLoadingComplete();
+      setSkipUserQuery(true);
     }
 
-    if (userError) {
+    if (error) {
       setUser(null);
       setAuthenticated(false);
       setUserLoadingComplete();
+      setSkipUserQuery(true);
     }
-  }, [userData, userError]);
+  }, [data, error]);
 
   const setUserLoadingComplete = () => {
     dispatch(setUserLoaded(true));
@@ -42,8 +44,7 @@ const useUserData = () => {
     isLoadingUserData,
     isUserLoaded,
     setUserLoadingComplete,
-    loadUser,
-    setSkipUserQuery
+    loadUser
   };
 };
 

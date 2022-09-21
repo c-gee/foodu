@@ -4,7 +4,7 @@ import * as Facebook from "expo-auth-session/providers/facebook";
 import { makeRedirectUri } from "expo-auth-session";
 import { FACEBOOK_EXPO_CLIENT_ID } from "@env";
 
-import { useAuth } from "../../contexts/AuthContext/index";
+import { useAuthContext } from "../../contexts/AuthContext/index";
 
 type UserInfo = {
   sub: string;
@@ -35,7 +35,7 @@ const useFacebookAuth = () => {
     null
   );
   const { withProviderSignIn, withProviderSignOut, setIdentity, setAuthError } =
-    useAuth();
+    useAuthContext();
   const [_, response, promptAsync] = Facebook.useAuthRequest(config);
 
   useEffect(() => {

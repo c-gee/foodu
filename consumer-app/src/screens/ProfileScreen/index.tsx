@@ -20,11 +20,13 @@ import TopBar from "./TopBar";
 import Header from "./Header";
 import ListItemRow, { ListItemRowType } from "./ListItemRow";
 import { ProfileStackScreenProps } from "../../navigation/types";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import useAppData from "../../hooks/AppData";
+import useAuth from "../../hooks/Auth";
 
 const ProfileScreen = ({ navigation }: ProfileStackScreenProps<"Profile">) => {
-  const { user, logOut } = useAuth();
+  const { user } = useAuth();
+  const { signOutApp } = useAuthContext();
   const { theme, language, setAppTheme } = useAppData();
   const [darkMode, setDarkMode] = useState<boolean>(theme === "dark");
 
@@ -172,7 +174,7 @@ const ProfileScreen = ({ navigation }: ProfileStackScreenProps<"Profile">) => {
           <View className="flex flex-row justify-start items-center ">
             <TouchableOpacity
               className="flex-row items-center"
-              onPress={logOut}
+              onPress={signOutApp}
             >
               <ArrowRightOnRectangleIcon size={28} color="#F87171" />
               <Text className="ml-4 text-lg text-red-400 font-semibold">

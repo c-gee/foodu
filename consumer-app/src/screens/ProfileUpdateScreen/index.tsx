@@ -20,8 +20,8 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import ControlledTextInput from "../../components/ControlledTextInput";
 import ControlledDatePicker from "../../components/ControlledDatePicker";
 import ControlledDropdownPicker from "../../components/ControlledDropdownPicker";
-import { useAuth } from "../../contexts/AuthContext";
 import { ProfileStackScreenProps } from "../../navigation/types";
+import useAuth from "../../hooks/Auth";
 import {
   UpdateProfileInput,
   Gender
@@ -39,8 +39,7 @@ const ProfileUpdateScreen = ({
   navigation
 }: ProfileStackScreenProps<"ProfileUpdate">) => {
   const { screenTitle } = route.params;
-  const { name } = route;
-  const { user, setUser, logOut, isSignOutLoading } = useAuth();
+  const { user, setUser } = useAuth();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
   const {
@@ -95,14 +94,6 @@ const ProfileUpdateScreen = ({
     }
   };
 
-  const onNavigationPress = async () => {
-    if (name === "FillYourProfile") {
-      logOut();
-    } else {
-      navigation.goBack();
-    }
-  };
-
   return (
     <SafeAreaView className="flex-1 bg-white">
       <ScrollView
@@ -112,11 +103,11 @@ const ProfileUpdateScreen = ({
           paddingBottom: 24
         }}
       >
-        {(isLoading || isSignOutLoading) && <FullScreenLoader />}
+        {isLoading && <FullScreenLoader />}
         <NavigationTopBar
           title={screenTitle}
           icon="go_back"
-          onPress={onNavigationPress}
+          onPress={navigation.goBack}
         />
         <View className="flex-1 justify-start items-center py-4">
           <View className="relative w-[160px] h-[160px] rounded-full">
@@ -252,7 +243,7 @@ const ProfileUpdateScreen = ({
               }}
             >
               <Text className="text-base text-white font-bold">
-                {name === "FillYourProfile" ? "Continue" : "Update"}
+                {screenTitle === "FillYourProfile" ? "Continue" : "Update"}
               </Text>
             </TouchableOpacity>
           </View>

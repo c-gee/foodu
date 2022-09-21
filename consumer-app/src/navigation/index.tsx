@@ -14,7 +14,7 @@ import SignInScreen from "../screens/SignInScreen";
 import SignUpScreen from "../screens/SignUpScreen";
 import PhoneLoginScreen from "../screens/PhoneLoginScreen";
 import OTPCodeVerificationScreen from "../screens/OTPCodeVerificationScreen";
-import { useAuth } from "../contexts/AuthContext";
+import useAuth from "../hooks/Auth";
 
 const RootStack = createNativeStackNavigator<RootStackParamList>();
 

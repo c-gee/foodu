@@ -19,10 +19,10 @@ import {
   useVerifyPhoneOtpMutation,
   useSignInByPhoneMutation
 } from "../../features/modules/user.generated";
-import { useAuth } from "../../contexts/AuthContext";
-import useUserData from "../../hooks/UserData";
-import { useAppDispatch, useAppSelector } from "../../hooks/Redux";
-import { loadAccessToken } from "../../features/auth/authSlice";
+import useAuth from "../../hooks/Auth";
+import { useAppDispatch } from "../../hooks/Redux";
+import { loadAuthTokens } from "../../features/auth/authSlice";
+import { useAuthContext } from "../../contexts/AuthContext";
 
 const CODE_LENGTH = 4;
 const CODE_EXPIRES_IN = 60;
@@ -38,12 +38,11 @@ const OTPCodeVerificationScreen = ({
   const [inputFocused, setInputFocused] = useState(false);
   const inputRef = useRef<TextInput>(null);
   const countDownRef = useRef<NodeJS.Timer>();
-  const { user, setAuthenticated, saveTokens, rememberMe, accessToken } =
-    useAuth();
+  const { rememberMe } = useAuthContext();
+  const { isLoadingUserData, loadUser, saveTokens, accessToken } = useAuth();
   const [verify, { isLoading }] = useVerifyPhoneOtpMutation();
   const [resendCode, { isLoading: isResendCodeLoading }] =
     useSignInByPhoneMutation();
-  const { isLoadingUserData, loadUser } = useUserData();
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -88,7 +87,12 @@ const OTPCodeVerificationScreen = ({
               refreshToken
             });
           } else {
-            dispatch(loadAccessToken(accessToken));
+            dispatch(
+              loadAuthTokens({
+                accessToken: accessToken,
+                refreshToken: refreshToken
+              })
+            );
           }
         } else {
           Alert.alert(

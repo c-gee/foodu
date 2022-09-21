@@ -11,19 +11,17 @@ import FullScreenLoader from "../../components/FullScreenLoader";
 import useGoogleAuth from "../../hooks/GoogleAuth";
 import useFacebookAuth from "../../hooks/FacebookAuth";
 import useProvidersAuth from "../../hooks/ProvidersAuth";
-import { useAuth } from "../../contexts/AuthContext";
+import useAuth from "../../hooks/Auth";
 import { RootStackScreenProps } from "../../navigation/types";
 import SignInArt from "../../../assets/sign-in-art.svg";
 import FacebookIcon from "../../../assets/fb-icon.svg";
 import GoogleIcon from "../../../assets/google-icon.svg";
-import { useEffect } from "react";
 
 const SignInScreen = ({ navigation }: RootStackScreenProps<"SignIn">) => {
-  const { user } = useAuth();
-  const { authLoading, isSignInByProviderLoading, isLoadingUserData } =
-    useProvidersAuth();
+  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
+  const { isLoadingUserData } = useAuth();
 
   return (
     <SafeAreaView className="flex-1 bg-white">

@@ -12,9 +12,9 @@ import {
 } from "@expo-google-fonts/urbanist";
 
 import FullScreenLoader from "../FullScreenLoader";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import useAppData from "../../hooks/AppData";
-import useUserData from "../../hooks/UserData";
+import useAuth from "../../hooks/Auth";
 
 const SPLASH_URI = "../../../assets/splash.png";
 
@@ -30,14 +30,6 @@ SplashScreen.preventAutoHideAsync().catch(() => {
 });
 
 const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
-  const {
-    isTokensLoaded,
-    reloadTokens,
-    refreshAuthTokens,
-    refreshToken,
-    accessToken,
-    setAuthenticated
-  } = useAuth();
   const [newAccessTokenLoaded, setNewAccessTokenLoaded] =
     useState<boolean>(false);
   const opacityAnimation = useMemo(() => new Animated.Value(1), []);
@@ -52,7 +44,19 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     Urbanist_700Bold
   });
   const { loadAppData } = useAppData();
-  const { isUserLoaded, setUserLoadingComplete, loadUser } = useUserData();
+  const {
+    setAuthenticated,
+    isAuthenticated,
+    user,
+    isTokensLoaded,
+    reloadTokens,
+    refreshAuthTokens,
+    refreshToken,
+    accessToken,
+    isUserLoaded,
+    setUserLoadingComplete,
+    loadUser
+  } = useAuth();
 
   useEffect(() => {
     loadAppData();

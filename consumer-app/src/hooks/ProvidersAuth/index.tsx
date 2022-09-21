@@ -1,22 +1,16 @@
 import { Alert } from "react-native";
 import { useEffect } from "react";
 
-import useUserData from "../UserData/index";
-import { Identity, useAuth } from "../../contexts/AuthContext";
+import useAuth from "../Auth/index";
+import { Identity, useAuthContext } from "../../contexts/AuthContext";
 import { useSignInByProviderMutation } from "../../features/modules/user.generated";
 
 const useProvidersAuth = () => {
-  const {
-    authLoading,
-    authError,
-    setAuthError,
-    identity,
-    saveTokens,
-    accessToken
-  } = useAuth();
+  const { authLoading, authError, setAuthError, identity } = useAuthContext();
+  const { saveTokens, accessToken } = useAuth();
   const [signInByProvider, { isLoading: isSignInByProviderLoading }] =
     useSignInByProviderMutation();
-  const { isLoadingUserData, loadUser } = useUserData();
+  const { loadUser } = useAuth();
 
   useEffect(() => {
     if (identity === null) return;
@@ -86,8 +80,7 @@ const useProvidersAuth = () => {
 
   return {
     authLoading,
-    isSignInByProviderLoading,
-    isLoadingUserData
+    isSignInByProviderLoading
   };
 };
 

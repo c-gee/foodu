@@ -19,7 +19,7 @@ export type RootState = ReturnType<typeof combinedReducer>;
 export type AppDispatch = typeof store.dispatch;
 
 const rootReducer: Reducer = (state: RootState, action: AnyAction) => {
-  if (action.type === "auth/logOut") {
+  if (action.type === "auth/resetAuthState") {
     state = {} as RootState;
   }
 

@@ -15,10 +15,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 
 import { signInByPhoneSchema } from "./validator";
 import NavigationTopBar from "../../components/NavigationTopBar";
-import { useAuth } from "../../contexts/AuthContext";
+import { useAuthContext } from "../../contexts/AuthContext";
 import useFacebookAuth from "../../hooks/FacebookAuth";
 import useGoogleAuth from "../../hooks/GoogleAuth";
 import useProvidersAuth from "../../hooks/ProvidersAuth";
+import useAuth from "../../hooks/Auth";
 import { RootStackScreenProps } from "../../navigation/types";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import FooduLogo from "../../../assets/foodu-logo.svg";
@@ -31,11 +32,11 @@ import ControlledTextInput from "../../components/ControlledTextInput";
 const COUNTRY_CODE = "+60";
 
 const PhoneLoginScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
-  const { rememberMe, setRememberMe } = useAuth();
+  const { rememberMe, setRememberMe } = useAuthContext();
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
-  const { authLoading, isSignInByProviderLoading, isLoadingUserData } =
-    useProvidersAuth();
+  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
+  const { isLoadingUserData } = useAuth();
   const [signInByPhone, { isLoading }] = useSignInByPhoneMutation();
   const {
     control,

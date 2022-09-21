@@ -17,6 +17,7 @@ import { signUpInputsSchema } from "./validator";
 import useGoogleAuth from "../../hooks/GoogleAuth";
 import useFacebookAuth from "../../hooks/FacebookAuth";
 import useProvidersAuth from "../../hooks/ProvidersAuth";
+import useAuth from "../../hooks/Auth";
 import NavigationTopBar from "../../components/NavigationTopBar";
 import FullScreenLoader from "../../components/FullScreenLoader";
 import ControlledTextInput from "../../components/ControlledTextInput";
@@ -29,10 +30,10 @@ import { useSignUpMutation } from "../../features/modules/user.generated";
 import { COUNTRY_CODE } from "../../utils";
 
 const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
-  const { authLoading, isSignInByProviderLoading, isLoadingUserData } =
-    useProvidersAuth();
+  const { authLoading, isSignInByProviderLoading } = useProvidersAuth();
   const { signInWithGoogle } = useGoogleAuth();
   const { loginWithFacebook } = useFacebookAuth();
+  const { isLoadingUserData } = useAuth();
   const [signUp, { isLoading }] = useSignUpMutation();
   const {
     control,

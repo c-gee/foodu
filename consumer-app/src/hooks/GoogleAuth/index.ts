@@ -9,7 +9,7 @@ import {
   GOOGLE_WEB_CLIENT_ID
 } from "@env";
 
-import { useAuth } from "../../contexts/AuthContext/index";
+import { useAuthContext } from "../../contexts/AuthContext/index";
 
 const environment = process.env;
 
@@ -30,7 +30,7 @@ const useGoogleAuth = () => {
     null
   );
   const { withProviderSignIn, withProviderSignOut, setIdentity, setAuthError } =
-    useAuth();
+    useAuthContext();
   const [_, response, promptAsync] = Google.useAuthRequest(config);
 
   useEffect(() => {

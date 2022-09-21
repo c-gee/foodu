@@ -7,10 +7,12 @@ import {
 
 import { api as UserApi } from "./features/modules/user.generated";
 import authReducer from "./features/auth/authSlice";
+import appSlice from "./features/app/appSlice";
 
 const combinedReducer = combineReducers({
   [UserApi.reducerPath]: UserApi.reducer,
-  auth: authReducer
+  auth: authReducer,
+  app: appSlice
 });
 
 export type RootState = ReturnType<typeof combinedReducer>;

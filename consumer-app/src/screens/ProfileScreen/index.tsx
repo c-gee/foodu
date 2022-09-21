@@ -1,6 +1,6 @@
 import { View, Text, ScrollView, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import {
   UserIcon,
   HeartIcon,
@@ -21,10 +21,16 @@ import Header from "./Header";
 import ListItemRow, { ListItemRowType } from "./ListItemRow";
 import { ProfileStackScreenProps } from "../../navigation/types";
 import { useAuth } from "../../contexts/AuthContext";
+import useAppData from "../../hooks/AppData";
 
 const ProfileScreen = ({ navigation }: ProfileStackScreenProps<"Profile">) => {
   const { user, logOut } = useAuth();
-  const [darkMode, setDarkMode] = useState<boolean>(false);
+  const { theme, language, setAppTheme } = useAppData();
+  const [darkMode, setDarkMode] = useState<boolean>(theme === "dark");
+
+  useEffect(() => {
+    setAppTheme(darkMode ? "dark" : "light");
+  }, [darkMode]);
 
   const topSection = useMemo(
     () => [
@@ -95,7 +101,7 @@ const ProfileScreen = ({ navigation }: ProfileStackScreenProps<"Profile">) => {
       {
         icon: <LanguageIcon size={28} color="#111827" />,
         title: "Language",
-        value: "English (US)", // get from redux state
+        value: language, // get from redux state
         type: "Link" as ListItemRowType,
         onPress: () => {
           navigation.navigate("Language");

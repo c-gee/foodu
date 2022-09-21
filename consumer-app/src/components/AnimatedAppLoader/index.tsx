@@ -13,6 +13,7 @@ import {
 
 import FullScreenLoader from "../FullScreenLoader";
 import { useAuth } from "../../contexts/AuthContext";
+import useAppData from "../../hooks/AppData";
 import useUserData from "../../hooks/UserData";
 
 const SPLASH_URI = "../../../assets/splash.png";
@@ -50,10 +51,11 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     Urbanist_600SemiBold,
     Urbanist_700Bold
   });
-
+  const { loadAppData } = useAppData();
   const { isUserLoaded, setUserLoadingComplete, loadUser } = useUserData();
 
   useEffect(() => {
+    loadAppData();
     reloadTokens();
   }, []);
 

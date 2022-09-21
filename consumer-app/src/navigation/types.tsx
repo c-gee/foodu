@@ -45,12 +45,13 @@ export type RootStackParamList = {
 export type ProfileStackParamList = {
   Profile: undefined;
   FavouriteRestaurants: undefined;
+  OffersAndPromos: undefined;
   PaymentMethods: undefined;
   ProfileUpdate: { screenTitle?: string };
   Address: undefined;
   Notification: undefined;
   Security: undefined;
-  Languages: undefined;
+  Language: undefined;
   HelpCenter: undefined;
   InviteFriends: undefined;
 };

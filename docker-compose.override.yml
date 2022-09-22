@@ -1,0 +1,34 @@
+services:
+  api:
+    build:
+      context: api/.
+      dockerfile: Dockerfile.dev
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:${DB_PORT}/${DB_DATABASE}?schema=${DB_SCHEMA}
+    volumes:
+      - ./api/src:/api/src
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    container_name: foodu-db
+    hostname: foodu-db
+    image: "postgres:14-alpine"
+    restart: unless-stopped
+    ports:
+      - ${DB_PORT}:5432
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  postgres-data:

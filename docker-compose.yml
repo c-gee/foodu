@@ -1,0 +1,19 @@
+version: "3.9"
+services:
+  api:
+    container_name: foodu-api
+    hostname: foodu-api
+    build:
+      context: api/.
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=staging
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_DATABASE}?schema=${DB_SCHEMA}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - JWT_SECRET=${JWT_SECRET}
+      - TWILIO_PHONE_NUMBER=${TWILIO_PHONE_NUMBER}
+      - TWILIO_VERIFY_SERVICE_SID=${TWILIO_VERIFY_SERVICE_SID}
+      - TEST_RECEIVER_PHONE_NUMBER=${TEST_RECEIVER_PHONE_NUMBER}
+    ports:
+      - ${API_PORT}:4000

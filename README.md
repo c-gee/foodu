@@ -55,7 +55,7 @@ A full-stack food delivery app to consolidate my understanding of tech stacks li
 
 - ✅ End to end typing with TypeScript.
 - ✅ Permanent data store using PostgreSQL + Prisma.
-- 💡 Docker for local development.
+- ✅ Docker for local development.
 - Unit and integration test.
 - CI/CD pipeline to staging environment.
 

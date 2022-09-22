@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["interactiveTransactions"]
@@ -43,9 +40,9 @@ model Identity {
   provider     Provider
   createdAt    DateTime @default(now()) @db.Timestamptz(3)
   updatedAt    DateTime @updatedAt @db.Timestamptz(3)
-  identityData Json     @default(dbgenerated())
-  User         User?    @relation(fields: [userId], references: [id])
+  identityData Json
   userId       String?
+  User         User?    @relation(fields: [userId], references: [id])
 
   @@id([provider, sub])
   @@map("identities")
@@ -57,9 +54,48 @@ model RefreshToken {
   revoked   Boolean  @default(false)
   createdAt DateTime @default(now()) @db.Timestamptz(3)
   updatedAt DateTime @updatedAt @db.Timestamptz(3)
-  User      User     @relation(fields: [userId], references: [id])
   userId    String
+  User      User     @relation(fields: [userId], references: [id])
 
   @@unique([token, userId])
   @@map("refresh_tokens")
+}
+
+model Merchant {
+  id                Int                            @id @default(autoincrement())
+  name              String
+  createdAt         DateTime                       @default(now()) @db.Timestamptz(3)
+  updatedAt         DateTime                       @updatedAt @db.Timestamptz(3)
+  address           String
+  latitude          Decimal?                       @db.Decimal(10, 8)
+  longitude         Decimal?                       @db.Decimal(11, 8)
+  logo              String?
+  photo             String?
+  rating            Decimal                        @default(0.0) @db.Decimal(3, 2)
+  totalReviews      Int                            @default(0)
+  cuisineCategories CuisineCategoriesOnMerchants[]
+
+  @@map("merchants")
+}
+
+model CuisineCategory {
+  id        Int                            @id @default(autoincrement()) @db.SmallInt
+  name      String                         @unique
+  icon      String?
+  createdAt DateTime                       @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime                       @updatedAt @db.Timestamptz(3)
+  merchants CuisineCategoriesOnMerchants[]
+
+  @@map("cuisine_categories")
+}
+
+model CuisineCategoriesOnMerchants {
+  merchantId        Int
+  cuisineCategoryId Int
+  createdAt         DateTime        @default(now()) @db.Timestamptz(3)
+  cuisineCategory   CuisineCategory @relation(fields: [cuisineCategoryId], references: [id])
+  merchant          Merchant        @relation(fields: [merchantId], references: [id])
+
+  @@id([merchantId, cuisineCategoryId])
+  @@map("cuisine_categories_on_merchants")
 }

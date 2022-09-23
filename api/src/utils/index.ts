@@ -43,3 +43,13 @@ export const isTokenRefreshable = (token: RefreshToken): boolean => {
 
   return !token.revoked && !isTokenExpired(token.createdAt);
 };
+
+export const toTitleCase = (str: string) => {
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(function (word) {
+      return word.replace(word[0], word[0].toUpperCase());
+    })
+    .join(" ");
+};

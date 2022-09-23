@@ -18,6 +18,15 @@ enum Provider {
   facebook
 }
 
+enum Currency {
+  MYR
+}
+
+model CurrencyMagnifier {
+  currency  Currency @unique
+  magnifier Int
+}
+
 model User {
   id            String         @id @default(uuid())
   createdAt     DateTime       @default(now()) @db.Timestamptz(3)
@@ -74,6 +83,8 @@ model Merchant {
   rating            Decimal                        @default(0.0) @db.Decimal(3, 2)
   totalReviews      Int                            @default(0)
   cuisineCategories CuisineCategoriesOnMerchants[]
+  menuCategories    MenuCategory[]
+  menuItems         MenuItem[]
 
   @@map("merchants")
 }
@@ -98,4 +109,33 @@ model CuisineCategoriesOnMerchants {
 
   @@id([merchantId, cuisineCategoryId])
   @@map("cuisine_categories_on_merchants")
+}
+
+model MenuCategory {
+  id         Int        @id @default(autoincrement())
+  name       String
+  createdAt  DateTime   @default(now()) @db.Timestamptz(3)
+  updatedAt  DateTime   @updatedAt @db.Timestamptz(3)
+  merchantId Int
+  Merchant   Merchant   @relation(fields: [merchantId], references: [id])
+  menuItems  MenuItem[]
+
+  @@unique([name, merchantId])
+  @@map("menu_categories")
+}
+
+model MenuItem {
+  id             BigInt       @id @default(autoincrement())
+  name           String
+  createdAt      DateTime     @default(now()) @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @db.Timestamptz(3)
+  photo          String?
+  magnifiedPrice BigInt       @default(0)
+  currency       Currency
+  merchantId     Int
+  Merchant       Merchant     @relation(fields: [merchantId], references: [id])
+  menuCategoryId Int
+  MenuCategory   MenuCategory @relation(fields: [menuCategoryId], references: [id])
+
+  @@map("menu_items")
 }

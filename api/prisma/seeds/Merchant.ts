@@ -1,6 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 import casual from "casual";
 
+import { createMenuCategories } from "./MenuCategory";
+
 const NUMBER_MERCHANTS_TO_GENERATE = 100;
 
 export async function seedMerchants(prisma: PrismaClient) {
@@ -9,10 +11,13 @@ export async function seedMerchants(prisma: PrismaClient) {
   const cuisineCategoryIds = await prisma.cuisineCategory.findMany();
 
   for (let i = 0; i < NUMBER_MERCHANTS_TO_GENERATE; i++) {
-    const randomIndex = parseInt(
-      (Math.random() * cuisineCategoryIds.length).toFixed(0)
-    );
-    const categoriesToConnect = cuisineCategoryIds.splice(randomIndex, 3); // pick 3
+    const randomIndex = Math.round(Math.random() * cuisineCategoryIds.length);
+    const cuisineCategoriesToConnect = cuisineCategoryIds.splice(
+      randomIndex,
+      3
+    ); // pick 3
+
+    const menuCategories = createMenuCategories();
 
     await prisma.merchant.create({
       data: {
@@ -25,13 +30,18 @@ export async function seedMerchants(prisma: PrismaClient) {
         rating: parseFloat(casual.double(1, 5).toFixed(2)),
         totalReviews: casual.integer(10, 2000),
         cuisineCategories: {
-          create: categoriesToConnect.map((category) => ({
+          create: cuisineCategoriesToConnect.map((category) => ({
             cuisineCategory: {
               connect: {
                 id: category.id
               }
             }
           }))
+        },
+        menuCategories: {
+          createMany: {
+            data: menuCategories
+          }
         }
       }
     });

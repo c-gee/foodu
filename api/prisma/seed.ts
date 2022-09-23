@@ -3,6 +3,7 @@ import { PrismaClient } from "@prisma/client";
 import { seedUsers } from "./seeds/User";
 import { seedCuisineCategories } from "./seeds/CuisineCategories";
 import { seedMerchants } from "./seeds/merchant";
+import { seedMenuItems } from "./seeds/MenuItem";
 
 const prisma = new PrismaClient();
 
@@ -10,6 +11,7 @@ async function main() {
   await seedUsers(prisma);
   await seedCuisineCategories(prisma);
   await seedMerchants(prisma);
+  await seedMenuItems(prisma);
 }
 
 if (process.env.production || process.env.NODE_ENV === "production") {

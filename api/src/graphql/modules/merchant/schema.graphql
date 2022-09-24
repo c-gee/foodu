@@ -30,6 +30,7 @@ type MenuItems {
   photo: String
   magnifiedPrice: BigInt!
   currency: Currency!
+  displayPrice: String!
 }
 
 type MerchantsResult {
@@ -39,12 +40,17 @@ type MerchantsResult {
 }
 
 type Query {
-  merchants(input: MerchantQueryInput!): MerchantsResult
+  merchants(input: MerchantsQueryInput!): MerchantsResult
+  merchant(input: MerchantQueryInput!): Merchant
 }
 
-input MerchantQueryInput {
+input MerchantsQueryInput {
   latitude: Decimal
   longitude: Decimal
   limit: Int!
   lastResultId: Int!
+}
+
+input MerchantQueryInput {
+  id: Int!
 }

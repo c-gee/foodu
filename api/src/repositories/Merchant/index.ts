@@ -1,10 +1,45 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Merchant, MenuCategory, MenuItem } from "@prisma/client";
 
-import { MerchantQueryInput } from "../../graphql/generated/graphql";
+import {
+  MerchantsQueryInput,
+  MerchantQueryInput
+} from "../../graphql/generated/graphql";
+
+type MerchantResult =
+  | (Merchant & {
+      cuisineCategories: {
+        cuisineCategory: {
+          name: string;
+          icon: string | null;
+        };
+      }[];
+      menuCategories: (MenuCategory & {
+        menuItems: MenuItem[];
+      })[];
+    })
+  | null;
+
+const formatMerchantResult = (merchant: MerchantResult) => {
+  return (
+    merchant && {
+      ...merchant,
+      cuisineCategories: merchant?.cuisineCategories.map(
+        (item) => item.cuisineCategory.name
+      ),
+      menuCategories: merchant?.menuCategories.map((menuCategory) => ({
+        name: menuCategory.name,
+        menuItems: menuCategory.menuItems.map((item) => ({
+          ...item,
+          id: item.id.toString()
+        }))
+      }))
+    }
+  );
+};
 
 const findMerchants = async (
   prisma: PrismaClient,
-  input: MerchantQueryInput
+  input: MerchantsQueryInput
 ) => {
   const merchants = await prisma.merchant.findMany({
     // Will create a SQL function to make the distance calculation later
@@ -34,23 +69,42 @@ const findMerchants = async (
     }
   });
 
-  return merchants.map((merchant) => ({
-    ...merchant,
-    cuisineCategories: merchant.cuisineCategories.map(
-      (item) => item.cuisineCategory.name
-    ),
-    menuCategories: merchant.menuCategories.map((menuCategory) => ({
-      name: menuCategory.name,
-      menuItems: menuCategory.menuItems.map((item) => ({
-        ...item,
-        id: item.id.toString()
-      }))
-    }))
-  }));
+  if (merchants.length === 0) return [];
+
+  return merchants.map((merchant) => formatMerchantResult(merchant));
+};
+
+const findMerchantById = async (
+  prisma: PrismaClient,
+  input: MerchantQueryInput
+) => {
+  const merchant = await prisma.merchant.findUnique({
+    where: { id: input.id },
+    include: {
+      cuisineCategories: {
+        select: {
+          cuisineCategory: {
+            select: {
+              name: true,
+              icon: true
+            }
+          }
+        }
+      },
+      menuCategories: {
+        include: {
+          menuItems: true
+        }
+      }
+    }
+  });
+
+  return formatMerchantResult(merchant);
 };
 
 const useMerchant = () => ({
-  findMerchants
+  findMerchants,
+  findMerchantById
 });
 
 export default useMerchant;

@@ -1,11 +1,11 @@
 import { ValidationError } from "yup";
 
-import { merchantsInputsSchema } from "./validator";
+import { merchantInputsSchema, merchantsInputsSchema } from "./validator";
 import { handleError } from "../errors";
 import { Resolvers, ErrorType } from "../../generated/graphql";
 import useMerchant from "../../../repositories/Merchant/index";
 
-const { findMerchants } = useMerchant();
+const { findMerchants, findMerchantById } = useMerchant();
 
 const resolvers: Resolvers = {
   Query: {
@@ -20,18 +20,37 @@ const resolvers: Resolvers = {
         // Should eventually be finding nearest merchants by user location
         const merchants = await findMerchants(prisma, input);
 
-        if (merchants && merchants.length > 0) {
-          return {
-            merchants,
-            lastResultId: merchants[merchants.length - 1].id,
-            hasMore: true
-          };
+        return {
+          merchants,
+          lastResultId:
+            merchants[merchants.length - 1]?.id || input.lastResultId || 0,
+          hasMore: merchants.length === input.limit
+        };
+      } catch (error) {
+        if (error instanceof ValidationError) {
+          return handleError(ErrorType.InvalidInputError, error.message);
+        }
+
+        return handleError(ErrorType.UnknownError);
+      }
+    },
+    async merchant(_, { input }, { prisma, currentUser }) {
+      try {
+        if (currentUser === null) {
+          return handleError(ErrorType.AuthenticationError);
+        }
+
+        await merchantInputsSchema.validate(input);
+
+        const merchant = await findMerchantById(prisma, input);
+
+        if (merchant) {
+          return merchant;
         } else {
-          return {
-            merchants: [],
-            lastResultId: input.lastResultId,
-            hasMore: false
-          };
+          return handleError(
+            ErrorType.NotFoundError,
+            "No such merchant found."
+          );
         }
       } catch (error) {
         if (error instanceof ValidationError) {

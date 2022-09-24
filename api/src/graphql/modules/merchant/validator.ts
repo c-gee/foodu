@@ -6,3 +6,7 @@ export const merchantsInputsSchema = yup.object().shape({
   limit: yup.number().required(),
   lastResultId: yup.number().required()
 });
+
+export const merchantInputsSchema = yup.object().shape({
+  id: yup.number().required()
+});

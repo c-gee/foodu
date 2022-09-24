@@ -1,0 +1,55 @@
+type CurrencyMagnifier {
+  currency: Currency!
+  magnifier: Int!
+}
+
+type Merchant {
+  id: ID!
+  name: String!
+  address: String!
+  latitude: Decimal
+  longitude: Decimal
+  logo: String
+  photo: String
+  rating: Decimal!
+  totalReviews: Int!
+  cuisineCategories: [String] # only return the category name
+  menuCategories: [MenuCategory]
+}
+
+type CuisineCategory {
+  id: ID!
+  name: String!
+  icon: String
+}
+
+type MenuCategory {
+  id: ID!
+  name: String!
+  menuItems: [MenuItems]!
+}
+
+type MenuItems {
+  id: ID!
+  name: String!
+  photo: String
+  magnifiedPrice: BigInt!
+  currency: Currency!
+}
+
+type MerchantsResult {
+  merchants: [Merchant]!
+  lastResultId: Int!
+  hasMore: Boolean!
+}
+
+type Query {
+  merchants(input: MerchantQueryInput!): MerchantsResult
+}
+
+input MerchantQueryInput {
+  latitude: Decimal
+  longitude: Decimal
+  limit: Int!
+  lastResultId: Int!
+}

@@ -1,25 +1,52 @@
 import { PrismaClient } from "@prisma/client";
 
-const findMerchants = async (prisma: PrismaClient) => {
+import { MerchantQueryInput } from "../../graphql/generated/graphql";
+
+const findMerchants = async (
+  prisma: PrismaClient,
+  input: MerchantQueryInput
+) => {
   const merchants = await prisma.merchant.findMany({
     // Will create a SQL function to make the distance calculation later
-    where: {
-      latitude: {
-        gt: 3.0738,
-        lt: 3.1569
+    // where: { distance: { lt: 30 }},
+    // sortBy: { distance: 'asc' },
+    include: {
+      cuisineCategories: {
+        select: {
+          cuisineCategory: {
+            select: {
+              name: true,
+              icon: true
+            }
+          }
+        }
       },
-      longitude: {
-        gt: 101.5183,
-        lt: 101.7123
+      menuCategories: {
+        include: {
+          menuItems: true
+        }
       }
     },
-    include: {
-      cuisineCategories: true,
-      menuCategories: true
+    take: input.limit,
+    skip: input.lastResultId === 0 ? 0 : 1,
+    cursor: {
+      id: input.lastResultId || 1
     }
   });
 
-  return merchants;
+  return merchants.map((merchant) => ({
+    ...merchant,
+    cuisineCategories: merchant.cuisineCategories.map(
+      (item) => item.cuisineCategory.name
+    ),
+    menuCategories: merchant.menuCategories.map((menuCategory) => ({
+      name: menuCategory.name,
+      menuItems: menuCategory.menuItems.map((item) => ({
+        ...item,
+        id: item.id.toString()
+      }))
+    }))
+  }));
 };
 
 const useMerchant = () => ({

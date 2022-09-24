@@ -1,7 +1,7 @@
 import * as yup from "yup";
 import "yup-phone";
+import { Provider } from "@prisma/client";
 
-import { Provider } from "../../generated/graphql";
 import { yupPhoneTransformer } from "../../../utils";
 
 const providers = Object.values(Provider);

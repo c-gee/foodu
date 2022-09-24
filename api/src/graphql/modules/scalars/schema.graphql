@@ -1,1 +1,9 @@
+# remember to add to codegen.yml too
+
+scalar Decimal
+scalar JSON
+scalar IdentityData
 scalar EmptyResponse
+scalar BigInt
+scalar Date
+scalar DateTime

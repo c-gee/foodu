@@ -25,12 +25,17 @@ generates:
         User: "@prisma/client#User"
         Identity: "@prisma/client#Identity"
         RefreshToken: "@prisma/client#RefreshToken"
+        Merchant: "@prisma/client#Merchant"
+        CuisineCategory: "@prisma/client#CuisineCategory"
+        MenuCategory: "@prisma/client#MenuCategory"
+        MenuItem: "@prisma/client#MenuItem"
       inputMaybeValue: T | null
       enumsAsConst: true
       scalars:
-        IdentityData: ../modules/user/index#IdentityData
+        Decimal: "@prisma/client/index#Prisma.Decimal"
         JSON: "@prisma/client/index#Prisma.JsonObject"
-        EmptyResponse: ../modules/scalars#EmptyResponse
+        IdentityData: ./../modules/scalars/types#IdentityData
+        EmptyResponse: ./../modules/scalars/types#EmptyResponse
         BigInt: bigint
         Date: Date
         DateTime: Date

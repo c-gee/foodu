@@ -137,10 +137,12 @@ const updateUserProfile = async (
   return user;
 };
 
-export const useUser = () => ({
+const useUser = () => ({
   createNewUser,
   findUserById,
   findUserByPhone,
   findOrCreateUserWithIdentity,
   updateUserProfile
 });
+
+export default useUser;

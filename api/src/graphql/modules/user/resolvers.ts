@@ -1,4 +1,3 @@
-import { VERIFICATION_STATUS } from "./../../../lib/twilio";
 import { PrismaClientKnownRequestError } from "@prisma/client/runtime";
 import { ValidationError } from "yup";
 
@@ -13,11 +12,12 @@ import {
 } from "./validator";
 import { handleError } from "../errors";
 import { Resolvers, ErrorType } from "../../generated/graphql";
-import { useUser } from "../../../repositories/User";
-import { useRefreshToken } from "../../../repositories/RefreshToken";
+import useUser from "../../../repositories/User";
+import useRefreshToken from "../../../repositories/RefreshToken";
 import { decodeToken, PayloadWithAuthMetadata } from "../../../lib/jwt";
 import { sendVerification, verifyOTP } from "../../../lib/twilio";
 import { isTokenRefreshable } from "../../../utils";
+import { VERIFICATION_STATUS } from "./../../../lib/twilio";
 
 const {
   createNewUser,

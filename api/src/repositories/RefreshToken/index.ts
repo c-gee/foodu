@@ -76,8 +76,10 @@ const getTokensResponse = async ({
   };
 };
 
-export const useRefreshToken = () => ({
+const useRefreshToken = () => ({
   findRefreshToken,
   getTokensResponse,
   revokeRefreshToken
 });
+
+export default useRefreshToken;

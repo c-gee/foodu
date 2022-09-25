@@ -6,12 +6,8 @@ const { getAppVars } = useApp();
 
 const resolvers: Resolvers = {
   Query: {
-    async appVars(_, __, { prisma, currentUser }) {
+    async appVars(_, __, { prisma }) {
       try {
-        if (currentUser === null) {
-          return handleError(ErrorType.AuthenticationError);
-        }
-
         const appVars = await getAppVars(prisma);
 
         return appVars;

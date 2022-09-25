@@ -29,7 +29,9 @@ generates:
         CuisineCategory: "@prisma/client#CuisineCategory"
         MenuCategory: "@prisma/client#MenuCategory"
         MenuItem: "@prisma/client#MenuItem"
+        Currency: "@prisma/client#Currency"
       inputMaybeValue: T | null
+      maybeValue: T | null
       enumsAsConst: true
       scalars:
         Decimal: "@prisma/client/index#Prisma.Decimal"

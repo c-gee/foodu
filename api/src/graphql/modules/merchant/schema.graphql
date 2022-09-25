@@ -28,9 +28,8 @@ type MenuItems {
   id: ID!
   name: String!
   photo: String
-  magnifiedPrice: BigInt!
-  currency: Currency!
-  displayPrice: String!
+  price: Int!
+  currency: CurrencyCode!
 }
 
 type MerchantsResult {

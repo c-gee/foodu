@@ -9,19 +9,24 @@ enum Provider {
   google
 }
 
-enum Currency {
+enum CurrencyCode {
   MYR
+}
+
+enum CurrencySymbol {
+  RM
 }
 
 # Any custom GraphQL only enums can be added here too...
 
-type CurrencyMagnifier {
-  currency: Currency!
+type Currency {
+  code: CurrencyCode!
   magnifier: Int!
+  symbol: CurrencySymbol!
 }
 
 type AppVars {
-  currencies: [CurrencyMagnifier]
+  currencies: [Currency]!
 }
 
 type Query {

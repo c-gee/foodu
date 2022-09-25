@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 
 const getAppVars = async (prisma: PrismaClient) => {
-  const currencies = await prisma.currencyMagnifier.findMany();
+  const currencies = await prisma.currency.findMany();
 
   return {
     currencies

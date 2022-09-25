@@ -8,6 +8,8 @@ type Merchant {
   photo: String
   rating: Decimal!
   totalReviews: Int!
+  distanceInKm: Decimal!
+  deliveryFee: DeliveryFee!
   cuisineCategories: [String] # only return the category name
   menuCategories: [MenuCategory]
 }
@@ -21,19 +23,26 @@ type CuisineCategory {
 type MenuCategory {
   id: ID!
   name: String!
-  menuItems: [MenuItems]!
+  menuItems: [MenuItem]!
 }
 
-type MenuItems {
+type MenuItem {
   id: ID!
   name: String!
   photo: String
   price: Int!
   currency: CurrencyCode!
+  displayPrice: String!
+}
+
+type DeliveryFee {
+  amount: Int!
+  currency: CurrencyCode!
+  displayAmount: String!
 }
 
 type MerchantsResult {
-  merchants: [Merchant]!
+  merchants: [Merchant]
   lastResultId: Int!
   hasMore: Boolean!
 }

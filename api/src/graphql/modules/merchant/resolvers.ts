@@ -23,7 +23,7 @@ const resolvers: Resolvers = {
         return {
           merchants,
           lastResultId:
-            merchants[merchants.length - 1]?.id || input.lastResultId || 0,
+            merchants[merchants.length - 1].id || input.lastResultId || 0,
           hasMore: merchants.length === input.limit
         };
       } catch (error) {

@@ -1,3 +1,4 @@
+import { Currency } from "@prisma/client";
 import * as yup from "yup";
 import { RefreshToken } from "../graphql/generated/graphql";
 
@@ -52,4 +53,13 @@ export const toTitleCase = (str: string) => {
       return word.replace(word[0], word[0].toUpperCase());
     })
     .join(" ");
+};
+
+export const formatMoney = (amount: number, currency: Currency) => {
+  return new Intl.NumberFormat("en-MY", {
+    style: "currency",
+    currency: currency.code
+  })
+    .format(amount / currency.magnifier)
+    .replace(/\s/g, "");
 };

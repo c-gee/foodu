@@ -12,7 +12,6 @@ type AuthState = {
   accessToken: string | null;
   refreshToken: string | null;
   user: User | null;
-  isUserLoaded: boolean;
   isAuthenticated: boolean;
 };
 
@@ -20,7 +19,6 @@ const initialState: AuthState = {
   accessToken: null,
   refreshToken: null,
   user: null,
-  isUserLoaded: false,
   isAuthenticated: false
 };
 
@@ -35,14 +33,11 @@ const authSlice = createSlice({
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
     },
-    setUserData(state, action: PayloadAction<User | null>) {
-      state.user = action.payload;
-    },
-    setUserLoaded(state, action: PayloadAction<boolean>) {
-      state.isUserLoaded = action.payload;
-    },
     setUserAuthenticated(state, action: PayloadAction<boolean>) {
       state.isAuthenticated = action.payload;
+    },
+    resetUserData(state) {
+      state.user = null;
     },
     resetAuth() {
       return initialState;
@@ -97,16 +92,27 @@ const authSlice = createSlice({
       .addMatcher(api.endpoints.verifyPhoneOtp.matchRejected, (state) => {
         state.accessToken = null;
         state.refreshToken = null;
-      });
+      })
+      // handle user query
+      .addMatcher(api.endpoints.me.matchFulfilled, (state, { payload }) => {
+        state.user = payload?.me ? payload?.me : null;
+        state.isAuthenticated = true;
+      })
+      .addMatcher(api.endpoints.me.matchRejected, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+      })
+      // handle user profile update
+      .addMatcher(
+        api.endpoints.updateProfile.matchFulfilled,
+        (state, { payload }) => {
+          state.user = payload?.updateProfile ? payload?.updateProfile : null;
+        }
+      );
   }
 });
 
-export const {
-  setAuthTokens,
-  setUserLoaded,
-  setUserData,
-  setUserAuthenticated,
-  resetAuth
-} = authSlice.actions;
+export const { setAuthTokens, resetUserData, setUserAuthenticated, resetAuth } =
+  authSlice.actions;
 
 export default authSlice.reducer;

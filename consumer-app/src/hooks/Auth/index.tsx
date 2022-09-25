@@ -4,8 +4,7 @@ import * as SecureStore from "expo-secure-store";
 import { useAppDispatch, useAppSelector } from "../Redux";
 import {
   Tokens,
-  setUserLoaded,
-  setUserData,
+  resetUserData,
   setUserAuthenticated,
   resetAuth,
   setAuthTokens
@@ -15,13 +14,14 @@ import {
   useMeQuery,
   useRefreshTokensMutation
 } from "../../features/modules/user.generated";
-import { User } from "../../features/graphql/types.generated";
 
 const ACCESS_TOKEN_KEY = "foodu-access-token";
 const REFRESH_TOKEN_KEY = "foodu-refresh-token";
 
 const useAuth = () => {
   const [isTokensLoaded, setTokensLoaded] = useState<boolean>(false);
+  const [isUserLoadingComplete, setUserLoadingComplete] =
+    useState<boolean>(false);
   const [skipUserQuery, setSkipUserQuery] = useState<boolean>(true);
   const {
     data,
@@ -33,7 +33,6 @@ const useAuth = () => {
   const user = useAppSelector((state) => state.auth.user);
   const accessToken = useAppSelector((state) => state.auth.accessToken);
   const refreshToken = useAppSelector((state) => state.auth.refreshToken);
-  const isUserLoaded = useAppSelector((state) => state.auth.isUserLoaded);
   const isAuthenticated = useAppSelector((state) => state.auth.isAuthenticated);
   const dispatch = useAppDispatch();
 
@@ -41,16 +40,12 @@ const useAuth = () => {
     if (!accessToken || !refreshToken) return;
 
     if (data && data.me) {
-      setUser(data.me);
-      setAuthenticated(true);
-      setUserLoadingComplete();
+      setUserLoadingCompleted();
       setSkipUserQuery(true);
     }
 
     if (error) {
-      setUser(null);
-      setAuthenticated(false);
-      setUserLoadingComplete();
+      setUserLoadingCompleted();
       setSkipUserQuery(true);
     }
   }, [data, error, accessToken, refreshToken]);
@@ -59,12 +54,12 @@ const useAuth = () => {
     dispatch(setUserAuthenticated(isAuthenticated));
   };
 
-  const setUserLoadingComplete = () => {
-    dispatch(setUserLoaded(true));
+  const setUserLoadingCompleted = () => {
+    setUserLoadingComplete(true);
   };
 
-  const setUser = (user: User | null) => {
-    dispatch(setUserData(user));
+  const resetUser = () => {
+    dispatch(resetUserData());
   };
 
   const loadUser = () => {
@@ -173,10 +168,10 @@ const useAuth = () => {
     isAuthenticated,
     setAuthenticated,
     user,
-    setUser,
+    resetUser,
     isLoadingUserData,
-    isUserLoaded,
-    setUserLoadingComplete,
+    isUserLoadingComplete,
+    setUserLoadingCompleted,
     loadUser,
     accessToken,
     refreshToken,

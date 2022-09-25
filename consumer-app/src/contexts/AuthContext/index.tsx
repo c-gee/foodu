@@ -68,7 +68,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const {
     refreshToken,
     resetTokens,
-    setUser,
+    resetUser,
     setAuthenticated,
     resetAuthState,
     resetUserApiState
@@ -109,7 +109,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       await signOut({ refreshToken }),
       setRememberMe(false),
       setIdentity(null),
-      setUser(null),
+      resetUser(),
       resetTokens(),
       resetAuthState(),
       resetUserApiState()

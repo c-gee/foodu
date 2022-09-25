@@ -1,5 +1,4 @@
 import {
-  ScrollView,
   Platform,
   View,
   Image,
@@ -39,7 +38,7 @@ const genders = Object.entries(Gender).map(([label, value]) => ({
 const FillYourProfileScreen = ({
   navigation
 }: RootStackScreenProps<"FillYourProfile">) => {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const { signOutApp } = useAuthContext();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
@@ -74,9 +73,7 @@ const FillYourProfileScreen = ({
       if ("data" in response && response.data?.updateProfile) {
         const user = response.data?.updateProfile;
 
-        if (user) {
-          setUser(user);
-        } else {
+        if (!user) {
           Alert.alert(
             "We have a little problem.",
             "Please try again, or contact our support if the problem persist."

@@ -36,7 +36,7 @@ const genders = Object.entries(Gender).map(([label, value]) => ({
 const ProfileUpdateScreen = ({
   navigation
 }: ProfileStackScreenProps<"ProfileUpdate">) => {
-  const { user, setUser } = useAuth();
+  const { user } = useAuth();
   const [updateProfile, { isLoading }] = useUpdateProfileMutation();
 
   const {
@@ -60,10 +60,9 @@ const ProfileUpdateScreen = ({
       const response = await updateProfile(data);
 
       if ("data" in response && response.data?.updateProfile) {
-        const user = response.data?.updateProfile;
+        const userData = response.data?.updateProfile;
 
-        if (user) {
-          setUser(user);
+        if (userData) {
           Alert.alert("All good.", "Your profile has been updated.");
         } else {
           Alert.alert(

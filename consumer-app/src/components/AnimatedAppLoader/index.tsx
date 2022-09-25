@@ -43,7 +43,7 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     Urbanist_600SemiBold,
     Urbanist_700Bold
   });
-  const { loadAppData, currencies } = useAppData();
+  const { loadAppData } = useAppData();
   const {
     setAuthenticated,
     isTokensLoaded,
@@ -51,8 +51,8 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     refreshAuthTokens,
     refreshToken,
     accessToken,
-    isUserLoaded,
-    setUserLoadingComplete,
+    isUserLoadingComplete,
+    setUserLoadingCompleted,
     loadUser
   } = useAuth();
   const {} = useAppVarsQuery({}, { refetchOnMountOrArgChange: true }); // Inital fetch and cache
@@ -66,12 +66,12 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     if (!isTokensLoaded) return;
 
     if (!refreshToken || !accessToken) {
-      setUserLoadingComplete();
+      setUserLoadingCompleted();
       setAuthenticated(false);
       return;
     }
 
-    if (isUserLoaded) return;
+    if (isUserLoadingComplete) return;
 
     async function refreshTokens() {
       try {
@@ -84,12 +84,12 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
         // Ignore error, will show sign in screen
         console.log(error);
       } finally {
-        setUserLoadingComplete();
+        setUserLoadingCompleted();
       }
     }
 
     refreshTokens();
-  }, [isTokensLoaded, isUserLoaded]);
+  }, [isTokensLoaded, isUserLoadingComplete]);
 
   useEffect(() => {
     if (!newAccessTokenLoaded) return;
@@ -98,7 +98,7 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
   }, [newAccessTokenLoaded]);
 
   useEffect(() => {
-    if (isAppReady && isUserLoaded) {
+    if (isAppReady && isUserLoadingComplete) {
       Animated.timing(opacityAnimation, {
         toValue: 0,
         duration: 500,
@@ -110,7 +110,7 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
         useNativeDriver: true
       }).start(() => setSplashAnimationComplete(true));
     }
-  }, [isAppReady, isUserLoaded]);
+  }, [isAppReady, isUserLoadingComplete]);
 
   const onResourcesLoaded = useCallback(async () => {
     try {
@@ -128,8 +128,8 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
 
   return (
     <View className="flex-1">
-      {isAppReady && isUserLoaded && children}
-      {(!isSplashAnimationComplete || !isUserLoaded) && (
+      {isAppReady && isUserLoadingComplete && children}
+      {(!isSplashAnimationComplete || !isUserLoadingComplete) && (
         <>
           <FullScreenLoader position="bottom" transparent={true} />
           <Animated.View

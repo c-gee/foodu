@@ -12,9 +12,9 @@ import {
 } from "@expo-google-fonts/urbanist";
 
 import FullScreenLoader from "../FullScreenLoader";
-import { useAuthContext } from "../../contexts/AuthContext";
 import useAppData from "../../hooks/AppData";
 import useAuth from "../../hooks/Auth";
+import { useAppVarsQuery } from "../../features/modules/app.generated";
 
 const SPLASH_URI = "../../../assets/splash.png";
 
@@ -43,11 +43,9 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     Urbanist_600SemiBold,
     Urbanist_700Bold
   });
-  const { loadAppData } = useAppData();
+  const { loadAppData, currencies } = useAppData();
   const {
     setAuthenticated,
-    isAuthenticated,
-    user,
     isTokensLoaded,
     reloadTokens,
     refreshAuthTokens,
@@ -57,6 +55,7 @@ const AnimatedSplashScreen = ({ children, image }: SplashScreenProps) => {
     setUserLoadingComplete,
     loadUser
   } = useAuth();
+  const {} = useAppVarsQuery({}, { refetchOnMountOrArgChange: true }); // Inital fetch and cache
 
   useEffect(() => {
     loadAppData();

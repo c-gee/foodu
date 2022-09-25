@@ -15,6 +15,7 @@ const LANGUAGE_KEY = "@foodu-language";
 const useAppData = () => {
   const theme = useAppSelector((state) => state.app.theme);
   const language = useAppSelector((state) => state.app.language);
+  const currencies = useAppSelector((state) => state.app.currencies);
   const dispatch = useAppDispatch();
 
   const setAppTheme = async (theme: Theme) => {
@@ -38,6 +39,7 @@ const useAppData = () => {
   return {
     theme,
     language,
+    currencies,
     setAppTheme,
     setAppLanguage,
     loadAppData

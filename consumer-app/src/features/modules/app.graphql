@@ -1,0 +1,9 @@
+query appVars {
+  appVars {
+    currencies {
+      code
+      magnifier
+      symbol
+    }
+  }
+}

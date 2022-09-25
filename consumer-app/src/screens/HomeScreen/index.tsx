@@ -7,7 +7,7 @@ import {
   NativeSyntheticEvent,
   TextInputSubmitEditingEventData
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import Header from "./Header";

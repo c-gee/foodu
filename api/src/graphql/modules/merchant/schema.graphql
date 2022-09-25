@@ -8,6 +8,7 @@ type Merchant {
   photo: String
   rating: Decimal!
   totalReviews: Int!
+  currency: CurrencyCode!
   distanceInKm: Decimal!
   deliveryFee: DeliveryFee!
   cuisineCategories: [String] # only return the category name

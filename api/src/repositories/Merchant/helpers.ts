@@ -29,7 +29,7 @@ export const formatMerchantResult = (
   currencies: Currency[]
 ) => {
   const currency = currencies.filter(
-    (currency) => currency.code === CurrencyCode.MYR // hardcorded
+    (currency) => currency.code === merchant.currency
   )[0];
   const distance = parseFloat(casual.double(0.5, 30).toFixed(2));
   const deliveryFee = Math.ceil(distance) * DELIVERY_COST_PER_KM;

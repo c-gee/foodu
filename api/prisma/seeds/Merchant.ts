@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { CurrencyCode, PrismaClient } from "@prisma/client";
 import casual from "casual";
 
 import { createMenuCategories } from "./MenuCategory";
@@ -29,6 +29,7 @@ export async function seedMerchants(prisma: PrismaClient) {
         photo: "https://unsplash.it/600/600",
         rating: parseFloat(casual.double(1, 5).toFixed(2)),
         totalReviews: casual.integer(10, 2000),
+        currency: CurrencyCode.MYR,
         cuisineCategories: {
           create: cuisineCategoriesToConnect.map((category) => ({
             cuisineCategory: {

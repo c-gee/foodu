@@ -18,13 +18,20 @@ enum Provider {
   facebook
 }
 
-enum Currency {
+enum CurrencyCode {
   MYR
 }
 
-model CurrencyMagnifier {
-  currency  Currency @unique
+enum CurrencySymbol {
+  RM
+}
+
+model Currency {
+  code      CurrencyCode   @id @unique
   magnifier Int
+  symbol    CurrencySymbol
+
+  @@map("currencies")
 }
 
 model User {
@@ -130,8 +137,8 @@ model MenuItem {
   createdAt      DateTime     @default(now()) @db.Timestamptz(3)
   updatedAt      DateTime     @updatedAt @db.Timestamptz(3)
   photo          String?
-  magnifiedPrice BigInt       @default(0)
-  currency       Currency
+  price          Int          @default(0)
+  currency       CurrencyCode
   merchantId     Int
   Merchant       Merchant     @relation(fields: [merchantId], references: [id])
   menuCategoryId Int

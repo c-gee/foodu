@@ -1,4 +1,4 @@
-import { PrismaClient, Currency } from "@prisma/client";
+import { PrismaClient, CurrencyCode } from "@prisma/client";
 import casual from "casual";
 
 import { toTitleCase } from "../../src/utils";
@@ -30,8 +30,8 @@ export async function seedMenuItems(prisma: PrismaClient) {
         menuItems.push({
           name: name,
           photo: "https://unsplash.it/400/400",
-          magnifiedPrice: casual.integer(100, 20000),
-          currency: Currency.MYR,
+          price: casual.integer(100, 20000),
+          currency: CurrencyCode.MYR,
           menuCategoryId: menuCategory.id,
           merchantId: menuCategory.merchantId
         });

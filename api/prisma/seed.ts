@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
-import { createCurrencyMagnifiers } from "./seeds/CurrencyMagnifier";
+import { createCurrencies } from "./seeds/Currency";
 import { seedUsers } from "./seeds/User";
 import { seedCuisineCategories } from "./seeds/CuisineCategories";
 import { seedMerchants } from "./seeds/merchant";
@@ -9,7 +9,7 @@ import { seedMenuItems } from "./seeds/MenuItem";
 const prisma = new PrismaClient();
 
 async function main() {
-  await createCurrencyMagnifiers(prisma);
+  await createCurrencies(prisma);
   await seedUsers(prisma);
   await seedCuisineCategories(prisma);
   await seedMerchants(prisma);

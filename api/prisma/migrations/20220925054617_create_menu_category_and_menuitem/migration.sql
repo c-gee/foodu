@@ -1,3 +1,6 @@
+-- AlterTable
+ALTER TABLE "currencies" ADD CONSTRAINT "currencies_pkey" PRIMARY KEY ("code");
+
 -- CreateTable
 CREATE TABLE "menu_categories" (
     "id" SERIAL NOT NULL,
@@ -16,8 +19,8 @@ CREATE TABLE "menu_items" (
     "createdAt" TIMESTAMPTZ(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMPTZ(3) NOT NULL,
     "photo" TEXT,
-    "magnifiedPrice" BIGINT NOT NULL DEFAULT 0,
-    "currency" "Currency" NOT NULL,
+    "price" INTEGER NOT NULL DEFAULT 0,
+    "currency" "CurrencyCode" NOT NULL,
     "merchantId" INTEGER NOT NULL,
     "menuCategoryId" INTEGER NOT NULL,
 

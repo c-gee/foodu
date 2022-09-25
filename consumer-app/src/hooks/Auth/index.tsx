@@ -8,7 +8,7 @@ import {
   setUserData,
   setUserAuthenticated,
   resetAuth,
-  loadAuthTokens
+  setAuthTokens
 } from "../../features/auth/authSlice";
 import {
   api,
@@ -118,7 +118,7 @@ const useAuth = () => {
       );
 
       dispatch(
-        loadAuthTokens({
+        setAuthTokens({
           accessToken: accessTokenFromStore,
           refreshToken: refreshTokenFromStore
         })
@@ -139,13 +139,6 @@ const useAuth = () => {
       throw "Refresh token not given!";
     }
 
-    dispatch(
-      loadAuthTokens({
-        accessToken: accessToken,
-        refreshToken: refreshToken
-      })
-    );
-
     await SecureStore.setItemAsync(ACCESS_TOKEN_KEY, accessToken);
     await SecureStore.setItemAsync(REFRESH_TOKEN_KEY, refreshToken);
   };
@@ -159,7 +152,7 @@ const useAuth = () => {
     }
 
     dispatch(
-      loadAuthTokens({
+      setAuthTokens({
         accessToken: null,
         refreshToken: null
       })

@@ -21,7 +21,6 @@ import {
 } from "../../features/modules/user.generated";
 import useAuth from "../../hooks/Auth";
 import { useAppDispatch } from "../../hooks/Redux";
-import { loadAuthTokens } from "../../features/auth/authSlice";
 import { useAuthContext } from "../../contexts/AuthContext";
 
 const CODE_LENGTH = 4;
@@ -86,13 +85,6 @@ const OTPCodeVerificationScreen = ({
               accessToken,
               refreshToken
             });
-          } else {
-            dispatch(
-              loadAuthTokens({
-                accessToken: accessToken,
-                refreshToken: refreshToken
-              })
-            );
           }
         } else {
           Alert.alert(

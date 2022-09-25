@@ -18,7 +18,8 @@ generates:
         BigInt: bigint
         Date: Date
         DateTime: Date
-      maybeValue: T | null | undefined
+      maybeValue: T | null
+      inputMaybeValue: T | null
   src/:
     preset: near-operation-file
     presetConfig:

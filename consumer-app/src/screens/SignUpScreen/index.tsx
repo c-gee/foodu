@@ -5,10 +5,10 @@ import {
   TextInput,
   TouchableOpacity,
   Platform,
-  KeyboardAvoidingView,
   Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { EnvelopeIcon, UserIcon } from "react-native-heroicons/solid";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -85,22 +85,13 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "flex-start",
-          paddingBottom: 24
-        }}
-      >
+      <KeyboardAwareScrollView>
         {(isLoading ||
           authLoading ||
           isSignInByProviderLoading ||
           isLoadingUserData) && <FullScreenLoader />}
         <NavigationTopBar title="" icon="go_back" onPress={navigation.goBack} />
-        <KeyboardAvoidingView
-          className="px-6 flex-1"
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
+        <View className="px-6 flex-1">
           <View className="py-6 self-center">
             <FooduLogo
               width={120}
@@ -220,8 +211,8 @@ const SignUpScreen = ({ navigation }: RootStackScreenProps<"SignUp">) => {
               </Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

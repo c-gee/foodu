@@ -23,8 +23,10 @@ const MenuItemScreen = ({ route }: RootStackScreenProps<"MenuItem">) => {
   };
 
   return (
-    <KeyboardAwareScrollView>
-      <ScrollView className="flex-1 bg-white">
+    <KeyboardAwareScrollView
+      contentContainerStyle={{ paddingBottom: 12, backgroundColor: "white" }}
+    >
+      <View className="flex-1 bg-white">
         <HeroImage imageURL={menuItem.imageURL} variant="menu_item" />
         <View className="pb-6 border-b-[1px] border-b-gray-200">
           <View className="flex justify-start space-y-4 px-6 pt-1">
@@ -94,7 +96,7 @@ const MenuItemScreen = ({ route }: RootStackScreenProps<"MenuItem">) => {
         </View>
         <View className="p-6 pt-2">
           <TextInput
-            className="bg-gray-100 text-sm leading-6 text-gray-500 font-regular rounded-2xl py-4"
+            className="bg-gray-100 text-base leading-6 text-gray-500 font-regular rounded-2xl py-4"
             multiline
             maxLength={200}
             numberOfLines={2}
@@ -110,7 +112,7 @@ const MenuItemScreen = ({ route }: RootStackScreenProps<"MenuItem">) => {
             }}
           />
         </View>
-      </ScrollView>
+      </View>
     </KeyboardAwareScrollView>
   );
 };

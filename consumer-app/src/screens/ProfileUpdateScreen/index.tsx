@@ -1,6 +1,4 @@
 import {
-  ScrollView,
-  KeyboardAvoidingView,
   Platform,
   View,
   Image,
@@ -10,6 +8,7 @@ import {
   Alert
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { MaterialIcons } from "@expo/vector-icons";
@@ -94,13 +93,7 @@ const ProfileUpdateScreen = ({
 
   return (
     <SafeAreaView className="flex-1 bg-white">
-      <ScrollView
-        contentContainerStyle={{
-          flexGrow: 1,
-          justifyContent: "flex-start",
-          paddingBottom: 24
-        }}
-      >
+      <KeyboardAwareScrollView>
         {isLoading && <FullScreenLoader />}
         <NavigationTopBar
           title="Profile"
@@ -122,10 +115,7 @@ const ProfileUpdateScreen = ({
             </TouchableOpacity>
           </View>
         </View>
-        <KeyboardAvoidingView
-          className="px-6 flex-1"
-          behavior={Platform.OS === "ios" ? "padding" : "height"}
-        >
+        <View className="px-6 flex-1">
           <View className="py-6 flex space-y-5">
             <View className="flex-1 flex-row justify-start items-center h-14 bg-gray-200 rounded-2xl px-5">
               <ControlledTextInput
@@ -241,8 +231,8 @@ const ProfileUpdateScreen = ({
               <Text className="text-base text-white font-bold">Update</Text>
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      </ScrollView>
+        </View>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 };

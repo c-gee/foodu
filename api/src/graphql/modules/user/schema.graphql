@@ -12,10 +12,10 @@ type TokenResponse {
   refreshToken: String!
 }
 
-type User {
+type User implements Node {
   id: ID!
-  email: String
   name: String
+  email: String
   nickname: String
   dateOfBirth: Date
   gender: Gender

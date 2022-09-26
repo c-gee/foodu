@@ -19,6 +19,10 @@ enum CurrencySymbol {
 
 # Any custom GraphQL only enums can be added here too...
 
+interface Node {
+  id: ID!
+}
+
 type Currency {
   code: CurrencyCode!
   magnifier: Int!

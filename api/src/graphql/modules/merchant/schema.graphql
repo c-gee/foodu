@@ -1,4 +1,4 @@
-type Merchant {
+type Merchant implements Node {
   id: ID!
   name: String!
   address: String!
@@ -15,19 +15,19 @@ type Merchant {
   menuCategories: [MenuCategory]
 }
 
-type CuisineCategory {
+type CuisineCategory implements Node {
   id: ID!
   name: String!
   icon: String
 }
 
-type MenuCategory {
+type MenuCategory implements Node {
   id: ID!
   name: String!
   menuItems: [MenuItem]!
 }
 
-type MenuItem {
+type MenuItem implements Node {
   id: ID!
   name: String!
   photo: String

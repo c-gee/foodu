@@ -17,14 +17,39 @@ const resolvers: Resolvers = {
 
         await merchantsInputsSchema.validate(input);
 
-        // Should eventually be finding nearest merchants by user location
-        const merchants = await findMerchants(prisma, input);
+        const { first, after, last, before } = input;
+
+        if (after && !first) {
+          throw new ValidationError("Cannot have after without first");
+        }
+
+        if (last && !before) {
+          throw new ValidationError("Last and before must be provided");
+        }
+
+        if (first && before) {
+          throw new ValidationError("Cannot use first together with before");
+        }
+
+        if (last && after) {
+          throw new ValidationError("Cannot use last together with after");
+        }
+
+        const { merchants, totalResults, hasPreviousPage, hasNextPage } =
+          await findMerchants(prisma, input);
 
         return {
-          merchants,
-          lastResultId:
-            merchants[merchants.length - 1].id || input.lastResultId || 0,
-          hasMore: merchants.length === input.limit
+          edges: merchants.map((merchant) => ({
+            cursor: merchant.id.toString(),
+            node: {
+              ...merchant
+            }
+          })),
+          pageInfo: {
+            totalResults,
+            hasNextPage,
+            hasPreviousPage
+          }
         };
       } catch (error) {
         if (error instanceof ValidationError) {

@@ -42,22 +42,33 @@ type DeliveryFee {
   displayAmount: String!
 }
 
-type MerchantsResult {
-  merchants: [Merchant]
-  lastResultId: Int!
-  hasMore: Boolean!
+type MerchantEdge implements Edge {
+  node: Merchant
+  cursor: ID
+}
+
+type MerchantConnection implements Connection {
+  edges: [MerchantEdge]!
+  pageInfo: PageInfo!
 }
 
 type Query {
-  merchants(input: MerchantsQueryInput!): MerchantsResult
+  merchants(input: MerchantsQueryInput!): MerchantConnection
   merchant(input: MerchantQueryInput!): Merchant
 }
 
-input MerchantsQueryInput {
+input SearchQuery {
   latitude: Decimal
   longitude: Decimal
-  limit: Int!
-  lastResultId: Int!
+  reverse: Boolean
+}
+
+input MerchantsQueryInput {
+  query: SearchQuery # Optional for now
+  first: Int
+  after: ID
+  last: Int
+  before: ID
 }
 
 input MerchantQueryInput {

@@ -180,7 +180,7 @@ const HomeScreen = ({ navigation }: MainTabScreenProps<"Home">) => {
   );
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white" edges={["top"]}>
       <FlatList
         data={filteredResults}
         keyExtractor={(item) => item.id}

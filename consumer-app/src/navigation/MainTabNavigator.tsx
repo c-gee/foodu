@@ -8,6 +8,7 @@ import MessageScreen from "../screens/MessageScreen";
 import OrdersScreen from "../screens/OrdersScreen";
 import WalletScreen from "../screens/WalletScreen";
 import ProfileStackNavigator from "./ProfileStackNavigator";
+import { Platform } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -16,7 +17,14 @@ const MainTabNavigator = () => {
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: "#1BAC4B"
+        tabBarActiveTintColor: "#1BAC4B",
+        tabBarStyle: {
+          minHeight: 60
+        },
+        tabBarItemStyle: {
+          paddingTop: 4,
+          paddingBottom: Platform.OS === "android" ? 8 : 0
+        }
       }}
     >
       <Tab.Screen

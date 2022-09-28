@@ -1,4 +1,4 @@
-import { Text, ViewStyle, Pressable } from "react-native";
+import { Text, ViewStyle, Pressable, Platform } from "react-native";
 import { useState } from "react";
 import { Control, Controller, FieldValues } from "react-hook-form";
 import DateTimePicker from "@react-native-community/datetimepicker";
@@ -19,30 +19,50 @@ const ControlledDatePicker = <T extends FieldValues>({
   placeholder,
   textStyle
 }: Props<T>) => {
-  const [date, setDate] = useState<Date>(
-    initialDate ? new Date(initialDate) : new Date()
+  const [date, setDate] = useState<Date | null>(
+    initialDate ? new Date(initialDate) : null
+  );
+  const [showCalender, setShowCalender] = useState(
+    Platform.OS === "ios" ? true : false
   );
 
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field: { onChange, value } }) => {
+      render={({ field: { onChange: hookFormOnChange } }) => {
         return (
-          <Pressable className="flex-1 flex-row justify-start items-center">
+          <Pressable
+            className="flex-1 flex-row justify-start items-center"
+            onPress={() => setShowCalender(true)}
+          >
             <Text className={textStyle}>{placeholder}</Text>
-            <DateTimePicker
-              display="default"
-              value={date}
-              onChange={(event, selectedDate) => {
-                setDate(selectedDate || new Date());
-                onChange(selectedDate);
-              }}
-              mode="date"
-              style={{
-                flex: 1
-              }}
-            />
+            {Platform.OS === "android" && (
+              <Text
+                className={textStyle}
+                style={{
+                  marginLeft: 15,
+                  color: "#212121"
+                }}
+              >
+                {date && date.toLocaleDateString("en-MY")}
+              </Text>
+            )}
+            {showCalender && (
+              <DateTimePicker
+                display="default"
+                value={date || new Date()}
+                onChange={(_, selectedDate) => {
+                  setShowCalender(Platform.OS === "ios" ? true : false);
+                  setDate(selectedDate || new Date());
+                  hookFormOnChange(selectedDate);
+                }}
+                mode="date"
+                style={{
+                  flex: 1
+                }}
+              />
+            )}
           </Pressable>
         );
       }}
